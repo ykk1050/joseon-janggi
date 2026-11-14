@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>출처와 라이선스 - 조선 수호 장기</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { padding: 20px 16px 40px; }
+  main { max-width: 760px; margin: 0 auto; }
+  h1 { font-family: var(--serif); }
+  section { background: var(--paper); border-radius: 14px; padding: 14px 18px; margin: 14px 0; box-shadow: 0 2px 0 #e2d3b2; }
+  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  li { line-height: 1.7; margin-bottom: 6px; }
+  .back { margin-bottom: 8px; }
+  small { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <button class="btn back" id="back">← 게임으로</button>
+  <h1>출처와 라이선스</h1>
+  <p>이 게임을 만들 때 쓴 것들과, 만든 사람을 적어 두었어요.</p>
+
+  <section>
+    <h2>🎨 그림·3D</h2>
+    <ul>
+      <li>장기알, 장기판, 지도 그림: 코드로 직접 만듦</li>
+      <li>3D 모델은 쓰지 않았어요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔊 소리·음악</h2>
+    <ul>
+      <li>효과음 10개(버튼, 장기알 놓기, 칼, 폭발, 동전, 책장, 성공·실패 음악)<br>
+        만든 사람: Kenney (<a href="https://www.kenney.nl" target="_blank" rel="noopener">www.kenney.nl</a>)<br>
+        라이선스: CC0 1.0 (누구나 자유롭게 쓸 수 있음)<br>
+        <small>Interface Sounds, Impact Sounds, RPG Audio, Sci-Fi Sounds, Music Jingles 묶음에서 골라 mp3로 바꿈</small></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔤 글꼴</h2>
+    <ul>
+      <li>따로 넣은 글꼴은 없어요. 기기에 들어 있는 기본 글꼴로 보여요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧩 프로그램 라이브러리</h2>
+    <ul>
+      <li>쓰지 않았어요. 게임 프로그램은 모두 코드로 직접 만듦</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🛠 도구 결과물 · 🤖 AI로 만든 그림</h2>
+    <ul>
+      <li>없어요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📚 역사 내용 참고</h2>
+    <ul>
+      <li>초등학교 5학년 사회 교과서 (게임 속 이야기는 교과서 문장을 기준으로 함)</li>
+      <li>한국민족문화대백과사전(한국학중앙연구원) 「대마도 정벌」, 「사군」, 「육진」, 「이순신」, 「명량대첩」, 「병자호란」 항목<br>
+        <a href="https://encykorea.aks.ac.kr" target="_blank" rel="noopener">encykorea.aks.ac.kr</a></li>
+      <li>게임을 위해 군사의 힘(체력, 공격력)과 전투 장면은 실제 역사와 다르게 꾸몄어요. 장수 이름과 사건은 역사에서 가져왔어요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📄 라이선스 전문</h2>
+    <p><a href="THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">THIRD-PARTY-NOTICES.txt</a> 파일에 모두 적어 두었어요.</p>
+  </section>
+</main>
+<script>
+document.getElementById('back').onclick = function () {
+  if (window.opener) { window.close(); return; }
+  if (history.length > 1) history.back(); else location.href = 'index.html';
+};
+</script>
+</body>
+</html>

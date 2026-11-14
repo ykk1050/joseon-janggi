@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>조선 수호 장기</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 시작 화면 -->
+<section id="title" class="screen">
+  <div class="title-box">
+    <div class="title-pieces"><span class="tp p">조</span><span class="tp p">선</span><span class="tp e">수</span><span class="tp e">호</span></div>
+    <h1>조선 수호 장기</h1>
+    <p class="sub">장기판 위에 군사를 놓고, 조선을 지켜라!</p>
+    <button class="btn big" id="btnStart">시작하기</button>
+    <div class="howto">
+      <b>이렇게 해요</b>
+      <ol>
+        <li>군량으로 상점에서 군사를 사요.</li>
+        <li>군사를 장기판 아래쪽에 놓아요.</li>
+        <li>「전투 시작」을 누르면 군사들이 스스로 싸워요.</li>
+        <li>같은 군사 3명이 모이면 ★2로 합체해요!</li>
+      </ol>
+    </div>
+  </div>
+  <footer class="foot"><a href="credits.html" target="_blank" rel="noopener">출처와 라이선스</a> · <span class="ver"></span></footer>
+</section>
+
+<!-- 장 선택 -->
+<section id="chapters" class="screen hidden">
+  <h2 class="scr-title">어느 이야기로 갈까요?</h2>
+  <div id="chapterList" class="chapter-list"></div>
+  <p class="hint">처음이라면 1장부터 차례대로 해 보세요.</p>
+  <button class="btn ghost" id="btnBackTitle">← 처음 화면</button>
+</section>
+
+<!-- 게임 화면 -->
+<section id="game" class="screen hidden">
+  <header class="topbar">
+    <div class="tb-left">
+      <div id="tbChapter" class="tb-ch"></div>
+      <div id="tbStage" class="tb-stage"></div>
+    </div>
+    <div class="tb-right">
+      <div id="tbSiege" class="siege-meters hidden">
+        <div class="meter"><span>🍚 식량</span><div class="bar"><i id="mFood"></i></div></div>
+        <div class="meter"><span>🔥 땔감</span><div class="bar"><i id="mWood"></i></div></div>
+      </div>
+      <div class="chip">🌾 군량 <b id="tbGold">0</b></div>
+      <div class="chip">👥 배치 <b id="tbCap">0/0</b></div>
+      <button class="btn icon" id="btnMenu" aria-label="메뉴">⚙</button>
+    </div>
+  </header>
+
+  <div class="game-main">
+    <div class="board-col">
+      <div id="board" class="board"></div>
+      <div class="bench-label">대기석 <small>(군사를 눌러 고른 뒤, 장기판 아래쪽 칸을 누르면 놓여요)</small></div>
+      <div id="bench" class="bench"></div>
+    </div>
+
+    <aside class="side">
+      <div class="panel" id="traitPanel"></div>
+      <div class="panel info" id="infoPanel"><p class="muted">군사를 누르면 설명이 나와요.</p></div>
+
+      <div id="prepControls">
+        <div class="shop-head">
+          <b>상점</b>
+          <button class="btn small" id="btnReroll">🔄 다시 뽑기 (🌾1)</button>
+        </div>
+        <div id="shop" class="shop"></div>
+        <div class="row-btns">
+          <button class="btn small danger" id="btnSell" disabled>팔기</button>
+          <button class="btn big go" id="btnFight">⚔ 전투 시작</button>
+        </div>
+      </div>
+      <div id="battleControls" class="hidden">
+        <div class="battle-msg" id="battleMsg">전투 중!</div>
+        <button class="btn small" id="btnSpeed">빠르게 ×2</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- 이야기 상자 -->
+<div id="story" class="overlay hidden">
+  <div class="story-box">
+    <div id="storyWho" class="story-who"></div>
+    <div id="storyText" class="story-text"></div>
+    <div class="story-foot"><span id="storyPage" class="muted"></span><button class="btn" id="btnStoryNext">다음 ▶</button></div>
+  </div>
+</div>
+
+<!-- 범용 창 (퀴즈, 결과, 지도, 회의, 요약) -->
+<div id="modal" class="overlay hidden">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- 메뉴 -->
+<div id="menu" class="overlay hidden">
+  <div class="modal-box menu-box">
+    <h3>메뉴</h3>
+    <button class="btn" id="btnSound">🔊 소리 끄기</button>
+    <button class="btn" id="btnRestartCh">↺ 이 장 처음부터</button>
+    <button class="btn" id="btnToChapters">📜 장 선택으로</button>
+    <button class="btn ghost" id="btnCloseMenu">닫기</button>
+    <footer class="foot in-menu"><a href="credits.html" target="_blank" rel="noopener">출처와 라이선스</a> · <span class="ver"></span></footer>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
