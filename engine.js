@@ -36,7 +36,8 @@ function starMul(star) { return star === 3 ? 3.2 : star === 2 ? 1.8 : 1; }
 
 /* players: [{type, star, x, y, items:[]}], enemies: [[type, x, y]]
    opts: { mult, atkMul, hpMul, surviveRounds, maxRounds,
-           startMana(작전 회의 보상), castleHpMul(대포 맞은 성), cells({'x,y':'forest'}) } */
+           startMana(작전 회의 보상), castleHpMul(대포 맞은 성), cells({'x,y':'forest'|'river'|'site'|'paddy'|'rock'}),
+           leader(이 적이 쓰러지면 항복), weak(약해진 채 시작하는 적의 체력 비율) } */
 function createBattle(players, enemies, opts = {}) {
   const units = [];
   let id = 0;
@@ -57,7 +58,7 @@ function createBattle(players, enemies, opts = {}) {
       skillPow: 1 + 0.4 * has('powder'), regen: 0.08 * has('ginseng'),
       shield: 0, stun: 0, buffAtk: 1, items: it.slice(), fixed: !!d.fixed, splash: !!d.splash,
       crit: 0.1, alive: true, moved: false, done: false,
-      antiBoard: d.antiBoard || 0, rush: !!d.rush, ambush: false,
+      antiBoard: d.antiBoard || 0, rush: !!d.rush, ambush: false, wall: !!d.wall,
     };
   };
   for (const p of players) {
@@ -78,13 +79,22 @@ function createBattle(players, enemies, opts = {}) {
   for (const [type, x, y] of enemies) units.push(make('e', type, 1, x, y, m, m, []));
   for (const u of units) {
     if (u.side === 'p' && !u.fixed && u.maxMana && opts.startMana) u.mana = Math.min(u.maxMana, u.mana + opts.startMana);
-    if (u.fixed && opts.castleHpMul) u.hp = Math.round(u.maxHp * opts.castleHpMul);
+    if (u.fixed && u.side === 'p' && opts.castleHpMul) u.hp = Math.round(u.maxHp * opts.castleHpMul);
+    if (u.side === 'e' && opts.weak && !UNITS[u.type].general && !u.fixed) u.hp = Math.round(u.maxHp * opts.weak);
   }
-  return { units, round: 1, side: 'p', over: false, result: null, buffs, counts, cells: opts.cells || {},
-    surviveRounds: opts.surviveRounds || 0, maxRounds: opts.maxRounds || MAX_ROUNDS };
+  const b = { units, round: 1, side: 'p', over: false, result: null, buffs, counts, cells: Object.assign({}, opts.cells || {}),
+    leader: opts.leader || null, forts: 0, surviveRounds: opts.surviveRounds || 0, maxRounds: opts.maxRounds || MAX_ROUNDS };
+  // 싸우는 중에 적이 새로 나타남(매복)
+  b.spawn = (type, x, y) => {
+    if (unitAt(b, x, y)) return null;
+    const u = make('e', type, 1, x, y, m, m, []);
+    u.id = b.units.length; b.units.push(u); return u;
+  };
+  return b;
 }
 
 const unitAt = (b, x, y) => b.units.find(u => u.alive && u.x === x && u.y === y);
+const castleOf = (b) => b.units.find(u => u.fixed && u.side === 'p');   // 남한산성 (성벽은 적 쪽 fixed)
 function enemiesOf(b, u) { return b.units.filter(o => o.alive && o.side !== u.side); }
 function alliesOf(b, u) { return b.units.filter(o => o.alive && o.side === u.side && !o.fixed); }
 const canAct = (u) => u.alive && !u.fixed && !u.done && u.stun <= 0;
@@ -93,6 +103,7 @@ const skillOf = (u) => SKILLS[UNITS[u.type].skill];
 const skillNeedsTarget = (u) => skillOf(u).kind === 'strike';
 
 // 갈 수 있는 칸: 우리 편 칸은 지나갈 수 있지만 멈출 수는 없고, 적이 있는 칸은 지나갈 수 없음
+// 바위 칸은 못 감, 강 칸에 들어가면 거기서 멈춤, 논 칸은 말 탄 군사(이동 3칸)가 멈춤
 function reachable(b, u) {
   if (u.moved || u.mv <= 0) return [];
   const seen = new Map([[u.x + ',' + u.y, 0]]);
@@ -105,8 +116,10 @@ function reachable(b, u) {
       if (seen.has(k)) continue;
       const o = unitAt(b, n.x, n.y);
       if (o && o.side !== u.side) continue;
+      const cell = cellOf(b, n);
+      if (cell === 'rock') continue;
       seen.set(k, step);
-      next.push(n);
+      if (!(cell === 'river' || (cell === 'paddy' && u.mv >= 3))) next.push(n);
       if (!o) out.push({ x: n.x, y: n.y, d: step });
     }
     front = next;
@@ -130,6 +143,10 @@ function targetsFrom(b, u, pos = u) { return enemiesOf(b, u).filter(o => hexDist
 
 function dealDamage(b, ev, src, tgt, amount, opts = {}) {
   if (!tgt.alive) return;
+  // 성벽: 대포·화약 무기는 잘 부수고, 다른 군사는 조금만 깎음
+  if (tgt.wall) { const siege = !!UNITS[src.type].siege; amount *= siege ? 2.5 : 0.4; if (siege) ev.push({ k: 'rule', rule: 'wall', id: src.id }); }
+  // 진에 선 우리 군사는 덜 다침
+  if (tgt.side === 'p' && cellOf(b, tgt) === 'fort') amount *= 0.75;
   // 판옥선·거북선: 바로 옆에 붙어 올라타려는 공격을 덜 받음
   if (tgt.antiBoard && src.range <= 1 && hexDist(src, tgt) <= 1) { amount *= 1 - tgt.antiBoard; ev.push({ k: 'rule', rule: 'board', id: tgt.id }); }
   let dmg = amount * (0.92 + Math.random() * 0.16);
@@ -141,7 +158,10 @@ function dealDamage(b, ev, src, tgt, amount, opts = {}) {
   tgt.hp -= left;
   if (tgt.maxMana) tgt.mana = Math.min(tgt.maxMana, tgt.mana + MANA_HIT);
   ev.push({ k: 'dmg', id: tgt.id, dmg, crit, skill: !!opts.skill });
-  if (tgt.hp <= 0) { tgt.alive = false; tgt.hp = 0; ev.push({ k: 'die', id: tgt.id }); }
+  if (tgt.hp <= 0) {
+    tgt.alive = false; tgt.hp = 0; ev.push({ k: 'die', id: tgt.id });
+    if (b.leader && tgt.side === 'e' && tgt.type === b.leader) b.surrender = true;   // 두목이 쓰러지면 항복
+  }
 }
 function heal(ev, u, amount) {
   if (!u.alive) return;
@@ -169,7 +189,7 @@ function castSkill(b, ev, u, target) {
     }
     case 'multi': {
       for (let i = 0; i < sk.n; i++) {
-        const live = foes.filter(o => o.alive); if (!live.length) break;
+        const live = foes.filter(o => o.alive && !o.wall); if (!live.length) break;
         const t = live[Math.floor(Math.random() * live.length)];
         ev.push({ k: 'shot', from: u.id, to: t.id });
         dealDamage(b, ev, u, t, pow * sk.mult, { skill: true }); hit.push(t);
@@ -214,6 +234,10 @@ function doMove(b, u, x, y) {
   if (!canAct(u) || !reachable(b, u).some(p => p.x === x && p.y === y)) return ev;
   u.x = x; u.y = y; u.moved = true;
   ev.push({ k: 'move', id: u.id, x, y });
+  const cell = cellOf(b, u);
+  if (u.side === 'p' && cell === 'site') { b.cells[x + ',' + y] = 'fort'; b.forts++; ev.push({ k: 'fort', id: u.id, x, y, n: b.forts }); }
+  if (cell === 'river') ev.push({ k: 'rule', rule: 'river', id: u.id });
+  if (cell === 'paddy' && u.mv >= 3) ev.push({ k: 'rule', rule: 'paddy', id: u.id });
   return ev;
 }
 function doAttack(b, u, t) {
@@ -261,7 +285,7 @@ function endTurn(b) {
   const ev = [];
   if (b.over) return ev;
   if (b.side === 'e') {
-    const castle = b.units.find(u => u.fixed);
+    const castle = castleOf(b);
     if (castle && b.round >= b.surviveRounds) { b.over = true; b.result = 'win'; }
     else if (!castle && b.round >= b.maxRounds) { b.over = true; b.result = 'lose'; }
     else b.round++;
@@ -271,10 +295,11 @@ function endTurn(b) {
 }
 function checkEnd(b, ev) {
   if (b.over) return;
-  const castle = b.units.find(u => u.fixed);
+  const castle = castleOf(b);
   const pAlive = b.units.some(u => u.alive && u.side === 'p' && !u.fixed);
-  const eAlive = b.units.some(u => u.alive && u.side === 'e');
+  const eAlive = b.units.some(u => u.alive && u.side === 'e' && !u.fixed);
   if (castle && !castle.alive) { b.over = true; b.result = 'lose'; }
+  else if (b.surrender) { b.over = true; b.result = 'win'; ev.push({ k: 'surrender' }); }
   else if (!eAlive) { b.over = true; b.result = 'win'; }
   else if (!castle && !pAlive) { b.over = true; b.result = 'lose'; }
   if (b.over) ev.push({ k: 'end', result: b.result });
@@ -302,6 +327,7 @@ function planMove(b, u) {
     let s;
     if (inRange) s = 1000 + (u.range > 1 ? near * 5 : -near) - c.d * 0.5;   // 활·총은 멀찍이, 칼·창은 바짝
     else s = -near * 10 - Math.min(...foes.map(o => eucl(c, o))) - c.d * 0.1;
+    if (u.side === 'p' && cellOf(b, c) === 'site') s += 30;   // 진터는 차지하고 싶음
     if (s > bs + 1e-6) { bs = s; best = c; }
   }
   return best && (best.x !== u.x || best.y !== u.y) ? best : null;
@@ -331,5 +357,16 @@ function autoTurn(b, side) {
   for (const u of actOrder(b, side)) { if (b.over) break; aiAct(b, u); }
   return endTurn(b);
 }
+
+// 단계 데이터 → 판 칸 / 적 목록 (pass: 2-1에서 고른 곳 'hill' | 'field')
+function stageCells(st, pass) {
+  const m = {};
+  const put = (list, k) => (list || []).forEach(([x, y]) => { m[x + ',' + y] = k; });
+  if (!st) return m;
+  put(st.forest, 'forest'); put(st.river, 'river'); put(st.sites, 'site');
+  if (st.pass && pass) put(st.pass[pass], pass === 'hill' ? 'rock' : 'paddy');
+  return m;
+}
+function stageEnemies(st) { return st.enemies.concat((st.walls || []).map(([x, y]) => ['wall', x, y])); }
 
 if (typeof module !== 'undefined') module.exports = { createBattle, beginTurn, endTurn, aiAct, autoTurn };
