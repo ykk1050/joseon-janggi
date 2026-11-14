@@ -149,7 +149,7 @@ const CHAPTERS = [
     ],
     stages: [
       {
-        id:'1-1', feature:'leeJM', title:'쓰시마섬을 공격하라', terrain:'sea', mult:0.8,
+        id:'1-1', bg:'sea', feature:'leeJM', title:'쓰시마섬을 공격하라', terrain:'sea', mult:0.8,
         pool:['spear','archer','ship','leeJM'],
         enemies:[['wokou',1,1],['wokou',3,1],['wokouA',2,0],['wokouB',3,0]],
         pre:[
@@ -167,7 +167,7 @@ const CHAPTERS = [
         map:'tsushima',
       },
       {
-        id:'1-2', feature:'choiYD', title:'압록강의 여진을 몰아내라', terrain:'land', mult:0.85,
+        id:'1-2', bg:'river', feature:'choiYD', title:'압록강의 여진을 몰아내라', terrain:'land', mult:0.85,
         pool:['spear','archer','cavalry','rocket','choiYD'],
         enemies:[['jur',0,1],['jur',2,1],['jur',4,1],['jurA',1,0],['jurA',4,0]],
         pre:[
@@ -186,7 +186,7 @@ const CHAPTERS = [
         map:'4gun',
       },
       {
-        id:'1-3', feature:'kimJS', title:'두만강의 여진을 몰아내라', terrain:'land', mult:0.9,
+        id:'1-3', bg:'riverN', feature:'kimJS', title:'두만강의 여진을 몰아내라', terrain:'land', mult:0.9,
         pool:['spear','archer','cavalry','rocket','kimJS','choiYD'],
         enemies:[['jur',0,1],['jur',1,1],['jur',4,1],['jur',5,1],['jurA',2,0],['jurA',3,0],['jurC',2,1]],
         pre:[
@@ -220,7 +220,7 @@ const CHAPTERS = [
     ],
     stages: [
       {
-        id:'2-1', title:'일본군의 침략', terrain:'land', mult:1.0, scripted:true,
+        id:'2-1', bg:'field', title:'일본군의 침략', terrain:'land', mult:1.0, scripted:true,
         pool:['spear','archer','cavalry'],
         enemies:[['gun',0,0],['gun',1,0],['gun',2,0],['gun',3,0],['gun',4,0],['gun',5,0],['samurai',1,1],['samurai',2,1],['samurai',3,1],['samurai',4,1],['jpGen',2,2]],
         pre:[
@@ -240,7 +240,7 @@ const CHAPTERS = [
                why:'일본군은 조총이라는 새로운 무기를 갖추고 있었어요.' },
       },
       {
-        id:'2-2', feature:'yiSS', title:'바다를 지켜라 — 이순신의 수군', terrain:'sea', mult:0.95,
+        id:'2-2', bg:'sea', feature:'yiSS', title:'바다를 지켜라 — 이순신의 수군', terrain:'sea', mult:0.95,
         pool:['panok','turtle','yiSS','archer','spear'],
         enemies:[['jpShip',0,1],['jpShip',2,1],['jpShip',4,1],['gun',1,0],['gun',4,0]],
         pre:[
@@ -256,7 +256,7 @@ const CHAPTERS = [
                why:'이순신이 이끄는 수군이 바다에서 활약했어요.' },
       },
       {
-        id:'2-3', title:'의병이 일어나다', terrain:'land', mult:1.2,
+        id:'2-3', bg:'field', title:'의병이 일어나다', terrain:'land', mult:1.2,
         pool:['militia','milLead','panok','turtle','yiSS','spear','archer'],
         enemies:[['samurai',1,1],['samurai',2,1],['samurai',4,1],['gun',0,0],['gun',3,0],['gun',5,0],['samurai',3,1]],
         pre:[
@@ -272,7 +272,7 @@ const CHAPTERS = [
                why:'나라를 지키려고 스스로 일어난 백성의 군대를 의병이라고 해요.' },
       },
       {
-        id:'2-4', title:'명군과 함께, 위기를 이겨 내라', terrain:'land', mult:1.38,
+        id:'2-4', bg:'field', title:'명군과 함께, 위기를 이겨 내라', terrain:'land', mult:1.38,
         pool:['ming','mingGun','militia','milLead','panok','turtle','yiSS'],
         enemies:[['jpGen',2,1],['samurai',0,1],['samurai',1,1],['samurai',4,1],['samurai',5,1],['gun',0,0],['gun',2,0],['gun',3,0],['gun',5,0]],
         pre:[

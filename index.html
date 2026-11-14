@@ -4,18 +4,62 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>조선 수호 장기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Batang:wght@400;700&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- 시작 화면 -->
 <section id="title" class="screen">
+  <svg class="ilwol" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14263a"/><stop offset="1" stop-color="#2c4c66"/></linearGradient>
+      <linearGradient id="gPeak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa58a"/><stop offset=".55" stop-color="#2f6b57"/><stop offset="1" stop-color="#1c4436"/></linearGradient>
+      <linearGradient id="gPeak2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f7f73"/><stop offset="1" stop-color="#1a3c3a"/></linearGradient>
+      <pattern id="pWave" width="96" height="44" patternUnits="userSpaceOnUse">
+        <rect width="96" height="44" fill="#1f4d78"/>
+        <path d="M-48 44 A48 44 0 0 1 48 44 M48 44 A48 44 0 0 1 144 44" fill="#2a6596" stroke="#e9f1ee" stroke-width="5"/>
+        <path d="M-30 44 A30 28 0 0 1 30 44 M66 44 A30 28 0 0 1 126 44" fill="none" stroke="#e9f1ee" stroke-width="3"/>
+        <path d="M-14 44 A14 13 0 0 1 14 44 M82 44 A14 13 0 0 1 110 44" fill="none" stroke="#e9f1ee" stroke-width="2.5"/>
+      </pattern>
+      <radialGradient id="gSun"><stop offset=".7" stop-color="#d9392b"/><stop offset="1" stop-color="#d9392b" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="1600" height="900" fill="url(#gSky)"/>
+    <circle cx="1270" cy="200" r="96" fill="url(#gSun)" opacity=".35"/>
+    <circle cx="1270" cy="200" r="66" fill="#d9392b"/>
+    <circle cx="330" cy="200" r="58" fill="#efeadb"/>
+    <g stroke="#0f2a26" stroke-width="6" stroke-linejoin="round">
+      <path d="M60 780 Q170 470 240 455 Q310 470 420 780 Z" fill="url(#gPeak2)"/>
+      <path d="M1180 780 Q1290 470 1360 455 Q1430 470 1540 780 Z" fill="url(#gPeak2)"/>
+      <path d="M270 780 Q400 330 480 315 Q560 330 700 780 Z" fill="url(#gPeak)"/>
+      <path d="M900 780 Q1040 330 1120 315 Q1200 330 1330 780 Z" fill="url(#gPeak)"/>
+      <path d="M540 780 Q690 170 800 150 Q910 170 1060 780 Z" fill="url(#gPeak)"/>
+    </g>
+    <g fill="none" stroke="#7fc3a6" stroke-width="4" opacity=".7">
+      <path d="M800 170 Q770 300 730 420 M800 170 Q830 300 880 430"/><path d="M480 330 Q460 430 430 520"/><path d="M1120 330 Q1140 430 1170 520"/>
+    </g>
+    <g stroke="#f4f7f2" stroke-width="7" stroke-linecap="round" opacity=".9">
+      <path d="M690 560 L680 760"/><path d="M915 560 L925 760"/>
+    </g>
+    <g class="pine">
+      <path d="M150 900 C140 800 175 720 150 600 C135 520 170 460 160 400" stroke="#a8321f" stroke-width="22" fill="none"/>
+      <path d="M1450 900 C1460 800 1425 720 1450 600 C1465 520 1430 460 1440 400" stroke="#a8321f" stroke-width="22" fill="none"/>
+      <g fill="#1e4a35" stroke="#0f2a1e" stroke-width="4">
+        <ellipse cx="160" cy="420" rx="110" ry="30"/><ellipse cx="200" cy="520" rx="120" ry="32"/><ellipse cx="120" cy="620" rx="110" ry="30"/><ellipse cx="190" cy="700" rx="90" ry="26"/>
+        <ellipse cx="1440" cy="420" rx="110" ry="30"/><ellipse cx="1400" cy="520" rx="120" ry="32"/><ellipse cx="1480" cy="620" rx="110" ry="30"/><ellipse cx="1410" cy="700" rx="90" ry="26"/>
+      </g>
+    </g>
+    <rect y="760" width="1600" height="140" fill="url(#pWave)"/>
+    <rect width="1600" height="900" fill="url(#gSky)" opacity=".25"/>
+  </svg>
+  <div class="dancheong top"></div>
   <div class="title-box">
+    <div class="hyunpan"><span class="hp-small">초등 사회 역사 전략 게임</span><h1>조선 수호 장기</h1></div>
     <div class="title-army" id="titleArmy"></div>
-    <h1>조선 수호 장기</h1>
-    <p class="sub">장기판 위에 군사를 놓고, 조선을 지켜라!</p>
-    <button class="btn big" id="btnStart">시작하기</button>
-    <div class="howto">
+    <button class="btn seal" id="btnStart">⚔ 출정하기</button>
+    <div class="howto scroll">
       <b>이렇게 해요</b>
       <ol>
         <li>🌾 군량으로 상점에서 군사를 사서 판에 놓아요.</li>
@@ -30,7 +74,8 @@
 
 <!-- 장 선택 -->
 <section id="chapters" class="screen hidden">
-  <h2 class="scr-title">어느 이야기로 갈까요?</h2>
+  <div class="dancheong top"></div>
+  <h2 class="scr-title">어느 전쟁터로 나갈까요?</h2>
   <div id="chapterList" class="chapter-list"></div>
   <p class="hint">처음이라면 1장부터 차례대로 해 보세요.</p>
   <button class="btn ghost" id="btnBackTitle">← 처음 화면</button>
