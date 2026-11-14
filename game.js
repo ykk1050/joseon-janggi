@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.003';
+const VERSION = 'v1.004';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
