@@ -64,8 +64,8 @@
       <b>이렇게 해요</b>
       <ol>
         <li>🌾 군량으로 상점에서 군사를 사서 판에 놓아요.</li>
-        <li>⚔ 「전투 시작」을 누르면 군사들이 스스로 싸워요.</li>
-        <li>★ 같은 군사 3명이 모이면 합체! 💥 마나가 차면 필살기!</li>
+        <li>⚔ 장기처럼 차례를 번갈아 가며, 군사를 움직이고 적을 눌러 공격해요.</li>
+        <li>★ 같은 군사 3명이 모이면 합체! 💥 마나가 차면 필살기를 직접 써요!</li>
         <li>⬆ 레벨업하면 더 많이, 더 좋은 군사를 쓸 수 있어요.</li>
       </ol>
     </div>
@@ -124,8 +124,17 @@
         </div>
       </div>
       <div id="battleControls" class="panel hidden">
-        <div class="battle-msg" id="battleMsg">전투 중!</div>
-        <button class="btn small" id="btnSpeed">⏩ 빠르게</button>
+        <div class="battle-msg" id="battleMsg">우리 차례</div>
+        <div class="battle-hint" id="battleHint">움직일 군사를 누르세요</div>
+        <div class="battle-btns">
+          <button class="btn sk" id="btnSkill" disabled>💥 필살기</button>
+          <button class="btn" id="btnWait" disabled>✋ 이 군사는 쉬기</button>
+        </div>
+        <div class="battle-btns">
+          <button class="btn small" id="btnAuto">🤖 남은 군사 자동</button>
+          <button class="btn big go" id="btnEndTurn">차례 끝내기 ▶</button>
+        </div>
+        <button class="btn small" id="btnSpeed">⏩ 적 차례 빠르게</button>
       </div>
       <div class="panel" id="traitPanel"></div>
       <div class="panel info" id="infoPanel"></div>

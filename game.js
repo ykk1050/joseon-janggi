@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.001';
+const VERSION = 'v1.002';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -231,6 +231,7 @@ function giveItem(u) {
   play('ok'); toast(`${UNITS[u.type].name}에게 ${ITEMS[it].name}!`);
 }
 function tapCell(x, y) {
+  if (S.phase === 'battle') return tapBattle(x, y);
   if (S.phase !== 'prep') return;
   if (y < 3) {
     const e = enemiesNow().find(en => en[1] === x && en[2] === y);
@@ -401,8 +402,9 @@ function renderInfo() {
   const tier = d.side === 'p' && d.cost ? `<span class="tier" style="background:${TIER_COLORS[d.cost]}">${d.cost}등급</span>` : '';
   const items = I.unit && I.unit.items.length ? `<div class="stats">아이템: ${I.unit.items.map(i => ITEMS[i].icon + ITEMS[i].name).join(', ')}</div>` : '';
   el.innerHTML = `<div class="info-head"><div class="mini ${d.side}">${spriteHTML(type)}</div><div><h4>${d.name} ${star > 1 ? '★'.repeat(star) : ''} ${tier}</h4>
-    <div class="stats">❤ ${Math.round(d.hp * m)} · ⚔ ${Math.round(d.atk * m)} · 사거리 ${rng}${d.move > 1 ? ' · 빠름' : ''}</div>
-    <div class="stats">${d.traits.map(t => TRAITS[t].icon + t).join(' ')}</div></div></div>
+    <div class="stats">❤ ${Math.round(d.hp * m)} · ⚔ ${Math.round(d.atk * m * ATK_SCALE)} · 사거리 ${rng}${d.fixed ? '' : ` · 이동 ${moveOf(d)}칸`}</div>
+    ${I.live ? `<div class="stats now">지금 ❤ ${I.live.hp} / ${I.live.maxHp}${I.live.shield > 0 ? ` 🛡${Math.round(I.live.shield)}` : ''}${I.live.maxMana ? ` · 마나 ${I.live.mana} / ${I.live.maxMana}` : ''}</div>` : ''}
+    <div class="stats">${(d.traits || []).map(t => TRAITS[t].icon + t).join(' ')}</div></div></div>
     ${sk ? `<div class="skill"><b>💥 ${sk.name}</b>${sk.desc ? ' — ' + sk.desc : ''}</div>` : ''}${items}<p class="fact">📜 ${d.fact}</p>`;
 }
 function updateTop() {
@@ -429,45 +431,183 @@ function renderAll() {
 }
 setInterval(() => { const b = $('#board'); if (b) b.classList.toggle('beat'); document.body.classList.toggle('beat'); }, 420);
 
-// ───────── 전투 ─────────
+// ───────── 전투 (장기처럼 차례를 번갈아) ─────────
 $('#btnFight').onclick = () => {
   if (S.phase !== 'prep') return;
   if (!S.board.length) { play('error'); toast('판 아래쪽에 군사를 먼저 놓아 주세요'); return; }
   startBattle();
 };
-$('#btnSpeed').onclick = () => { S.speed = S.speed === 1 ? 2 : 1; $('#btnSpeed').textContent = S.speed === 1 ? '⏩ 빠르게' : '▶ 보통 속도'; };
+$('#btnSpeed').onclick = () => { S.speed = S.speed === 1 ? 2 : 1; $('#btnSpeed').textContent = S.speed === 1 ? '⏩ 적 차례 빠르게' : '▶ 적 차례 보통 속도'; };
 
-let timer = null;
+let bTok = 0;   // 전투를 그만두면 늘려서, 예약해 둔 움직임을 멈춤
+function later(fn, ms) { const t = bTok; setTimeout(() => { if (t === bTok) fn(); }, ms / (S.speed || 1)); }
+const hexEl = (x, y) => $('#board').querySelector(`.hex[data-x="${x}"][data-y="${y}"]`);
+const selU = () => (S.bs.sel !== null ? S.battle.units[S.bs.sel] : null);
+
 function startBattle() {
   play('ok');
-  S.phase = 'battle'; S.sel = null;
+  S.phase = 'battle'; S.sel = null; bTok++;
   $('#prepControls').classList.add('hidden');
   $('#battleControls').classList.remove('hidden');
+  $('#game').classList.add('in-battle');
   const c = chap();
   const players = S.board.map(b => ({ type: b.u.type, star: b.u.star, x: b.x, y: b.y, items: b.u.items }));
   let opts;
   if (c.siege) {
     players.push({ type: 'castle', star: 1, x: 3, y: 5 });
     const m = siegeMul();
-    opts = { surviveTicks: c.surviveTicks, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp };
+    opts = { surviveRounds: c.surviveRounds, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp };
   } else opts = { mult: stage().mult };
   const bt = createBattle(players, enemiesNow(), opts);
   S.battle = bt;
+  S.bs = { sel: null, mode: null, busy: true, finished: false };
   boardBase();
   $('#board').insertAdjacentHTML('beforeend', bt.units.map((u, i) => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, bars: true, items: u.items, odd: i & 1 })).join(''));
   syncBars();
   renderTraits(); renderBench();
-  $('#battleMsg').textContent = c.siege ? '성을 지켜라!' : '전투 중!';
-  let n = 0;
-  clearInterval(timer);
-  timer = setInterval(() => {
-    n++;
-    if (S.speed === 1 && n % 2) return;
-    const ev = stepBattle(bt);
-    drawEvents(ev); syncBars();
-    if (c.siege && !bt.over) $('#battleMsg').textContent = `성을 지켜라! 남은 시간 ${Math.max(0, Math.ceil((bt.surviveTicks - bt.tick) * TICK_MS / 1000))}초`;
-    if (bt.over) { clearInterval(timer); timer = null; setTimeout(() => endBattle(bt.result), 900); }
-  }, TICK_MS / 2);
+  playerTurn();
+}
+function playerTurn() {
+  const bt = S.battle;
+  drawEvents(beginTurn(bt, 'p')); syncBars();
+  S.bs.sel = null; S.bs.mode = null; S.bs.busy = false;
+  banner(chap().siege ? `${bt.round}번째 차례 — 성을 지켜라!` : `${bt.round}번째 차례 — 우리 차례!`, 'p');
+  if (!bt.units.some(u => u.side === 'p' && canAct(u))) { S.bs.busy = true; toast('모든 군사가 기절해서 이번 차례는 쉬어요'); later(enemyTurn, 1200); }
+  renderBattle();
+}
+function renderBattle() {
+  const bt = S.battle, bs = S.bs, sel = selU();
+  const board = $('#board');
+  const myTurn = bt.side === 'p' && !bs.busy && !bt.over;
+  board.querySelectorAll('.hex.mv, .hex.tg').forEach(h => h.classList.remove('mv', 'tg'));
+  for (const u of bt.units) {
+    const el = pieceEl(u.id); if (!el) continue;
+    const mine = u.alive && u.side === 'p' && !u.fixed;
+    el.classList.toggle('can-act', mine && myTurn && canAct(u) && u !== sel);
+    el.classList.toggle('done', mine && bt.side === 'p' && !canAct(u));
+    el.classList.toggle('sel', u === sel);
+    el.classList.toggle('sk-ready', u.alive && skillReady(u));
+    el.classList.remove('tgt');
+  }
+  const targets = sel && myTurn ? targetsFrom(bt, sel) : [];
+  if (sel && myTurn) {
+    if (bs.mode !== 'skill') reachable(bt, sel).forEach(p => hexEl(p.x, p.y).classList.add('mv'));
+    targets.forEach(t => { hexEl(t.x, t.y).classList.add('tg'); pieceEl(t.id).classList.add('tgt'); });
+  }
+  // 버튼
+  const bSk = $('#btnSkill');
+  const canSk = myTurn && sel && skillReady(sel) && (!skillNeedsTarget(sel) || targets.length > 0);
+  bSk.disabled = !(canSk || bs.mode === 'skill');
+  bSk.classList.toggle('ready', !!canSk && bs.mode !== 'skill');
+  bSk.textContent = bs.mode === 'skill' ? '✖ 필살기 취소' : sel && sel.maxMana ? `💥 ${skillOf(sel).name}` : '💥 필살기';
+  $('#btnWait').disabled = !(myTurn && sel);
+  $('#btnAuto').disabled = !myTurn;
+  $('#btnEndTurn').disabled = !myTurn;
+  // 안내 글
+  $('#battleMsg').textContent = chap().siege
+    ? `🏯 ${bt.round} / ${bt.surviveRounds}번째 차례 버티는 중`
+    : `⚔ ${bt.round}번째 차례 · 남은 차례 ${bt.maxRounds - bt.round + 1}`;
+  let hint;
+  if (bt.over) hint = '전투가 끝났어요!';
+  else if (bt.side === 'e') hint = '적이 움직이고 있어요…';
+  else if (bs.busy) hint = '우리 군사가 움직이고 있어요…';
+  else if (!sel) hint = '빛나는 군사를 눌러 고르세요. (흐린 군사는 이번 차례에 이미 움직였어요)';
+  else if (bs.mode === 'skill') hint = `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르세요.`;
+  else if (!sel.moved) hint = targets.length ? '파란 칸을 누르면 이동, 빨간 칸의 적을 누르면 공격해요.' : '파란 칸을 눌러 이동하세요. 적이 사거리 안에 오면 빨갛게 빛나요.';
+  else hint = targets.length ? '빨간 칸의 적을 눌러 공격하세요.' : '공격할 수 있는 적이 없어요.';
+  $('#battleHint').textContent = hint;
+}
+function tapBattle(x, y) {
+  const bt = S.battle, bs = S.bs, sel = selU();
+  const u = unitAt(bt, x, y);
+  if (u) { S.info = { unit: { type: u.type, star: u.star, items: u.items }, live: u }; renderInfo(); }
+  if (bt.side !== 'p' || bs.busy || bt.over) return;
+  if (sel && u && u.side !== sel.side && hexDist(sel, u) <= sel.range) {
+    return act(bs.mode === 'skill' ? doSkill(bt, sel, u) : doAttack(bt, sel, u));
+  }
+  if (bs.mode === 'skill') { bs.mode = null; renderBattle(); return; }
+  if (sel && !u && reachable(bt, sel).some(p => p.x === x && p.y === y)) {
+    play('place', .5);
+    drawEvents(doMove(bt, sel, x, y));
+    // 옮긴 뒤 할 수 있는 일이 없으면 이 군사의 차례는 끝
+    if (!targetsFrom(bt, sel).length && !(skillReady(sel) && !skillNeedsTarget(sel))) { doWait(bt, sel); bs.sel = null; }
+    return afterAction();
+  }
+  if (u && u === sel) { bs.sel = null; renderBattle(); return; }
+  if (u && u.side === 'p' && !u.fixed) {
+    if (canAct(u)) { bs.sel = u.id; play('click'); renderBattle(); }
+    else toast('이 군사는 이번 차례에 이미 움직였어요');
+    return;
+  }
+  if (u && u.side === 'e' && sel) { play('error', .4); toast(`너무 멀어요! ${UNITS[sel.type].name}의 사거리는 ${sel.range}칸이에요`); }
+}
+function act(ev) {
+  drawEvents(ev); syncBars();
+  S.bs.sel = null; S.bs.mode = null;
+  afterAction();
+}
+function afterAction() {
+  const bt = S.battle;
+  if (bt.over) return finishBattle();
+  if (!bt.units.some(u => u.side === 'p' && canAct(u))) { S.bs.busy = true; renderBattle(); later(enemyTurn, 700); return; }
+  renderBattle();
+}
+function finishBattle() {
+  if (S.bs.finished) return;
+  S.bs.finished = true; S.bs.busy = true;
+  renderBattle();
+  later(() => endBattle(S.battle.result), 1000);
+}
+$('#btnWait').onclick = () => {
+  const sel = selU(); if (!sel || S.bs.busy) return;
+  play('click'); doWait(S.battle, sel); S.bs.sel = null; S.bs.mode = null; afterAction();
+};
+$('#btnSkill').onclick = () => {
+  const sel = selU(); if (!sel || S.bs.busy) return;
+  if (S.bs.mode === 'skill') { S.bs.mode = null; renderBattle(); return; }
+  if (!skillReady(sel)) return;
+  if (!skillNeedsTarget(sel)) return act(doSkill(S.battle, sel, null));
+  S.bs.mode = 'skill'; play('click'); renderBattle();
+};
+$('#btnEndTurn').onclick = () => {
+  if (S.phase !== 'battle' || S.bs.busy || S.battle.side !== 'p') return;
+  play('click'); S.bs.busy = true; enemyTurn();
+};
+$('#btnAuto').onclick = () => {
+  if (S.phase !== 'battle' || S.bs.busy || S.battle.side !== 'p') return;
+  play('click'); S.bs.busy = true; S.bs.sel = null; S.bs.mode = null; renderBattle();
+  runUnits(actOrder(S.battle, 'p'), () => later(enemyTurn, 300));
+};
+// 군사들을 하나씩 생각해서 움직이게 함 (적 차례, 「자동」 버튼)
+function runUnits(list, done) {
+  const bt = S.battle;
+  const step = (i) => {
+    if (bt.over) return finishBattle();
+    if (i >= list.length) return done();
+    const u = list[i];
+    if (!canAct(u)) return step(i + 1);
+    const r = aiAct(bt, u);
+    drawEvents(r.moveEv);
+    later(() => {
+      drawEvents(r.actEv); syncBars(); renderBattle();
+      later(() => step(i + 1), r.actEv.length ? 450 : 150);
+    }, r.moveEv.length ? 360 : 80);
+  };
+  step(0);
+}
+function enemyTurn() {
+  const bt = S.battle;
+  if (bt.over) return finishBattle();
+  for (const u of bt.units) if (u.side === 'p') u.done = true;   // 움직이지 않은 군사는 그 자리에서 쉼
+  S.bs.busy = true; S.bs.sel = null; S.bs.mode = null;
+  drawEvents(beginTurn(bt, 'e')); syncBars();
+  renderBattle();
+  banner('적의 차례', 'e');
+  later(() => runUnits(actOrder(bt, 'e'), () => {
+    drawEvents(endTurn(bt));
+    if (bt.over) return finishBattle();
+    later(playerTurn, 300);
+  }), 1000);
 }
 const pieceEl = (id) => $('#board').querySelector(`.piece[data-id="${id}"]`);
 function centerOf(u) { return { x: hexLeft(u.x, u.y) + HW / 2, y: hexTop(u.y) + HH / 2 }; }
@@ -557,6 +697,8 @@ function drawEvents(ev) {
       if (e.big) { banner(`${UNITS[u.type].name} — ${sk.name}!`, u.side); const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); play('boom', .6); }
       else play('ok', .35);
       if (sk.fx) (e.targets || []).slice(0, 4).forEach((id, i) => setTimeout(() => playFx(sk.fx, bt.units[id], e.big ? 1.15 : .85), i * 90));
+    } else if (e.k === 'rest') {
+      floatText(bt.units[e.id], '기절해서 쉬어요', 'cast ' + bt.units[e.id].side);
     } else if (e.k === 'stun') {
       playFx('stunned', bt.units[e.id], .7);
     } else if (e.k === 'buff') {
@@ -590,6 +732,7 @@ function pickItem(done) {
 }
 function backToBoard() {
   S.phase = 'prep';
+  $('#game').classList.remove('in-battle');
   $('#prepControls').classList.remove('hidden');
   $('#battleControls').classList.add('hidden');
 }
@@ -749,7 +892,7 @@ function syncSoundBtn() { $('#btnSound').textContent = save.sound ? '🔊 소리
 $('#btnMenu').onclick = () => { syncSoundBtn(); $('#menu').classList.remove('hidden'); };
 $('#btnCloseMenu').onclick = () => $('#menu').classList.add('hidden');
 $('#btnSound').onclick = () => { save.sound = !save.sound; writeSave(); syncSoundBtn(); };
-function stopAll() { $('#menu').classList.add('hidden'); clearInterval(timer); timer = null; closeModal(); $('#story').classList.add('hidden'); }
+function stopAll() { $('#menu').classList.add('hidden'); bTok++; if (S) backToBoard(); closeModal(); $('#story').classList.add('hidden'); }
 $('#btnRestartCh').onclick = () => { stopAll(); startChapter(S.ch); };
 $('#btnToChapters').onclick = () => { stopAll(); renderChapters(); show('chapters'); };
 

@@ -279,3 +279,27 @@ body.beat .mini:nth-child(odd) .spr { background-position: calc(var(--x1) * var(
   .shop { gap: 4px; }
   .card .mini { --k: 1.6px; }
 }
+
+/* 차례제 전투: 갈 수 있는 칸(파랑), 공격할 수 있는 적(빨강), 이미 움직인 군사(흐림) */
+.hex.mv { background: rgba(90,175,255,.6) !important; animation: hlp 1s infinite; }
+.hex.tg { background: rgba(235,60,45,.62) !important; animation: hlp .8s infinite; }
+.piece.can-act .spr { animation: canAct 1.1s infinite; }
+@keyframes canAct { 50% { filter: drop-shadow(0 0 3px #ffe58a) drop-shadow(0 0 5px #ffe58a); } }
+.piece.done .spr { filter: grayscale(.75) brightness(.78); }
+.piece.tgt .spr { filter: drop-shadow(0 0 3px #ff4a35) drop-shadow(0 0 6px #ff4a35); }
+.piece.sk-ready .mpb { box-shadow: 0 0 5px 1px #7fd0ff; }
+.battle-hint { font-size: .95rem; color: var(--muted); min-height: 2.6em; margin: 0 4px 6px; line-height: 1.35; }
+.battle-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 6px 0; }
+.battle-btns .btn { flex: 1 1 140px; }
+.btn.sk.ready { background: linear-gradient(#7fd0ff, #2f7fd0); color: #fff; animation: skPulse 1s infinite; }
+@keyframes skPulse { 50% { box-shadow: 0 0 0 3px rgba(127,208,255,.6), 0 0 16px rgba(127,208,255,.8); } }
+.info .stats.now { color: #ffe58a; font-weight: 700; }
+/* 세로 화면(휴대폰·태블릿): 전투 중에는 대기석·아이템을 숨겨 버튼을 판 바로 아래로 */
+@media (orientation: portrait) {
+  .in-battle .bench-label, .in-battle .bench, .in-battle .tray-row { display: none; }
+}
+@media (max-width: 600px) {
+  .battle-btns .btn { flex-basis: 120px; font-size: .95rem; padding-left: 8px; padding-right: 8px; }
+  .battle-btns .btn.go { font-size: 1.1rem; }
+  .battle-msg { font-size: 1.15rem; }
+}
