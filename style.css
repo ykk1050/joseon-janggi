@@ -226,7 +226,8 @@ body.beat .mini:nth-child(odd) .spr { background-position: calc(var(--x1) * var(
 .story-who.king { background: var(--gold); color: #3a2a00; }
 .story-who.guide { background: #2f9e50; }
 .story-text { font-size: 1.25rem; line-height: 1.7; min-height: 3.4em; word-break: keep-all; }
-.story-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.story-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; }
+#btnStoryPrev { min-width: 96px; }
 .story-foot .muted { color: #8a7a62; }
 .modal-box { background: #f7f1e3; color: #2a2118; border-radius: 18px; padding: 20px; width: min(640px, 100%); max-height: 92vh; overflow: auto; box-shadow: 0 6px 0 #a99a78; text-align: center; }
 .modal-box .muted { color: #8a7a62; }

@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.007';
+const VERSION = 'v1.008';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -55,9 +55,17 @@ function showStory(lines, done) {
     $('#storyText').textContent = l.text;
     $('#storyPage').textContent = (i + 1) + ' / ' + lines.length;
     $('#btnStoryNext').textContent = i === lines.length - 1 ? '확인 ✔' : '다음 ▶';
+    $('#btnStoryPrev').style.visibility = i > 0 ? 'visible' : 'hidden';
   };
   box.classList.remove('hidden'); render(); play('page', .4);
-  $('#btnStoryNext').onclick = () => { i++; if (i >= lines.length) { box.classList.add('hidden'); done && done(); } else { render(); play('page', .4); } };
+  $('#btnStoryNext').onclick = () => { i++; if (i >= lines.length) { box.classList.add('hidden'); document.onkeydown = null; done && done(); } else { render(); play('page', .4); } };
+  $('#btnStoryPrev').onclick = () => { if (i > 0) { i--; render(); play('page', .4); } };
+  // 키보드: ← 이전, → 또는 Enter 다음
+  document.onkeydown = (e) => {
+    if (box.classList.contains('hidden')) return;
+    if (e.key === 'ArrowLeft') $('#btnStoryPrev').click();
+    else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); $('#btnStoryNext').click(); }
+  };
 }
 
 // ───────── 범용 창 ─────────
