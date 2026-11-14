@@ -6,15 +6,17 @@
 <title>출처와 라이선스 - 조선 수호 장기</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Batang:wght@400;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="theme.css">
 <style>
   body { padding: 20px 16px 40px; }
   main { max-width: 760px; margin: 0 auto; }
-  h1 { font-family: var(--serif); }
-  section { background: var(--paper); border-radius: 14px; padding: 14px 18px; margin: 14px 0; box-shadow: 0 2px 0 #e2d3b2; }
-  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  h1 { font-family: var(--title, var(--serif)); font-weight: 400; color: #f2cd62; letter-spacing: .06em; }
+  section { background: var(--hanji, #f4e9d0); color: #3a2414; font-family: var(--body2, var(--serif)); border-radius: 6px; padding: 14px 18px; margin: 18px 0; box-shadow: 0 0 0 3px #3d2618, 0 0 0 5px #e7bf55, 0 8px 18px rgba(0,0,0,.45); }
+  h2 { font-family: var(--title, var(--serif)); font-weight: 400; font-size: 1.25rem; margin: 0 0 8px; color: #2a1a12; }
   li { line-height: 1.7; margin-bottom: 6px; }
+  a { color: #22405e; }
   .back { margin-bottom: 8px; }
-  small { color: var(--muted); }
+  small { color: #7a5a3a; }
 </style>
 </head>
 <body>
@@ -26,7 +28,8 @@
   <section>
     <h2>🎨 그림·3D</h2>
     <ul>
-      <li>육각 판, 지도 그림: 코드로 직접 만듦</li>
+      <li>육각 판, 지도 그림, 시작 화면 일월오봉도·현판·단청 무늬: 코드로 직접 만듦</li>
+      <li>전투장 배경 5종(바다, 압록강, 두만강, 들판, 눈 덮인 성벽): 직접 설계해 Pixelbolt로 그림</li>
       <li>군사 도트 그림 30종: 몸·모자·무기 조각을 직접 설계해 Pixelbolt로 그림<br>
         스프라이트: Pixelbolt © 2026 PixelForge contributors (MIT License)</li>
       <li>필살기 이펙트 6종(베기, POW, 회복, 방패, 기절 별, 축복 빛)<br>
@@ -48,7 +51,11 @@
   <section>
     <h2>🔤 글꼴</h2>
     <ul>
-      <li>따로 넣은 글꼴은 없어요. 기기에 들어 있는 기본 글꼴로 보여요.</li>
+      <li>제목 글꼴: Song Myung(송명) © JIKJI SOFT<br>
+        라이선스: SIL Open Font License 1.1 (Google Fonts에서 불러옴)</li>
+      <li>이야기 글꼴: Gowun Batang(고운바탕) © Yanghee Ryu<br>
+        라이선스: SIL Open Font License 1.1 (Google Fonts에서 불러옴)</li>
+      <li>인터넷이 연결되지 않으면 기기에 들어 있는 기본 글꼴로 보여요.</li>
     </ul>
   </section>
 
@@ -62,7 +69,7 @@
   <section>
     <h2>🛠 도구 결과물 · 🤖 AI로 만든 그림</h2>
     <ul>
-      <li>도구 결과물: 위의 Pixelbolt 스프라이트와 pixelfx 이펙트 (남의 그림을 바꾼 것이 아니라 코드로 설계해 만든 것)</li>
+      <li>도구 결과물: 위의 Pixelbolt 스프라이트·전투장 배경과 pixelfx 이펙트 (남의 그림을 바꾼 것이 아니라 코드로 설계해 만든 것)</li>
       <li>AI 그림 생성기로 만든 그림은 없어요.</li>
     </ul>
   </section>

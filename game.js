@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.000';
+const VERSION = 'v1.001';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -88,7 +88,7 @@ function renderChapters() {
   const list = $('#chapterList'); list.innerHTML = '';
   CHAPTERS.forEach((c, i) => {
     const b = document.createElement('button');
-    b.className = 'ch-card'; b.style.background = c.color;
+    b.className = 'ch-card'; b.style.setProperty('--cc', c.color);
     const desc = ['쓰시마섬을 공격하고, 압록강과 두만강의 여진을 몰아내요.', '조총을 가진 일본군을 수군·의병·명군의 힘으로 막아요.', '청군에 포위된 남한산성을 최대한 오래 지켜요.'][i];
     const faces = [['leeJM','choiYD','kimJS'], ['yiSS','turtle','militia'], ['castle','qing','qingG']][i];
     let status = save.cleared[c.id] ? '✔ 완료' : '▶ 시작';
@@ -309,7 +309,7 @@ function boardBase() {
   const c = chap();
   const terrain = c.siege ? 'siege' : stage().terrain;
   const b = $('#board');
-  b.className = 'board ' + terrain;
+  b.className = 'board ' + terrain + ' bg-' + (c.siege ? 'snow' : stage().bg);
   let cells = '';
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
     const mine = y >= 3;

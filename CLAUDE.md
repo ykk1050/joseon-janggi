@@ -7,29 +7,12 @@
 
 브랜치: `design-wip` — 사용자 요청: "기본 필드 이미지(바다 등)랑 메인화면 디자인이 너무 구려. 역사게임답게."
 
-이미 한 것:
-- `img/bg/{sea,river,riverN,field,snow}.png` 전투장 도트 배경 (만든 코드: `art/gen-backgrounds.js`)
-- `data.js` 단계마다 `bg:` 필드 (3장은 `snow`)
-- `index.html` 일월오봉도 SVG 메인화면, 현판 제목(`.hyunpan`), 단청 띠(`.dancheong`), 두루마리 설명(`.howto.scroll`), 출정 버튼(`.btn.seal`)
-- Google Fonts 링크: Song Myung, Gowun Batang (index.html, credits.html)
-- `theme.css` 초안 (있으면 그대로 쓰고, 없으면 아래 색으로 새로 만든다)
-
-남은 일 (차례대로):
-1. `theme.css`를 `style.css` 다음에 불러오도록 `index.html`, `credits.html`에 `<link>` 추가.
-   색: 옻칠 #2a1a12/#3d2618, 한지 #f4e9d0, 주칠 #b03524, 단청 초록 #2f6b57, 남색 #22405e, 금 #e7bf55.
-   제목 글꼴 `"Song Myung"`, 이야기 글 `"Gowun Batang"`.
-2. `game.js`
-   - `boardBase()`의 `b.className = 'board ' + terrain;` → `'board ' + terrain + ' bg-' + (c.siege ? 'snow' : stage().bg)`
-   - `renderChapters()`의 `b.style.background = c.color;` → `b.style.setProperty('--cc', c.color);`
-   - 맨 위 `VERSION`을 `v1.001`로.
-3. 출처: `credits.html`의 "글꼴" 칸과 `THIRD-PARTY-NOTICES.txt` 3번에 아래를 넣는다.
-   - Song Myung © JIKJI SOFT, SIL Open Font License 1.1 (Google Fonts)
-   - Gowun Batang © Yanghee Ryu, SIL Open Font License 1.1 (Google Fonts)
-   - 인터넷이 없으면 기기 기본 글꼴로 보인다고 적는다.
-4. 확인: 시작 화면, 장 선택, 1장 바다·강, 3장 눈 성벽 화면이 깨지지 않는지 본다.
-   개발용 미리보기: `index.html?demo=prep&ch=0` (ch 0~2, `&st=` 단계 번호, `demo=battle`이면 바로 전투).
-5. `design-wip`에만 커밋하고 푸시한다. **main에는 합치지 않는다.** main은 GitHub Pages로 학생들이 쓰는 주소다.
-   사용자가 확인한 뒤 PC에서 합친다.
+상태: **v1.001에서 남은 일 1~5를 모두 마침. 사용자 확인을 기다리는 중.**
+- 전투장 도트 배경(`img/bg/`), 일월오봉도 메인화면, `theme.css`(옻칠·한지·단청·주칠), Song Myung·Gowun Batang 글꼴
+- 시작 화면이 PC에서 제목 두 줄, 휴대폰에서 화면 밖으로 넘치던 것 고침 (좁은 화면은 군사 5명만 보임)
+- 출처 페이지를 한지 테마로 맞춤, 글꼴·배경 출처 적음
+- 다음 할 일: 사용자가 보고 고칠 점을 말하면 고친다. 괜찮다고 하면 사용자가 PC에서 main에 합친다.
+  **main에는 직접 합치지 않는다.**
 
 할 수 없는 일(이 PC의 도구가 필요한 일: 새 효과음, Pixelbolt·pixelfx로 새 그림)은 하지 말고 무엇을 못 했는지 알려 준다.
 
