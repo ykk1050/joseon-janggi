@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.006';
+const VERSION = 'v1.007';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -606,7 +606,7 @@ function startBattle() {
   // 역사 한마디: 처음 만나는 적
   if (bt.buffs.crisis) sayRule('crisis');
   if (bt.leader) say(bt.leader, `<b>👑 ${UNITS[bt.leader].name}</b>를 쓰러뜨리면 남은 적이 항복해요!`);
-  if (Object.values(bt.cells).includes('site')) say(null, `🚩 강 건너 진터에 군사를 세우면 진을 세워요. ${stage().siteName}를 세워 보세요!`);
+  if (Object.values(bt.cells).includes('site')) say(null, `🚩 강 건너 깃발 자리에 군사를 세우면 ${stage().fortWord || '진'}을 세워요. ${stage().siteName}를 세워 보세요!`);
   [...new Set(bt.units.filter(u => u.side === 'e' && !u.wall).map(u => u.type))].filter(t => !S.seen.has(t)).slice(0, 2)
     .forEach(t => { S.seen.add(t); say(t, `<b>${UNITS[t].name}</b> — ${UNITS[t].fact}`); });
   bt.units.filter(u => u.side === 'e').forEach(u => S.seen.add(u.type));
@@ -935,7 +935,7 @@ function afterStage(won) {
   const c = chap(), st = stage();
   let lines = st.scripted ? (won ? st.win.concat(st.lose.slice(1)) : st.lose) : st.win;
   const forts = S.battle ? S.battle.forts : 0;
-  if (won && forts) { S.gold += forts; updateTop(); lines = [{ who:'안내', text:`🏯 진을 ${forts}곳 세웠어요! 군량 +${forts}` }].concat(lines); }
+  if (won && forts) { S.gold += forts; updateTop(); lines = [{ who:'안내', text:`🏯 ${stage().fortWord || '진'}을 ${forts}곳 세웠어요! 군량 +${forts}` }].concat(lines); }
   if (st.pass && S.passAfter) lines = lines.concat([S.passAfter]);
   const steps = [];
   if (won) steps.push((n) => pickItem(n));

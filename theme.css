@@ -94,3 +94,9 @@ body { background: #1b120c radial-gradient(ellipse at 50% -10%, rgba(231,191,85,
   .title-army .mini:nth-child(2), .title-army .mini:nth-child(4), .title-army .mini:nth-last-child(2) { display: none; }
   .title-army .mini { margin: 0 -4px; }
 }
+
+/* 육각 칸 테두리를 조금 더 또렷하게 (배경 그림 위에서도 칸이 보이게) */
+.hex, .hex.foe, .hex.mine, .board.sea .hex.foe, .board.sea .hex.mine { background: rgba(40,24,12,.38); }
+.hex::before { content: ""; position: absolute; inset: 1.5px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: rgba(255,248,225,.10); pointer-events: none; }
+.hex.foe::before { background: rgba(255,170,150,.12); }
+.hex.mine::before { background: rgba(255,248,225,.14); }
