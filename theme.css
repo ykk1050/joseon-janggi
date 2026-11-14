@@ -1,0 +1,76 @@
+/* 조선 수호 장기 — 역사 테마 초안 (옻칠·한지·단청·주칠) (코드로 직접 만듦) */
+:root {
+  --ink: #f6ecd6; --muted: #c9b89a;
+  --hanji: #f4e9d0; --hanji2: #e9dbb9;
+  --vermil: #b03524; --jade: #2f6b57; --navy: #22405e; --gold: #e7bf55;
+  --title: "Song Myung", var(--serif);
+  --body2: "Gowun Batang", var(--serif);
+}
+body { background: #1b120c radial-gradient(ellipse at 50% -10%, rgba(231,191,85,.16), transparent 60%) fixed; }
+
+/* 단청 띠 */
+.dancheong { height: 14px; width: 100%; position: relative; z-index: 3;
+  background: repeating-linear-gradient(90deg, #2f6b57 0 22px, #e7bf55 22px 26px, #b03524 26px 40px, #f4e9d0 40px 44px, #22405e 44px 62px, #f4e9d0 62px 66px);
+  box-shadow: 0 3px 0 #1b120c, 0 5px 0 #b03524; }
+.dancheong.top { position: absolute; top: 0; left: 0; }
+#chapters .dancheong.top { position: relative; margin: -24px -16px 18px; width: calc(100% + 32px); }
+
+/* 버튼 */
+.btn { background: linear-gradient(#f6ecd6, #e2d0a8); color: #3a2414; box-shadow: 0 4px 0 #8a6a3c; }
+.btn.big { background: linear-gradient(#c84a32, #9a2a1c); color: #fff3d6; box-shadow: 0 4px 0 #5e160e, inset 0 0 0 2px rgba(231,191,85,.55); }
+.btn.go { background: linear-gradient(#c84a32, #8e2418); color: #fff3d6; box-shadow: 0 5px 0 #4e100a, inset 0 0 0 2px rgba(231,191,85,.6); font-family: var(--title); font-size: 1.35rem; }
+.btn.xp { background: linear-gradient(#3f8a6f, #245a48); color: #fff3d6; box-shadow: 0 4px 0 #123a2e; }
+.btn.seal { font-family: var(--title); font-size: 1.6rem; letter-spacing: .12em; padding: 14px 40px; min-height: 60px; color: #fff3d6;
+  background: radial-gradient(circle at 30% 30%, #d9583c, #9a2618 70%); border: 3px solid #e7bf55; border-radius: 14px;
+  box-shadow: 0 6px 0 #4e100a, 0 0 30px rgba(217,57,43,.45); }
+.btn.icon { background: linear-gradient(#3d2618, #2a1a12); color: var(--gold); box-shadow: 0 3px 0 #120a06, inset 0 0 0 1px rgba(231,191,85,.5); }
+
+/* 시작 화면 */
+#title { overflow: hidden; padding-top: 40px; }
+.ilwol { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+#title .title-box { position: relative; z-index: 2; }
+#title .foot { z-index: 2; }
+#title .foot, #title .foot a { color: #f4e9d0; text-shadow: 0 1px 2px #000; }
+.hyunpan { display: inline-block; padding: 14px 44px 18px; margin: 30px 0 18px; position: relative;
+  background: linear-gradient(#4a2e1c, #2e1b10); border: 6px solid #1b120c; border-radius: 6px;
+  box-shadow: 0 0 0 3px #e7bf55, 0 0 0 9px #7a4a26, 0 0 0 11px #1b120c, 0 14px 30px rgba(0,0,0,.6); }
+.hyunpan .hp-small { display: block; font-family: var(--body2); color: #d9c38a; font-size: .95rem; letter-spacing: .3em; }
+.title-box h1 { font-family: var(--title); font-weight: 400; font-size: clamp(2.6rem, 9vw, 4.6rem); margin: 2px 0 0; letter-spacing: .12em;
+  color: #f2cd62; text-shadow: 0 2px 0 #6b4310, 0 4px 0 #2e1b10, 0 0 22px rgba(242,205,98,.35); }
+.title-army { padding: 4px 18px 0; margin: 4px auto 22px; display: inline-flex; flex-wrap: nowrap;
+  background: linear-gradient(180deg, transparent 72%, #8c8478 72%, #a8a092 80%, #6c655b 88%, #4a443c 100%); }
+.howto.scroll { position: relative; margin: 24px auto 0; max-width: 470px; background: var(--hanji); color: #3a2414; border-radius: 4px; padding: 16px 22px; font-family: var(--body2); }
+.howto.scroll::before, .howto.scroll::after { content: ""; position: absolute; left: -10px; right: -10px; height: 12px; border-radius: 6px; background: linear-gradient(#7a4a26, #3d2618); }
+.howto.scroll::before { top: -8px; } .howto.scroll::after { bottom: -8px; }
+
+/* 장 선택 */
+.scr-title { font-family: var(--title); font-weight: 400; font-size: 2.1rem; color: #f2cd62; }
+.ch-card { background: var(--hanji) !important; color: #3a2414; border-radius: 6px; border-top: 14px solid var(--cc, #2f6b57); box-shadow: 0 6px 0 #6b4a26, 0 10px 22px rgba(0,0,0,.45); }
+.ch-card h3 { font-family: var(--title); font-weight: 400; color: #2a1a12; }
+.ch-card p { font-family: var(--body2); color: #5a4228; }
+.ch-card .ch-status { color: var(--vermil); font-family: var(--title); font-weight: 400; }
+
+/* 게임 화면 */
+.topbar { background: linear-gradient(#3d2618, #2a1a12); border-bottom: 3px solid #e7bf55; box-shadow: 0 3px 0 #1b120c, 0 6px 0 #b03524; margin-bottom: 6px; }
+.tb-stage { font-family: var(--title); font-weight: 400; font-size: 1.3rem; color: #f2cd62; }
+.chip { background: #1b120c; border: 1px solid rgba(231,191,85,.45); }
+.panel { background: linear-gradient(#3d2618, #2a1a12); border: 1px solid rgba(231,191,85,.35); }
+.card { background: linear-gradient(180deg, var(--tc) -70%, #2a1a12 70%); }
+.board { background-size: 100% 100%; image-rendering: pixelated; border-radius: 6px; }
+.board.bg-sea { background-image: url(img/bg/sea.png); }
+.board.bg-river { background-image: url(img/bg/river.png); }
+.board.bg-riverN { background-image: url(img/bg/riverN.png); }
+.board.bg-field { background-image: url(img/bg/field.png); }
+.board.bg-snow { background-image: url(img/bg/snow.png); }
+.board::before, .board.sea::before, .board.siege::before { inset: -14px; border-radius: 10px;
+  background: linear-gradient(135deg, #6b4226, #3d2618 40%, #5a3820 60%, #2a1a12); box-shadow: inset 0 0 0 3px #e7bf55, inset 0 0 0 6px #1b120c, 0 12px 26px rgba(0,0,0,.6); }
+.hex, .hex.foe, .hex.mine, .board.sea .hex.foe, .board.sea .hex.mine, .board.siege .hex.wall { background: rgba(255,248,225,.3); transform: none; }
+.hex.foe { background: rgba(255,200,180,.28); }
+.hex.hl { background: rgba(242,205,98,.95) !important; }
+.board.bg-river .frontline, .board.bg-riverN .frontline { display: none; }
+.slot { background: rgba(61,38,24,.75); border: 2px solid rgba(231,191,85,.35); }
+
+/* 이야기·창: 한지 */
+.story-box, .modal-box { background-color: var(--hanji); border: 3px solid #3d2618; box-shadow: 0 0 0 4px #e7bf55, 0 0 0 8px #3d2618, 0 14px 30px rgba(0,0,0,.6); border-radius: 6px; }
+.story-text, .modal-box p, .why, .dmg-card, .summary { font-family: var(--body2); }
+.story-who, .modal-box h3, .big-result { font-family: var(--title); font-weight: 400; }
