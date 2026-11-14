@@ -1,7 +1,12 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
 const VERSION = 'v1.000';
 const $ = (s) => document.querySelector(s);
-const BENCH = 5;
+const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
+const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
+const BH = 0.75 * (ROWS - 1) + 1;         // 판 높이(칸 높이 단위)
+const HH = 100 / BH;                      // 육각 칸 높이(% of board)
+const hexLeft = (x, y) => (x + (y & 1) * 0.5) * HW;
+const hexTop = (y) => y * 0.75 * HH;
 
 // ───────── 저장 ─────────
 const SAVE_KEY = 'joseonJanggi';
@@ -15,36 +20,28 @@ const SND = {};
 let lastHit = 0;
 function play(n, vol = 0.6) {
   if (!save.sound) return;
-  if (n === 'hit' || n === 'boom') { const t = performance.now(); if (t - lastHit < 90) return; lastHit = t; }
+  if (n === 'hit' || n === 'boom') { const t = performance.now(); if (t - lastHit < 80) return; lastHit = t; }
   try { const a = SND[n].cloneNode(); a.volume = vol; a.play().catch(() => {}); } catch (e) {}
 }
 
 // ───────── 상태 ─────────
 let S = null;
 let uidSeq = 1;
-const newUnit = (type, star = 1) => ({ uid: uidSeq++, type, star });
+const newUnit = (type, star = 1) => ({ uid: uidSeq++, type, star, items: [] });
+const chap = () => CHAPTERS[S.ch];
+const stage = () => (chap().stages ? chap().stages[S.stage] : null);
+const rnd = (a) => a[Math.floor(Math.random() * a.length)];
 
-function chap() { return CHAPTERS[S.ch]; }
-function stage() { return chap().stages ? chap().stages[S.stage] : null; }
-
-// ───────── 화면 전환 ─────────
 function show(id) {
   ['title','chapters','game'].forEach(s => $('#' + s).classList.toggle('hidden', s !== id));
   if (id === 'game') requestAnimationFrame(sizeBoard);
 }
 document.querySelectorAll('.ver').forEach(e => e.textContent = VERSION);
-
-function toast(msg, ms = 1400) {
+function toast(msg, ms = 1500) {
   const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden');
   clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.add('hidden'), ms);
 }
-
-// 여러 단계를 차례로
-function seq(steps, done) {
-  let i = 0;
-  const next = () => { if (i < steps.length) steps[i++](next); else if (done) done(); };
-  next();
-}
+function seq(steps, done) { let i = 0; const next = () => { if (i < steps.length) steps[i++](next); else if (done) done(); }; next(); }
 
 // ───────── 이야기 상자 ─────────
 function showStory(lines, done) {
@@ -52,36 +49,26 @@ function showStory(lines, done) {
   let i = 0;
   const box = $('#story');
   const render = () => {
-    const l = lines[i];
-    const who = $('#storyWho');
+    const l = lines[i], who = $('#storyWho');
     who.textContent = l.who;
     who.className = 'story-who' + (['세종','인조'].includes(l.who) ? ' king' : l.who === '안내' ? ' guide' : '');
     $('#storyText').textContent = l.text;
     $('#storyPage').textContent = (i + 1) + ' / ' + lines.length;
     $('#btnStoryNext').textContent = i === lines.length - 1 ? '확인 ✔' : '다음 ▶';
   };
-  box.classList.remove('hidden');
-  render(); play('page', .4);
-  $('#btnStoryNext').onclick = () => {
-    i++;
-    if (i >= lines.length) { box.classList.add('hidden'); done && done(); }
-    else { render(); play('page', .4); }
-  };
+  box.classList.remove('hidden'); render(); play('page', .4);
+  $('#btnStoryNext').onclick = () => { i++; if (i >= lines.length) { box.classList.add('hidden'); done && done(); } else { render(); play('page', .4); } };
 }
 
 // ───────── 범용 창 ─────────
-function modal(html, bind) {
-  $('#modalBox').innerHTML = html;
-  $('#modal').classList.remove('hidden');
-  bind && bind($('#modalBox'));
-}
+function modal(html, bind) { $('#modalBox').innerHTML = html; $('#modal').classList.remove('hidden'); bind && bind($('#modalBox')); }
 function closeModal() { $('#modal').classList.add('hidden'); }
 
 function showQuiz(qz, done) {
   if (!qz) { done(); return; }
   const order = qz.a.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
-  modal(`<h3>📜 역사 퀴즈</h3><p class="q">${qz.q}</p><div id="qOpts">${order.map(i => `<button class="btn choice" data-i="${i}">${qz.a[i]}</button>`).join('')}</div><div id="qAfter"></div>`, (box) => {
+  modal(`<h3>📜 역사 퀴즈</h3><p class="q">${qz.q}</p><div>${order.map(i => `<button class="btn choice" data-i="${i}">${qz.a[i]}</button>`).join('')}</div><div id="qAfter"></div>`, (box) => {
     box.querySelectorAll('.choice').forEach(b => b.onclick = () => {
       const pick = +b.dataset.i;
       box.querySelectorAll('.choice').forEach(x => { x.disabled = true; if (+x.dataset.i === qz.ok) x.classList.add('right'); });
@@ -98,17 +85,15 @@ function showQuiz(qz, done) {
 $('#btnStart').onclick = () => { play('click'); renderChapters(); show('chapters'); };
 $('#btnBackTitle').onclick = () => { play('click'); show('title'); };
 function renderChapters() {
-  const list = $('#chapterList');
-  list.innerHTML = '';
+  const list = $('#chapterList'); list.innerHTML = '';
   CHAPTERS.forEach((c, i) => {
     const b = document.createElement('button');
     b.className = 'ch-card'; b.style.background = c.color;
-    const desc = ['쓰시마섬을 공격하고, 압록강과 두만강의 여진을 몰아내요.',
-                  '조총을 가진 일본군을 수군·의병·명군의 힘으로 막아요.',
-                  '청군에 포위된 남한산성을 최대한 오래 지켜요.'][i];
+    const desc = ['쓰시마섬을 공격하고, 압록강과 두만강의 여진을 몰아내요.', '조총을 가진 일본군을 수군·의병·명군의 힘으로 막아요.', '청군에 포위된 남한산성을 최대한 오래 지켜요.'][i];
+    const faces = [['leeJM','choiYD','kimJS'], ['yiSS','turtle','militia'], ['castle','qing','qingG']][i];
     let status = save.cleared[c.id] ? '✔ 완료' : '▶ 시작';
-    if (c.siege && save.cleared[c.id]) status = `✔ 완료 · 최고 기록 ${save.best3}일 버팀`;
-    b.innerHTML = `<h3>${c.title}</h3><p>${desc}</p><div class="ch-status">${status}</div>`;
+    if (c.siege && save.cleared[c.id]) status = `✔ 완료 · 최고 ${save.best3}일 버팀`;
+    b.innerHTML = `<div class="ch-faces">${faces.map(f => `<span class="mini">${spriteHTML(f)}</span>`).join('')}</div><h3>${c.title}</h3><p>${desc}</p><div class="ch-status">${status}</div>`;
     b.onclick = () => { play('click'); startChapter(i); };
     list.appendChild(b);
   });
@@ -117,84 +102,63 @@ function renderChapters() {
 // ───────── 장 진행 ─────────
 function startChapter(i) {
   const c = CHAPTERS[i];
-  S = { ch: i, stage: 0, day: 1, gold: c.startGold, cap: c.startCap,
-        bench: Array(BENCH).fill(null), board: [], shop: [], phase: 'prep',
-        sel: null, info: null, maps: [], food: 100, wood: 100, held: 0, meetBuff: null, speed: 1 };
+  S = { ch: i, stage: 0, day: 1, gold: c.startGold, level: c.startLevel, xp: 0, streak: 0,
+        bench: Array(BENCH).fill(null), board: [], items: [], shop: [], phase: 'prep',
+        sel: null, info: null, maps: [], food: 100, wood: 100, held: 0, meetBuff: null, speed: 1, firstRoll: true };
   show('game');
   $('#tbSiege').classList.toggle('hidden', !c.siege);
+  updateTop();
   showStory(c.intro, () => c.siege ? startDay(1) : startStage(0));
 }
-
-function startStage(i) {
-  S.stage = i;
-  const st = stage();
-  showStory(st.pre, () => enterPrep(true));
-}
-
+function startStage(i) { S.stage = i; S.firstRoll = true; showStory(stage().pre, () => enterPrep(true)); }
 function startDay(d) {
-  S.day = d;
-  const c = chap();
-  if (d > 1) S.gold += c.income[d - 1];
-  updateTop();
-  const lines = [{ who:'안내', text:`${d}일째 아침이에요. 🍚 식량 ${S.food}, 🔥 땔감 ${S.wood} 남았어요.` + (d > 1 ? ` 군량 +${c.income[d - 1]}` : '') }];
-  showStory(lines, () => enterPrep(true));
+  S.day = d; updateTop();
+  showStory([{ who:'안내', text:`${d}일째 아침이에요. 🍚 식량 ${S.food}, 🔥 땔감 ${S.wood} 남았어요.` }], () => enterPrep(true));
 }
-
 function enemiesNow() {
   const c = chap();
-  if (c.siege) {
-    let w = c.waves[S.day - 1].slice();
-    if (S.meetBuff === 'peace') w = w.slice(0, Math.max(3, w.length - 2));
-    return w;
-  }
+  if (c.siege) { let w = c.waves[S.day - 1].slice(); if (S.meetBuff === 'peace') w = w.slice(0, Math.max(3, w.length - 2)); return w; }
   return stage().enemies;
 }
 function poolNow() { return chap().siege ? chap().pool : stage().pool; }
-function siegeMul() {
-  return { atk: 0.6 + 0.4 * S.food / 100, hp: 0.6 + 0.4 * S.wood / 100 };
-}
+function siegeMul() { return { atk: 0.6 + 0.4 * S.food / 100, hp: 0.6 + 0.4 * S.wood / 100 }; }
 
-// ───────── 준비(상점·배치) ─────────
-function enterPrep(newShop) {
-  S.phase = 'prep'; S.sel = null;
-  if (newShop) rollShop();
-  $('#prepControls').classList.remove('hidden');
-  $('#battleControls').classList.add('hidden');
-  renderAll();
-}
-
-function owns(type) { return S.bench.some(u => u && u.type === type) || S.board.some(b => b.u.type === type); }
+// ───────── 상점 ─────────
 function rollShop() {
-  const pool = poolNow().filter(t => !(UNITS[t].general && owns(t)));
+  const pool = poolNow();
+  const odds = ODDS[S.level];
   S.shop = [];
-  for (let i = 0; i < 4; i++) S.shop.push(pool[Math.floor(Math.random() * pool.length)]);
-  // 첫 장면에서는 그 단계 장수가 꼭 보이도록
-  const gen = poolNow().find(t => UNITS[t].general && !owns(t));
-  if (gen && !S.shop.includes(gen) && Math.random() < 0.6) S.shop[3] = gen;
+  for (let i = 0; i < SHOP_N; i++) {
+    let r = Math.random() * 100, tier = 1;
+    for (let t = 0; t < 5; t++) { if (r < odds[t]) { tier = t + 1; break; } r -= odds[t]; }
+    let cands = [];
+    for (let t = tier; t >= 1 && !cands.length; t--) cands = pool.filter(u => UNITS[u].cost === t);
+    if (!cands.length) cands = pool;
+    S.shop.push(rnd(cands));
+  }
+  // 단계마다 처음 한 번은 그 단계의 장수를 꼭 보여 줌(역사 인물을 만나도록)
+  const st = stage();
+  if (S.firstRoll && st && st.feature && !allOwned().some(o => o.u.type === st.feature)) S.shop[SHOP_N - 1] = st.feature;
+  S.firstRoll = false;
 }
-
 $('#btnReroll').onclick = () => {
   if (S.phase !== 'prep') return;
-  if (S.gold < 1) { play('error'); toast('군량이 부족해요'); return; }
-  S.gold -= 1; play('click'); rollShop(); renderAll();
+  if (S.gold < REROLL_COST) { play('error'); toast('군량이 부족해요'); return; }
+  S.gold -= REROLL_COST; play('click'); rollShop(); renderAll();
 };
-
-function buy(i) {
-  const t = S.shop[i];
-  if (!t || S.phase !== 'prep') return;
-  const d = UNITS[t];
-  if (S.gold < d.cost) { play('error'); toast('군량이 부족해요'); return; }
-  const slot = S.bench.indexOf(null);
-  const sameCount = allOwned().filter(o => o.u.type === t && o.u.star === 1).length;
-  if (slot < 0 && sameCount < 2) { play('error'); toast('대기석이 가득 찼어요'); return; }
-  S.gold -= d.cost; S.shop[i] = null; play('coin', .5);
-  const u = newUnit(t);
-  if (slot >= 0) S.bench[slot] = u;
-  else S.bench.push(u); // 잠깐 넣었다가 합체로 정리
-  tryMerge();
-  S.bench = S.bench.slice(0, BENCH).concat(Array(Math.max(0, BENCH - S.bench.length)).fill(null)).slice(0, BENCH);
-  S.info = { type: t };
-  renderAll();
+$('#btnXp').onclick = () => {
+  if (S.phase !== 'prep') return;
+  if (S.level >= MAX_LEVEL) { toast('가장 높은 레벨이에요'); return; }
+  if (S.gold < XP_COST) { play('error'); toast('군량이 부족해요'); return; }
+  S.gold -= XP_COST; play('coin', .5); addXp(XP_BUY); renderAll();
+};
+function addXp(n) {
+  S.xp += n;
+  while (S.level < MAX_LEVEL && S.xp >= XP_NEED[S.level]) {
+    S.xp -= XP_NEED[S.level]; S.level++;
+    play('ok'); toast(`⬆ 레벨 ${S.level}! 이제 ${S.level}명까지 놓을 수 있어요`, 2000);
+  }
+  if (S.level >= MAX_LEVEL) S.xp = 0;
 }
 
 function allOwned() {
@@ -202,6 +166,22 @@ function allOwned() {
   S.board.forEach((b, i) => r.push({ where: 'board', i, u: b.u }));
   S.bench.forEach((u, i) => { if (u) r.push({ where: 'bench', i, u }); });
   return r;
+}
+function buy(i) {
+  const t = S.shop[i];
+  if (!t || S.phase !== 'prep') return;
+  const d = UNITS[t];
+  if (S.gold < d.cost) { play('error'); toast('군량이 부족해요'); return; }
+  const slot = S.bench.indexOf(null);
+  const same = allOwned().filter(o => o.u.type === t && o.u.star === 1).length;
+  if (slot < 0 && same < 2) { play('error'); toast('대기석이 가득 찼어요. 군사를 팔거나 판에 놓아 주세요'); return; }
+  S.gold -= d.cost; S.shop[i] = null; play('coin', .5);
+  const u = newUnit(t);
+  if (slot >= 0) S.bench[slot] = u; else S.bench.push(u);
+  tryMerge();
+  S.bench = S.bench.slice(0, BENCH); while (S.bench.length < BENCH) S.bench.push(null);
+  S.info = { unit: u };
+  renderAll();
 }
 function tryMerge() {
   let again = true;
@@ -211,37 +191,47 @@ function tryMerge() {
     allOwned().forEach(o => { if (o.u.star < 3) { const k = o.u.type + '|' + o.u.star; (groups[k] = groups[k] || []).push(o); } });
     for (const k in groups) {
       const g = groups[k];
-      if (g.length >= 3) {
-        g.sort((a, b) => (a.where === 'board' ? 0 : 1) - (b.where === 'board' ? 0 : 1));
-        const keep = g[0];
-        keep.u.star++;
-        const remove = g.slice(1, 3);
-        remove.forEach(o => { if (o.where === 'bench') S.bench[o.i] = null; });
-        const rmBoard = new Set(remove.filter(o => o.where === 'board').map(o => o.u.uid));
-        S.board = S.board.filter(b => !rmBoard.has(b.u.uid));
-        play('ok'); toast(`${UNITS[keep.u.type].name} ${'★'.repeat(keep.u.star)} 합체!`);
-        again = true; break;
-      }
+      if (g.length < 3) continue;
+      g.sort((a, b) => (a.where === 'board' ? 0 : 1) - (b.where === 'board' ? 0 : 1));
+      const keep = g[0], gone = g.slice(1, 3);
+      keep.u.star++;
+      gone.forEach(o => { o.u.items.forEach(it => { if (keep.u.items.length < 3) keep.u.items.push(it); else S.items.push(it); }); });
+      gone.forEach(o => { if (o.where === 'bench') S.bench[o.i] = null; });
+      const rm = new Set(gone.filter(o => o.where === 'board').map(o => o.u.uid));
+      S.board = S.board.filter(b => !rm.has(b.u.uid));
+      play('ok'); toast(`✨ ${UNITS[keep.u.type].name} ${'★'.repeat(keep.u.star)} 합체!`);
+      S.mergedUid = keep.u.uid;
+      again = true; break;
     }
   }
 }
-
 $('#btnSell').onclick = () => {
-  if (!S.sel || S.phase !== 'prep') return;
+  if (!S.sel || S.sel.item !== undefined || S.phase !== 'prep') return;
   let u;
   if (S.sel.where === 'bench') { u = S.bench[S.sel.i]; S.bench[S.sel.i] = null; }
   else { u = S.board[S.sel.i].u; S.board.splice(S.sel.i, 1); }
-  const refund = UNITS[u.type].cost * Math.pow(3, u.star - 1);
-  S.gold += refund; S.sel = null; play('coin', .5); toast(`군량 +${refund}`);
+  const refund = sellPrice(u);
+  u.items.forEach(it => S.items.push(it));
+  S.gold += refund; S.sel = null; S.info = null; play('coin', .5); toast(`군량 +${refund}` + (u.items.length ? ' · 아이템은 돌려받았어요' : ''));
   renderAll();
 };
+const sellPrice = (u) => UNITS[u.type].cost * Math.pow(3, u.star - 1) - (u.star > 1 ? 1 : 0);
 
-function boardAt(x, y) { return S.board.findIndex(b => b.x === x && b.y === y); }
-function castleCell(x, y) { return chap().siege && x === 2 && y === 5; }
-
+// ───────── 배치 ─────────
+const boardAt = (x, y) => S.board.findIndex(b => b.x === x && b.y === y);
+const castleCell = (x, y) => chap().siege && x === 3 && y === 5;
+function selectedUnit() {
+  if (!S.sel || S.sel.item !== undefined) return null;
+  return S.sel.where === 'bench' ? S.bench[S.sel.i] : S.board[S.sel.i].u;
+}
+function giveItem(u) {
+  const it = S.items[S.sel.item];
+  if (u.items.length >= 3) { play('error'); toast('아이템은 3개까지 들 수 있어요'); return; }
+  u.items.push(it); S.items.splice(S.sel.item, 1); S.sel = null; S.info = { unit: u };
+  play('ok'); toast(`${UNITS[u.type].name}에게 ${ITEMS[it].name}!`);
+}
 function tapCell(x, y) {
   if (S.phase !== 'prep') return;
-  // 적 미리보기 눌러 설명 보기
   if (y < 3) {
     const e = enemiesNow().find(en => en[1] === x && en[2] === y);
     if (e) { S.info = { type: e[0] }; S.sel = null; play('click'); renderAll(); }
@@ -249,63 +239,69 @@ function tapCell(x, y) {
   }
   if (castleCell(x, y)) { S.info = { type: 'castle' }; S.sel = null; renderAll(); return; }
   const bi = boardAt(x, y);
-  if (!S.sel) {
-    if (bi >= 0) { S.sel = { where: 'board', i: bi }; S.info = { type: S.board[bi].u.type, star: S.board[bi].u.star }; play('click'); }
-    renderAll(); return;
-  }
-  // 선택한 것을 옮기기
+  if (S.sel && S.sel.item !== undefined) { if (bi >= 0) giveItem(S.board[bi].u); renderAll(); return; }
+  if (!S.sel) { if (bi >= 0) { S.sel = { where: 'board', i: bi }; S.info = { unit: S.board[bi].u }; play('click'); } renderAll(); return; }
   if (S.sel.where === 'board') {
     const from = S.board[S.sel.i];
     if (bi === S.sel.i) { S.sel = null; renderAll(); return; }
     if (bi >= 0) { const o = S.board[bi]; [o.x, from.x] = [from.x, o.x]; [o.y, from.y] = [from.y, o.y]; }
     else { from.x = x; from.y = y; }
-    play('place'); S.sel = null;
   } else {
     const u = S.bench[S.sel.i];
-    if (bi >= 0) { const o = S.board[bi]; S.bench[S.sel.i] = o.u; o.u = u; play('place'); S.sel = null; }
+    if (bi >= 0) { const o = S.board[bi]; S.bench[S.sel.i] = o.u; o.u = u; }
     else {
-      if (S.board.length >= S.cap) { play('error'); toast(`지금은 ${S.cap}명까지 놓을 수 있어요`); return; }
-      S.board.push({ u, x, y }); S.bench[S.sel.i] = null; play('place'); S.sel = null;
+      if (S.board.length >= S.level) { play('error'); toast(`지금은 ${S.level}명까지 놓을 수 있어요. 「레벨업」을 해 보세요!`); return; }
+      S.board.push({ u, x, y }); S.bench[S.sel.i] = null;
     }
   }
-  renderAll();
+  play('place'); S.sel = null; renderAll();
 }
-
 function tapBench(i) {
   if (S.phase !== 'prep') return;
   const u = S.bench[i];
-  if (!S.sel) {
-    if (u) { S.sel = { where: 'bench', i }; S.info = { type: u.type, star: u.star }; play('click'); }
-    renderAll(); return;
-  }
+  if (S.sel && S.sel.item !== undefined) { if (u) giveItem(u); renderAll(); return; }
+  if (!S.sel) { if (u) { S.sel = { where: 'bench', i }; S.info = { unit: u }; play('click'); } renderAll(); return; }
   if (S.sel.where === 'bench') {
     if (S.sel.i === i) { S.sel = null; renderAll(); return; }
     [S.bench[i], S.bench[S.sel.i]] = [S.bench[S.sel.i], S.bench[i]];
-    if (!u) { S.sel = null; } else { S.sel = { where: 'bench', i }; S.info = { type: u.type, star: u.star }; }
-    play('place');
+    S.sel = null;
   } else {
     const b = S.board[S.sel.i];
     if (u) { S.bench[i] = b.u; b.u = u; } else { S.bench[i] = b.u; S.board.splice(S.sel.i, 1); }
-    S.sel = null; play('place');
+    S.sel = null;
   }
+  play('place'); renderAll();
+}
+function tapItem(i) {
+  if (S.phase !== 'prep') return;
+  if (S.sel && S.sel.item === i) { S.sel = null; } else { S.sel = { item: i }; S.info = { item: S.items[i] }; play('click'); }
   renderAll();
 }
 
-// ───────── 그리기 ─────────
-function pieceHTML(type, star, opts = {}) {
+// ───────── 그림 조각 ─────────
+function spriteHTML(type) {
+  const f0 = SPRITE.frames[type + '-i0'], f1 = SPRITE.frames[type + '-i1'], fa = SPRITE.frames[type + '-a'];
+  return `<div class="spr" style="--x0:${f0[0]};--y0:${f0[1]};--x1:${f1[0]};--y1:${f1[1]};--xa:${fa[0]};--ya:${fa[1]}"></div>`;
+}
+function pieceHTML(type, star, o = {}) {
   const d = UNITS[type];
-  const cls = ['piece', d.side, d.general ? 'gen' : '', d.fixed ? 'fixed' : '', opts.sel ? 'sel' : '', opts.cls || ''].join(' ');
-  const stars = star > 1 ? `<div class="star">${'★'.repeat(star)}</div>` : '';
-  const hp = opts.hp ? `<div class="hp"><i style="width:100%"></i></div>` : '';
-  const pos = opts.x !== undefined ? `style="left:${opts.x * 16.6667}%;top:${opts.y * 16.6667}%"` : '';
-  return `<div class="${cls}" ${pos} ${opts.id !== undefined ? `data-id="${opts.id}"` : ''}>${stars}<div class="oct"><span class="ch">${d.ch}</span><span class="nm">${d.name}</span></div>${hp}</div>`;
+  const tier = d.side === 'p' && !d.fixed ? d.cost : 0;
+  const cls = ['piece', d.side, d.fixed ? 'fixed' : '', o.sel ? 'sel' : '', o.cls || '', (o.odd ? 'odd' : '')].join(' ');
+  const pos = o.x !== undefined ? `style="left:${hexLeft(o.x, o.y)}%;top:${hexTop(o.y)}%"` : '';
+  const stars = star > 1 ? `<div class="stars s${star}">${'★'.repeat(star)}</div>` : '';
+  const bars = o.bars ? `<div class="bars"><div class="hpb"><i class="hp"></i><i class="sh"></i></div>${d.skill ? '<div class="mpb"><i class="mp"></i></div>' : ''}</div>` : '';
+  const items = o.items && o.items.length ? `<div class="its">${o.items.map(it => `<span>${ITEMS[it].icon}</span>`).join('')}</div>` : '';
+  return `<div class="${cls}" ${pos} ${o.id !== undefined ? `data-id="${o.id}"` : ''}>${tier ? `<div class="base" style="--tc:${TIER_COLORS[tier]}"></div>` : '<div class="base enemy"></div>'}${spriteHTML(type)}${stars}${bars}${items}</div>`;
 }
 
 function sizeBoard() {
   const b = $('#board');
-  const cell = b.clientWidth / 6;
-  b.style.setProperty('--cell', cell + 'px');
-  $('#bench').style.setProperty('--cell', (b.clientWidth / 6.2) + 'px');
+  const w = b.clientWidth;
+  const k = (w * HW / 100) * 1.25 / SPRITE.w;
+  document.documentElement.style.setProperty('--k', k + 'px');
+  document.documentElement.style.setProperty('--hexw', (w * HW / 100) + 'px');
+  const sw = ($('#bench').clientWidth - 30) / 6;
+  document.documentElement.style.setProperty('--kb', Math.min(k, sw * 0.9 / SPRITE.w) + 'px');
 }
 window.addEventListener('resize', sizeBoard);
 
@@ -313,73 +309,67 @@ function boardBase() {
   const c = chap();
   const terrain = c.siege ? 'siege' : stage().terrain;
   const b = $('#board');
-  b.className = 'board ' + (terrain === 'sea' ? 'sea' : terrain === 'siege' ? 'siege' : '');
-  const lc = terrain === 'sea' ? 'rgba(255,255,255,.55)' : '#6b4a22';
-  let lines = '';
-  for (let i = 0; i < 6; i++) {
-    const p = (i + .5) / 6 * 100;
-    lines += `<line x1="${p}%" y1="${100 / 12}%" x2="${p}%" y2="${100 - 100 / 12}%" stroke="${lc}" stroke-width="1.5"/>`;
-    lines += `<line x1="${100 / 12}%" y1="${p}%" x2="${100 - 100 / 12}%" y2="${p}%" stroke="${lc}" stroke-width="1.5"/>`;
-  }
-  // 장기판처럼 궁성 대각선
-  const a = 100 / 12, q = (2.5) / 6 * 100, r = (3.5) / 6 * 100, bt = (5.5) / 6 * 100, tp = (3.5) / 6 * 100;
-  lines += `<line x1="${q}%" y1="${tp + 100/6}%" x2="${r}%" y2="${bt}%" stroke="${lc}" stroke-width="1"/><line x1="${r}%" y1="${tp + 100/6}%" x2="${q}%" y2="${bt}%" stroke="${lc}" stroke-width="1"/>`;
+  b.className = 'board ' + terrain;
   let cells = '';
-  for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) cells += `<div class="cell" data-x="${x}" data-y="${y}" style="left:${x * 16.6667}%;top:${y * 16.6667}%"></div>`;
-  const label = terrain === 'sea' ? '바 다' : '전 선';
-  b.innerHTML = `<svg class="lines" aria-hidden="true">${lines}</svg><div class="front-label">${label}</div>${cells}`;
-  b.querySelectorAll('.cell').forEach(c => c.onclick = () => tapCell(+c.dataset.x, +c.dataset.y));
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+    const mine = y >= 3;
+    cells += `<div class="hex ${mine ? 'mine' : 'foe'}${c.siege && y === 5 ? ' wall' : ''}" data-x="${x}" data-y="${y}" style="left:${hexLeft(x, y)}%;top:${hexTop(y)}%;width:${HW}%;height:${HH}%"></div>`;
+  }
+  b.innerHTML = cells + '<div class="frontline"></div>';
+  b.querySelectorAll('.hex').forEach(h => h.onclick = () => tapCell(+h.dataset.x, +h.dataset.y));
 }
-
 function renderBoardPrep() {
   boardBase();
   const b = $('#board');
   let html = '';
-  for (const [t, x, y] of enemiesNow()) html += pieceHTML(t, 1, { x, y, cls: 'preview' });
-  if (chap().siege) html += pieceHTML('castle', 1, { x: 2, y: 5 });
-  S.board.forEach((o, i) => { html += pieceHTML(o.u.type, o.u.star, { x: o.x, y: o.y, sel: S.sel && S.sel.where === 'board' && S.sel.i === i }); });
+  enemiesNow().forEach(([t, x, y], i) => { html += pieceHTML(t, 1, { x, y, cls: 'preview', odd: i & 1 }); });
+  if (chap().siege) html += pieceHTML('castle', 1, { x: 3, y: 5 });
+  S.board.forEach((o, i) => { html += pieceHTML(o.u.type, o.u.star, { x: o.x, y: o.y, items: o.u.items, sel: S.sel && S.sel.where === 'board' && S.sel.i === i, odd: i & 1, cls: o.u.uid === S.mergedUid ? 'merged' : '' }); });
   b.insertAdjacentHTML('beforeend', html);
-  // 놓을 수 있는 칸 표시
-  b.querySelectorAll('.cell').forEach(c => {
-    const y = +c.dataset.y, x = +c.dataset.x;
-    if (y >= 3 && !castleCell(x, y)) { c.classList.add('can'); if (S.sel) c.classList.add('hl'); }
-  });
-  sizeBoard();
+  if (S.sel && S.sel.item === undefined) b.querySelectorAll('.hex.mine').forEach(h => { if (!castleCell(+h.dataset.x, +h.dataset.y)) h.classList.add('hl'); });
+  if (S.sel && S.sel.item !== undefined) b.querySelectorAll('.piece.p').forEach(p => p.classList.add('can-item'));
 }
-
 function renderBench() {
-  const el = $('#bench');
-  el.innerHTML = '';
+  const el = $('#bench'); el.innerHTML = '';
   S.bench.forEach((u, i) => {
     const s = document.createElement('div');
     s.className = 'slot';
-    if (u) s.innerHTML = pieceHTML(u.type, u.star, { sel: S.sel && S.sel.where === 'bench' && S.sel.i === i });
+    if (u) s.innerHTML = pieceHTML(u.type, u.star, { items: u.items, sel: S.sel && S.sel.where === 'bench' && S.sel.i === i, odd: i & 1, cls: (u.uid === S.mergedUid ? 'merged ' : '') + (S.sel && S.sel.item !== undefined ? 'can-item' : '') });
     s.onclick = () => tapBench(i);
     el.appendChild(s);
   });
+  const tray = $('#tray'); tray.innerHTML = '';
+  if (!S.items.length) tray.innerHTML = '<span class="muted small">전투에서 이기면 아이템을 얻어요</span>';
+  S.items.forEach((it, i) => {
+    const b = document.createElement('button');
+    b.className = 'item' + (S.sel && S.sel.item === i ? ' sel' : '');
+    b.innerHTML = ITEMS[it].icon; b.title = ITEMS[it].name;
+    b.onclick = () => tapItem(i);
+    tray.appendChild(b);
+  });
 }
-
 function renderShop() {
-  const el = $('#shop');
-  el.innerHTML = '';
+  const el = $('#shop'); el.innerHTML = '';
   S.shop.forEach((t, i) => {
     const b = document.createElement('button');
     b.className = 'card';
     if (!t) { b.classList.add('sold'); el.appendChild(b); return; }
     const d = UNITS[t];
+    b.style.setProperty('--tc', TIER_COLORS[d.cost]);
     if (S.gold < d.cost) b.classList.add('poor');
-    b.innerHTML = `<div class="mini">${pieceHTML(t, 1)}</div><div><div class="cname">${d.name}</div><div class="ctrait">${d.traits.map(x => TRAITS[x].icon + x).join(' ')}</div></div><div class="ccost">🌾${d.cost}</div>`;
+    const owned = allOwned().filter(o => o.u.type === t && o.u.star === 1).length;
+    b.innerHTML = `<div class="mini">${spriteHTML(t)}</div><div class="cname">${d.name}</div><div class="ctrait">${d.traits.map(x => TRAITS[x].icon).join('')}</div><div class="ccost">🌾${d.cost}</div>${owned >= 2 ? '<div class="pair">★2 가능!</div>' : owned === 1 ? '<div class="pair one">2/3</div>' : ''}`;
     b.onclick = () => buy(i);
     el.appendChild(b);
   });
-  $('#btnReroll').disabled = S.gold < 1;
-  $('#btnSell').disabled = !S.sel;
-  if (S.sel) {
-    const u = S.sel.where === 'bench' ? S.bench[S.sel.i] : S.board[S.sel.i].u;
-    $('#btnSell').textContent = `팔기 (🌾${UNITS[u.type].cost * Math.pow(3, u.star - 1)})`;
-  } else $('#btnSell').textContent = '팔기';
+  const odds = ODDS[S.level];
+  $('#odds').innerHTML = odds.map((p, i) => p ? `<span style="color:${TIER_COLORS[i + 1]}">●${p}%</span>` : '').join(' ');
+  $('#btnReroll').disabled = S.gold < REROLL_COST;
+  $('#btnXp').disabled = S.gold < XP_COST || S.level >= MAX_LEVEL;
+  const su = selectedUnit();
+  $('#btnSell').disabled = !su;
+  $('#btnSell').textContent = su ? `팔기 🌾${sellPrice(su)}` : '팔기';
 }
-
 function renderTraits() {
   const counts = countTraits(S.board.map(b => ({ type: b.u.type })));
   const buffs = activeBuffs(counts);
@@ -390,7 +380,7 @@ function renderTraits() {
   shown.forEach(t => {
     const tr = TRAITS[t]; if (!tr.steps.length) return;
     const on = buffs[t] > 0;
-    h += `<div class="trait ${on ? 'on' : ''}" title="${tr.desc}">${tr.icon} ${t}<span class="cnt">${counts[t] || 0} / ${tr.steps.join('·')}</span></div>`;
+    h += `<div class="trait ${on ? 'on' : ''}"><span class="ti">${tr.icon}</span><span>${t}</span><span class="cnt">${counts[t] || 0} / ${tr.steps.join('·')}</span><div class="tdesc">${tr.desc}</div></div>`;
   });
   if (S.ch === 1) h += `<div class="crisis ${buffs.crisis ? 'on' : ''}">${buffs.crisis ? '🔥 위기 극복! 모든 군사 강화' : CRISIS_DESC}</div>`;
   if (chap().siege) {
@@ -399,44 +389,53 @@ function renderTraits() {
   }
   $('#traitPanel').innerHTML = h;
 }
-
 function renderInfo() {
   const el = $('#infoPanel');
-  if (!S.info) { el.innerHTML = '<p class="muted">군사를 누르면 설명이 나와요.</p>'; return; }
-  const d = UNITS[S.info.type], star = S.info.star || 1;
-  const m = star === 2 ? 1.8 : star === 3 ? 3.2 : 1;
-  const rng = d.range === 0 ? '-' : d.range === 1 ? '1칸(바로 옆)' : d.range + '칸';
-  const traits = d.traits.map(t => `${TRAITS[t].icon}${t}`).join(' ');
-  el.innerHTML = `<div class="info-head"><div class="mini">${pieceHTML(S.info.type, star)}</div><div><h4>${d.name} ${star > 1 ? '★'.repeat(star) : ''}</h4>
-    <div class="stats">체력 ${Math.round(d.hp * m)} · 공격 ${Math.round(d.atk * m)} · 사거리 ${rng}${d.move > 1 ? ' · 빠름' : ''}${d.cost ? ' · 🌾' + d.cost : ''}</div>
-    <div class="stats">${traits}${d.splash ? ' 💥주변 피해' : ''}</div></div></div><p class="fact">${d.fact}</p>`;
+  const I = S.info;
+  if (!I) { el.innerHTML = '<p class="muted">군사나 아이템을 누르면 설명이 나와요.</p>'; return; }
+  if (I.item) { const it = ITEMS[I.item]; el.innerHTML = `<h4>${it.icon} ${it.name}</h4><p class="fact">${it.desc}</p><p class="muted small">이제 아이템을 줄 군사를 누르세요.</p>`; return; }
+  const type = I.unit ? I.unit.type : I.type, star = I.unit ? I.unit.star : 1;
+  const d = UNITS[type], m = star === 2 ? 1.8 : star === 3 ? 3.2 : 1;
+  const rng = d.range === 0 ? '-' : d.range === 1 ? '1칸' : d.range + '칸';
+  const sk = d.skill ? SKILLS[d.skill] : null;
+  const tier = d.side === 'p' && d.cost ? `<span class="tier" style="background:${TIER_COLORS[d.cost]}">${d.cost}등급</span>` : '';
+  const items = I.unit && I.unit.items.length ? `<div class="stats">아이템: ${I.unit.items.map(i => ITEMS[i].icon + ITEMS[i].name).join(', ')}</div>` : '';
+  el.innerHTML = `<div class="info-head"><div class="mini ${d.side}">${spriteHTML(type)}</div><div><h4>${d.name} ${star > 1 ? '★'.repeat(star) : ''} ${tier}</h4>
+    <div class="stats">❤ ${Math.round(d.hp * m)} · ⚔ ${Math.round(d.atk * m)} · 사거리 ${rng}${d.move > 1 ? ' · 빠름' : ''}</div>
+    <div class="stats">${d.traits.map(t => TRAITS[t].icon + t).join(' ')}</div></div></div>
+    ${sk ? `<div class="skill"><b>💥 ${sk.name}</b>${sk.desc ? ' — ' + sk.desc : ''}</div>` : ''}${items}<p class="fact">📜 ${d.fact}</p>`;
 }
-
 function updateTop() {
   const c = chap();
   $('#tbChapter').textContent = c.title;
-  $('#tbStage').textContent = c.siege ? `${S.day}일째 — 남한산성을 지켜라` : `${stage().id}. ${stage().title}`;
+  $('#tbStage').textContent = c.siege ? `${S.day}일째 — 남한산성을 지켜라` : `${stage() ? stage().id + '. ' + stage().title : ''}`;
   $('#tbGold').textContent = S.gold;
-  $('#tbCap').textContent = `${S.board.length}/${S.cap}`;
+  $('#tbLevel').textContent = S.level;
+  const need = XP_NEED[S.level] || 1;
+  $('#tbXp').style.width = (S.level >= MAX_LEVEL ? 100 : S.xp / need * 100) + '%';
+  $('#tbXpText').textContent = S.level >= MAX_LEVEL ? 'MAX' : `${S.xp}/${need}`;
+  $('#tbCap').textContent = `${S.board.length}/${S.level}`;
+  const st = $('#tbStreak');
+  if (Math.abs(S.streak) >= 2) { st.classList.remove('hidden'); st.textContent = S.streak > 0 ? `🔥 ${S.streak}연승` : `💧 ${-S.streak}연패`; } else st.classList.add('hidden');
+  const interest = Math.min(3, Math.floor(S.gold / 10));
+  $('#tbInterest').textContent = interest ? `이자 +${interest}` : '';
   if (c.siege) { $('#mFood').style.width = S.food + '%'; $('#mWood').style.width = S.wood + '%'; }
 }
-
 function renderAll() {
   updateTop();
   if (S.phase === 'prep') { renderBoardPrep(); renderShop(); }
   renderBench(); renderTraits(); renderInfo();
+  S.mergedUid = null;
 }
+setInterval(() => { const b = $('#board'); if (b) b.classList.toggle('beat'); document.body.classList.toggle('beat'); }, 420);
 
 // ───────── 전투 ─────────
 $('#btnFight').onclick = () => {
   if (S.phase !== 'prep') return;
-  if (!S.board.length) { play('error'); toast('장기판 아래쪽에 군사를 먼저 놓아 주세요'); return; }
+  if (!S.board.length) { play('error'); toast('판 아래쪽에 군사를 먼저 놓아 주세요'); return; }
   startBattle();
 };
-$('#btnSpeed').onclick = () => {
-  S.speed = S.speed === 1 ? 2 : 1;
-  $('#btnSpeed').textContent = S.speed === 1 ? '빠르게 ×2' : '보통 속도';
-};
+$('#btnSpeed').onclick = () => { S.speed = S.speed === 1 ? 2 : 1; $('#btnSpeed').textContent = S.speed === 1 ? '⏩ 빠르게' : '▶ 보통 속도'; };
 
 let timer = null;
 function startBattle() {
@@ -445,107 +444,192 @@ function startBattle() {
   $('#prepControls').classList.add('hidden');
   $('#battleControls').classList.remove('hidden');
   const c = chap();
-  const players = S.board.map(b => ({ type: b.u.type, star: b.u.star, x: b.x, y: b.y }));
-  let opts = {};
+  const players = S.board.map(b => ({ type: b.u.type, star: b.u.star, x: b.x, y: b.y, items: b.u.items }));
+  let opts;
   if (c.siege) {
-    players.push({ type: 'castle', star: 1, x: 2, y: 5 });
+    players.push({ type: 'castle', star: 1, x: 3, y: 5 });
     const m = siegeMul();
     opts = { surviveTicks: c.surviveTicks, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp };
-    $('#battleMsg').textContent = '성을 지켜라! 버티는 중…';
-  } else {
-    opts = { mult: stage().mult };
-    $('#battleMsg').textContent = '전투 중!';
-  }
+  } else opts = { mult: stage().mult };
   const bt = createBattle(players, enemiesNow(), opts);
   S.battle = bt;
-  // 전투용 말 그리기
   boardBase();
-  const b = $('#board');
-  b.insertAdjacentHTML('beforeend', bt.units.map(u => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, hp: !u.fixed || true })).join(''));
-  sizeBoard();
-  renderTraits();
-  const tick = () => {
-    const ev = stepBattle(bt);
-    drawEvents(ev);
-    if (c.siege && !bt.over) $('#battleMsg').textContent = `성을 지켜라! 남은 시간 ${Math.max(0, Math.ceil((bt.surviveTicks - bt.tick) * (S.speed === 2 ? 0.19 : 0.38)))}초`;
-    if (bt.over) { clearInterval(timer); timer = null; setTimeout(() => endBattle(bt.result), 700); }
-  };
-  let last = 0;
+  $('#board').insertAdjacentHTML('beforeend', bt.units.map((u, i) => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, bars: true, items: u.items, odd: i & 1 })).join(''));
+  syncBars();
+  renderTraits(); renderBench();
+  $('#battleMsg').textContent = c.siege ? '성을 지켜라!' : '전투 중!';
+  let n = 0;
   clearInterval(timer);
   timer = setInterval(() => {
-    last += 1;
-    if (S.speed === 2 || last % 2 === 0) tick();
-  }, 190);
+    n++;
+    if (S.speed === 1 && n % 2) return;
+    const ev = stepBattle(bt);
+    drawEvents(ev); syncBars();
+    if (c.siege && !bt.over) $('#battleMsg').textContent = `성을 지켜라! 남은 시간 ${Math.max(0, Math.ceil((bt.surviveTicks - bt.tick) * TICK_MS / 1000))}초`;
+    if (bt.over) { clearInterval(timer); timer = null; setTimeout(() => endBattle(bt.result), 900); }
+  }, TICK_MS / 2);
 }
-
-function pieceEl(id) { return $('#board').querySelector(`.piece[data-id="${id}"]`); }
+const pieceEl = (id) => $('#board').querySelector(`.piece[data-id="${id}"]`);
+function centerOf(u) { return { x: hexLeft(u.x, u.y) + HW / 2, y: hexTop(u.y) + HH / 2 }; }
+function syncBars() {
+  for (const u of S.battle.units) {
+    const el = pieceEl(u.id); if (!el) continue;
+    const hp = el.querySelector('.hp'), sh = el.querySelector('.sh'), mp = el.querySelector('.mp');
+    const tot = Math.max(u.maxHp, u.hp + u.shield);
+    if (hp) hp.style.width = (u.hp / tot * 100) + '%';
+    if (sh) { sh.style.width = (u.shield / tot * 100) + '%'; sh.style.left = (u.hp / tot * 100) + '%'; }
+    if (mp && u.maxMana) mp.style.width = (u.mana / u.maxMana * 100) + '%';
+    el.classList.toggle('stunned', u.stun > 0);
+  }
+}
+function floatText(u, text, cls) {
+  const c = centerOf(u);
+  const d = document.createElement('div');
+  d.className = 'ftext ' + cls; d.textContent = text;
+  d.style.left = c.x + '%'; d.style.top = (c.y - HH * 0.35) + '%';
+  $('#board').appendChild(d); setTimeout(() => d.remove(), 900);
+}
+function shot(a, t, kind) {
+  const s = document.createElement('div');
+  s.className = 'shot ' + kind;
+  const A = centerOf(a), T = centerOf(t);
+  s.style.left = A.x + '%'; s.style.top = A.y + '%';
+  const ang = Math.atan2((T.y - A.y) * 0.73, T.x - A.x) * 180 / Math.PI;
+  s.style.transform = `rotate(${ang}deg)`;
+  $('#board').appendChild(s);
+  requestAnimationFrame(() => requestAnimationFrame(() => { s.style.left = T.x + '%'; s.style.top = T.y + '%'; }));
+  setTimeout(() => s.remove(), 260);
+}
+function playFx(name, u, scale = 1) {
+  const f = FX[name]; if (!f) return;
+  const board = $('#board');
+  const k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--k')) * (name === 'cartoon-pow' ? 0.22 : 0.34) * scale;
+  const el = document.createElement('div');
+  el.className = 'fx';
+  const c = centerOf(u);
+  el.style.width = f.w * k + 'px'; el.style.height = f.h * k + 'px';
+  el.style.left = `calc(${c.x}% - ${f.pivot[0] * k}px)`; el.style.top = `calc(${c.y + HH * 0.3}% - ${f.pivot[1] * k}px)`;
+  el.style.backgroundImage = `url(${f.img})`; el.style.backgroundSize = `${f.sw * k}px ${f.sh * k}px`;
+  board.appendChild(el);
+  const step = f.n > 40 ? 2 : 1;
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i >= f.n) { clearInterval(iv); el.remove(); return; }
+    el.style.backgroundPosition = `${-(i % f.cols) * f.w * k}px ${-Math.floor(i / f.cols) * f.h * k}px`;
+    i += step;
+  }, 1000 / f.fps);
+}
+function banner(text, side) {
+  const b = document.createElement('div');
+  b.className = 'banner ' + side; b.textContent = text;
+  $('#board').appendChild(b); setTimeout(() => b.remove(), 1300);
+}
 function drawEvents(ev) {
   const bt = S.battle;
   for (const e of ev) {
     if (e.k === 'move') {
-      const el = pieceEl(e.id); if (el) { el.style.left = e.x * 16.6667 + '%'; el.style.top = e.y * 16.6667 + '%'; }
-    } else if (e.k === 'atk') {
-      const a = bt.units[e.from], t = bt.units[e.to];
-      const el = pieceEl(e.from);
-      if (e.ranged) {
-        const s = document.createElement('div');
-        s.className = 'shot ' + a.side + (UNITS[a.type].boom || a.type === 'mingGun' || a.type === 'gunner' ? ' boom' : '');
-        s.style.left = a.x * 16.6667 + '%'; s.style.top = a.y * 16.6667 + '%';
-        $('#board').appendChild(s);
-        requestAnimationFrame(() => requestAnimationFrame(() => { s.style.left = t.x * 16.6667 + '%'; s.style.top = t.y * 16.6667 + '%'; }));
-        setTimeout(() => s.remove(), 260);
-      } else if (el) { el.classList.remove('lunge'); void el.offsetWidth; el.classList.add('lunge'); }
-      play(UNITS[a.type].boom || a.type === 'mingGun' || a.type === 'gunner' || a.type === 'rocket' ? 'boom' : 'hit', .35);
+      const el = pieceEl(e.id); if (el) { el.style.left = hexLeft(e.x, e.y) + '%'; el.style.top = hexTop(e.y) + '%'; }
+    } else if (e.k === 'atk' || e.k === 'shot') {
+      const a = bt.units[e.from], t = bt.units[e.to], el = pieceEl(e.from);
+      if (el) {
+        el.classList.add('atk'); setTimeout(() => el.classList.remove('atk'), 220);
+        const A = centerOf(a), T = centerOf(t);
+        if (!(e.ranged || e.k === 'shot')) { el.style.translate = `${(T.x - A.x) * 0.25}% ${(T.y - A.y) * 0.25}%`; setTimeout(() => { el.style.translate = ''; }, 150); }
+      }
+      if (e.ranged || e.k === 'shot') {
+        const d = UNITS[a.type];
+        shot(a, t, d.boom || ['gunner','mingGun','rocket','panok','ship','turtle'].includes(a.type) ? 'ball' : 'arrow');
+      }
+      const d = UNITS[a.type];
+      play(d.boom || ['gunner','mingGun','rocket','panok','ship'].includes(a.type) ? 'boom' : 'hit', .3);
     } else if (e.k === 'dmg') {
       const u = bt.units[e.id], el = pieceEl(e.id);
-      if (el) {
-        const bar = el.querySelector('.hp i'); if (bar) bar.style.width = Math.max(0, u.hp / u.maxHp * 100) + '%';
-        el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
-      }
-      const d = document.createElement('div');
-      d.className = 'dmg'; d.textContent = '-' + e.dmg;
-      d.style.left = u.x * 16.6667 + '%'; d.style.top = u.y * 16.6667 + '%';
-      $('#board').appendChild(d); setTimeout(() => d.remove(), 700);
+      if (el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+      floatText(u, e.dmg + (e.crit ? '!' : ''), (e.crit ? 'crit ' : '') + (e.skill ? 'sk ' : '') + u.side);
+    } else if (e.k === 'heal') {
+      floatText(bt.units[e.id], '+' + e.amt, 'heal');
     } else if (e.k === 'die') {
       const el = pieceEl(e.id); if (el) el.classList.add('dead');
+    } else if (e.k === 'cast') {
+      const u = bt.units[e.id];
+      const sk = SKILLS[UNITS[u.type].skill];
+      floatText(u, sk.name + '!', 'cast ' + u.side);
+      if (e.big) { banner(`${UNITS[u.type].name} — ${sk.name}!`, u.side); const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); play('boom', .6); }
+      else play('ok', .35);
+      if (sk.fx) (e.targets || []).slice(0, 4).forEach((id, i) => setTimeout(() => playFx(sk.fx, bt.units[id], e.big ? 1.15 : .85), i * 90));
+    } else if (e.k === 'stun') {
+      playFx('stunned', bt.units[e.id], .7);
+    } else if (e.k === 'buff') {
+      e.ids.forEach(id => playFx('blessing', bt.units[id], .7));
     }
   }
 }
 
+// ───────── 전투가 끝난 뒤 ─────────
+function income(won) {
+  const c = chap();
+  const base = c.siege ? (c.income[S.day] || 2) : 5;
+  const interest = Math.min(3, Math.floor(S.gold / 10));
+  const s = Math.abs(S.streak);
+  const streak = s >= 4 ? 3 : s >= 3 ? 2 : s >= 2 ? 1 : 0;
+  const winB = won ? 1 : 0;
+  const total = base + interest + streak + winB;
+  S.gold += total;
+  addXp(2);
+  return `<div class="income"><div>기본 수입 <b>+${base}</b></div><div>이자 (군량 10마다 1) <b>+${interest}</b></div>${streak ? `<div>${S.streak > 0 ? '🔥 연승' : '💧 연패'} 보너스 <b>+${streak}</b></div>` : ''}${winB ? '<div>승리 보너스 <b>+1</b></div>' : ''}<div class="sum">🌾 군량 +${total} · 경험치 +2</div></div>`;
+}
+function pickItem(done) {
+  const keys = Object.keys(ITEMS);
+  const opts = [];
+  while (opts.length < 3) { const k = rnd(keys); if (!opts.includes(k)) opts.push(k); }
+  modal(`<h3>🎁 전리품 상자</h3><p>아이템 하나를 골라요. 대기석 아래 아이템 칸에서 눌러 군사에게 줄 수 있어요.</p><div class="item-pick">${opts.map(k => `<button class="ipick" data-k="${k}"><span class="big-ic">${ITEMS[k].icon}</span><b>${ITEMS[k].name}</b><small>${ITEMS[k].desc}</small></button>`).join('')}</div>`, (box) => {
+    box.querySelectorAll('.ipick').forEach(b => b.onclick = () => {
+      if (S.items.length < TRAY_MAX) S.items.push(b.dataset.k); play('coin'); closeModal(); done();
+    });
+  });
+}
+function backToBoard() {
+  S.phase = 'prep';
+  $('#prepControls').classList.remove('hidden');
+  $('#battleControls').classList.add('hidden');
+}
 function endBattle(result) {
   const c = chap();
+  const won = result === 'win';
+  S.streak = won ? Math.max(1, S.streak + 1) : Math.min(-1, S.streak - 1);
   if (c.siege) return endSiegeDay(result);
   const st = stage();
-  if (result === 'win' || st.scripted) {
-    const won = result === 'win';
+  const inc = income(won);
+  updateTop();
+  if (won || st.scripted) {
     play(won ? 'win' : 'lose');
-    const title = won ? '승리!' : '패배…';
-    modal(`<div class="big-result ${won ? 'win' : 'lose'}">${title}</div><p>${won ? '조선군이 이겼어요!' : '조총을 가진 일본군이 너무 강했어요.'}</p><button class="btn big" id="rNext">계속</button>`, (box) => {
-      box.querySelector('#rNext').onclick = () => { closeModal(); afterStage(won); };
+    modal(`<div class="big-result ${won ? 'win' : 'lose'}">${won ? '승리!' : '패배…'}</div><p>${won ? '조선군이 이겼어요!' : '조총을 가진 일본군이 너무 강했어요.'}</p>${inc}<button class="btn big" id="rNext">계속</button>`, (box) => {
+      box.querySelector('#rNext').onclick = () => { closeModal(); backToBoard(); afterStage(won); };
     });
   } else {
     play('lose');
-    modal(`<div class="big-result lose">아쉬워요!</div><p>군사를 다른 자리에 놓거나, 군사를 더 사거나, 같은 군사 3명을 모아 ★2를 만들어 다시 도전해 보세요.</p><p><b>위로 군량 +3</b></p><button class="btn big" id="rRetry">다시 도전</button>`, (box) => {
-      box.querySelector('#rRetry').onclick = () => { closeModal(); S.gold += 3; enterPrep(true); };
+    modal(`<div class="big-result lose">아쉬워요!</div><p>자리를 바꾸거나, 군사를 더 사거나, ★2를 만들거나, 아이템을 줘서 다시 도전해 보세요.</p>${inc}<button class="btn big" id="rRetry">다시 도전</button>`, (box) => {
+      box.querySelector('#rRetry').onclick = () => { closeModal(); backToBoard(); enterPrep(true); };
     });
   }
 }
-
+function enterPrep(newShop) {
+  S.phase = 'prep'; S.sel = null;
+  if (newShop) rollShop();
+  backToBoard();
+  renderAll();
+}
 function afterStage(won) {
   const c = chap(), st = stage();
-  const lines = won || !st.scripted ? st.win : st.lose;
-  const steps = [
-    (n) => showStory(st.scripted && won ? st.win.concat(st.lose.slice(1)) : lines, n),
-  ];
+  const lines = st.scripted ? (won ? st.win.concat(st.lose.slice(1)) : st.lose) : st.win;
+  const steps = [];
+  if (won) steps.push((n) => pickItem(n));
+  steps.push((n) => showStory(lines, n));
   if (st.map) steps.push((n) => showMap(st.map, n));
   steps.push((n) => showQuiz(st.quiz, n));
-  steps.push((n) => { S.gold += st.reward.gold; S.cap += st.reward.cap; n(); });
-  seq(steps, () => {
-    if (S.stage + 1 < c.stages.length) startStage(S.stage + 1);
-    else endChapter();
-  });
+  steps.push((n) => { if (st.reward.xp) addXp(st.reward.xp); n(); });
+  seq(steps, () => { if (S.stage + 1 < c.stages.length) startStage(S.stage + 1); else endChapter(); });
 }
-
 function endChapter() {
   const c = chap();
   const steps = [(n) => showStory(c.outro, n)];
@@ -555,14 +639,12 @@ function endChapter() {
   steps.push((n) => showSummary(c, n));
   seq(steps, () => { save.cleared[c.id] = true; writeSave(); renderChapters(); show('chapters'); });
 }
-
 function showDamage(title, cards, done) {
   play('page');
   modal(`<h3>${title}</h3><div class="dmg-cards">${cards.map((d, i) => `<div class="dmg-card" style="animation-delay:${i * .6}s"><span class="ic">${d.icon}</span><span>${d.text}</span></div>`).join('')}</div><button class="btn big" id="dNext">다음</button>`, (box) => {
     box.querySelector('#dNext').onclick = () => { closeModal(); done(); };
   });
 }
-
 function showSummary(c, done) {
   const html = c.summary.text.replace(/\[([^\]]+)\]/g, (_, w) => `<span class="blank">${w}</span>`);
   modal(`<h3>📖 교과서 정리</h3><p class="muted">빈칸에 들어갈 말을 떠올린 뒤 눌러서 확인해 보세요.</p><p class="summary">${html}</p><button class="btn big" id="sNext">${c.title.split('.')[0]} 완료!</button>`, (box) => {
@@ -574,19 +656,20 @@ function showSummary(c, done) {
 // ───────── 병자호란(버티기) ─────────
 function endSiegeDay(result) {
   const c = chap();
+  backToBoard();
   if (result === 'win') {
-    S.held = S.day;
-    play('win');
+    S.held = S.day; play('win');
     S.food = Math.max(0, S.food - 20); S.wood = Math.max(0, S.wood - 20);
-    updateTop();
     const last = S.day >= c.days;
-    modal(`<div class="big-result win">${S.day}일째를 버텼어요!</div><p>하지만 성안의 🍚식량과 🔥땔감은 또 줄었어요.<br>(식량 ${S.food}, 땔감 ${S.wood})</p><button class="btn big" id="sdNext">계속</button>`, (box) => {
+    const inc = last ? '' : income(true);
+    updateTop();
+    modal(`<div class="big-result win">${S.day}일째를 버텼어요!</div><p>하지만 성안의 🍚식량과 🔥땔감은 또 줄었어요. (식량 ${S.food}, 땔감 ${S.wood})</p>${inc}<button class="btn big" id="sdNext">계속</button>`, (box) => {
       box.querySelector('#sdNext').onclick = () => {
         closeModal();
         if (S.meetBuff) S.meetBuff = null;
         if (last) return surrender(false);
-        if (S.day === c.meeting.after) return showMeeting(() => startDay(S.day + 1));
-        startDay(S.day + 1);
+        const next = () => (S.day === c.meeting.after ? showMeeting(() => startDay(S.day + 1)) : startDay(S.day + 1));
+        pickItem(next);
       };
     });
   } else {
@@ -596,7 +679,6 @@ function endSiegeDay(result) {
     });
   }
 }
-
 function showMeeting(done) {
   const m = chap().meeting;
   modal(`<h3>🏯 성안의 회의</h3><p>${m.text}</p><div class="meeting">
@@ -610,7 +692,6 @@ function showMeeting(done) {
     });
   });
 }
-
 function surrender(early) {
   const c = chap();
   const held = S.held;
@@ -622,7 +703,7 @@ function surrender(early) {
     (n) => showDamage('전쟁의 결과', c.damage, n),
     (n) => {
       play('page');
-      modal(`<h3>남한산성 버티기 기록</h3><div class="stars">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div><p><b>${held}일</b> 동안 남한산성을 지켜 냈어요.</p><div class="why">역사의 결과는 바꿀 수 없어요. 하지만 그때 성안의 사람들이 추위와 배고픔 속에서 어떤 고민을 했는지 생각해 보는 것이 중요해요.</div><p><button class="btn big" id="eNext">다음</button></p>`, (box) => {
+      modal(`<h3>남한산성 버티기 기록</h3><div class="stars-big">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div><p><b>${held}일</b> 동안 남한산성을 지켜 냈어요.</p><div class="why">역사의 결과는 바꿀 수 없어요. 하지만 그때 성안의 사람들이 추위와 배고픔 속에서 어떤 고민을 했는지 생각해 보는 것이 중요해요.</div><p><button class="btn big" id="eNext">다음</button></p>`, (box) => {
         box.querySelector('#eNext').onclick = () => { closeModal(); n(); };
       });
     },
@@ -636,9 +717,9 @@ const KOREA = 'M40,110 L55,104 L70,95 L100,78 L130,62 L160,50 L186,40 L215,32 L2
 function showMap(key, done) {
   if (key !== 'all' && !S.maps.includes(key)) S.maps.push(key);
   const has = (k) => key === 'all' || S.maps.includes(k);
-  const flag = (x, y, c, n) => `<g transform="translate(${x},${y})"><line x1="0" y1="0" x2="0" y2="-16" stroke="#3a2a10" stroke-width="1.5"/><path d="M0,-16 L12,-12 L0,-8 Z" fill="${c}"/>${n ? `<text x="2" y="10" font-size="8" fill="#3a2a10">${n}</text>` : ''}</g>`;
-  const gun4 = [[166,64],[148,72],[130,80],[112,90]].map((p, i) => flag(p[0], p[1], '#1f4e8c', '')).join('');
-  const jin6 = [[204,50],[216,47],[228,44],[240,41],[251,38],[260,35]].map(p => flag(p[0], p[1], '#2f7a4f', '')).join('');
+  const flag = (x, y, c) => `<g transform="translate(${x},${y})"><line x1="0" y1="0" x2="0" y2="-16" stroke="#3a2a10" stroke-width="1.5"/><path d="M0,-16 L12,-12 L0,-8 Z" fill="${c}"/></g>`;
+  const gun4 = [[166,64],[148,72],[130,80],[112,90]].map(p => flag(p[0], p[1], '#1f4e8c')).join('');
+  const jin6 = [[204,50],[216,47],[228,44],[240,41],[251,38],[260,35]].map(p => flag(p[0], p[1], '#2f7a4f')).join('');
   const msg = { tsushima:'쓰시마섬을 공격해 왜구의 항복을 받았어요!', '4gun':'압록강 유역에 4군을 설치했어요!', '6jin':'두만강 유역에 6진을 설치했어요!', all:'세종 때 넓어진 조선의 영토' }[key];
   const svg = `<svg viewBox="0 -20 300 420" role="img" aria-label="조선 지도">
     <rect x="0" y="-20" width="300" height="420" fill="#cfe5f2"/>
@@ -653,12 +734,12 @@ function showMap(key, done) {
     <text x="110" y="40" font-size="12" fill="#7a6a58">여진</text>
     <ellipse cx="262" cy="372" rx="6" ry="14" fill="#f6e7c1" stroke="#8a6a3a" stroke-width="1.5"/>
     <text x="222" y="398" font-size="11" font-weight="700" fill="#5a4a38">쓰시마섬</text>
-    ${has('tsushima') ? flag(262, 362, '#b02a24', '') + '<text x="224" y="352" font-size="10" font-weight="900" fill="#b02a24">항복!</text>' : ''}
+    ${has('tsushima') ? flag(262, 362, '#b02a24') + '<text x="224" y="352" font-size="10" font-weight="900" fill="#b02a24">항복!</text>' : ''}
     ${has('4gun') ? gun4 + '<text x="112" y="110" font-size="13" font-weight="900" fill="#1f4e8c">4군</text>' : ''}
     ${has('6jin') ? jin6 + '<text x="216" y="66" font-size="13" font-weight="900" fill="#2f7a4f">6진</text>' : ''}
   </svg>`;
   play('ok');
-  modal(`<h3>🗺 ${msg}</h3><div class="map-wrap">${svg}</div><p class="muted" style="font-size:.85rem">그림 지도(대략적인 모양)</p><button class="btn big" id="mpNext">다음</button>`, (box) => {
+  modal(`<h3>🗺 ${msg}</h3><div class="map-wrap">${svg}</div><p class="muted small">그림 지도(대략적인 모양)</p><button class="btn big" id="mpNext">다음</button>`, (box) => {
     box.querySelector('#mpNext').onclick = () => { closeModal(); done(); };
   });
 }
@@ -668,11 +749,30 @@ function syncSoundBtn() { $('#btnSound').textContent = save.sound ? '🔊 소리
 $('#btnMenu').onclick = () => { syncSoundBtn(); $('#menu').classList.remove('hidden'); };
 $('#btnCloseMenu').onclick = () => $('#menu').classList.add('hidden');
 $('#btnSound').onclick = () => { save.sound = !save.sound; writeSave(); syncSoundBtn(); };
-$('#btnRestartCh').onclick = () => {
-  $('#menu').classList.add('hidden'); clearInterval(timer); timer = null;
-  closeModal(); $('#story').classList.add('hidden'); startChapter(S.ch);
-};
-$('#btnToChapters').onclick = () => {
-  $('#menu').classList.add('hidden'); clearInterval(timer); timer = null;
-  closeModal(); $('#story').classList.add('hidden'); renderChapters(); show('chapters');
-};
+function stopAll() { $('#menu').classList.add('hidden'); clearInterval(timer); timer = null; closeModal(); $('#story').classList.add('hidden'); }
+$('#btnRestartCh').onclick = () => { stopAll(); startChapter(S.ch); };
+$('#btnToChapters').onclick = () => { stopAll(); renderChapters(); show('chapters'); };
+
+// 시작 화면 군사들
+$('#titleArmy').innerHTML = ['yiSS','turtle','spear','archer','militia'].map(t => `<span class="mini p">${spriteHTML(t)}</span>`).join('') + '<span class="vs">VS</span>' + ['gun','samurai','qing'].map(t => `<span class="mini e">${spriteHTML(t)}</span>`).join('');
+
+// 개발용 미리보기: ?demo=prep|battle&ch=0 (화면 확인용, 수업에는 쓰지 않음)
+(function demo() {
+  const q = new URLSearchParams(location.search);
+  if (!q.get('demo')) return;
+  const ch = +(q.get('ch') || 0);
+  startChapter(ch);
+  $('#story').classList.add('hidden');
+  if (CHAPTERS[ch].siege) { S.day = 1; } else { S.stage = +(q.get('st') || 0); }
+  S.level = 5; S.gold = 23; S.streak = 2;
+  const army = { 0: [['leeJM',3,4,1],['spear',2,3,2],['ship',4,3,1],['archer',3,5,1],['rocket',1,5,1]],
+                 1: [['yiSS',3,5,1],['turtle',3,3,2],['panok',4,4,1],['militia',2,3,1],['ming',5,3,1]],
+                 2: [['spear',2,4,2],['spear',4,4,1],['archer',2,5,1],['gunner',4,5,1],['spear',3,4,1]] }[ch];
+  S.board = army.map(([t, x, y, s]) => ({ u: Object.assign(newUnit(t, s), { items: t === 'leeJM' || t === 'yiSS' ? ['sword', 'book'] : [] }), x, y }));
+  S.bench[0] = newUnit('spear'); S.bench[1] = newUnit('cavalry');
+  S.items = ['armor', 'powder', 'ginseng'];
+  enterPrep(true);
+  S.info = { unit: S.board[0].u };
+  renderAll();
+  if (q.get('demo') === 'battle') { S.speed = 1; setTimeout(startBattle, 300); }
+})();

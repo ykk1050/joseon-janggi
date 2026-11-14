@@ -1,0 +1,5757 @@
+{
+ "version": 1,
+ "name": "units",
+ "width": 28,
+ "height": 26,
+ "palette": {
+  "o": "#2a1d16",
+  "s": "#f2c28f",
+  "S": "#d4996a",
+  "h": "#2b2b33",
+  "H": "#4a4a58",
+  "d": "#1d1d24",
+  "b": "#3a63a8",
+  "B": "#5c86c9",
+  "n": "#26467e",
+  "p": "#4a3a2e",
+  "f": "#2e221a",
+  "w": "#e3e8ee",
+  "W": "#8f9aa8",
+  "t": "#9a6532",
+  "T": "#5e3a1a",
+  "r": "#cf3b2c",
+  "R": "#8e2219",
+  "y": "#f0c03a",
+  "Y": "#b8861c",
+  "c": "#f5f0e2",
+  "C": "#c9c1ad",
+  "K": "#1a1412",
+  "F": "#b88a5a",
+  "G": "#7a5634",
+  "M": "#8a5a36",
+  "N": "#5e3b22",
+  "m": "#c08a5c",
+  "g": "#3f6b3a",
+  "q": "#5f8f4f",
+  "x": "#ffffff",
+  "z": "#ff9a1f",
+  "a": "#9aa0a6",
+  "A": "#6e737a",
+  "l": "#7f8890"
+ },
+ "frames": [
+  {
+   "name": "spear-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 2,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "spear-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 3,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "spear-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 9,
+     "rows": [
+      ".....ww",
+      "....ww.",
+      "...tW..",
+      "..tt...",
+      ".tt....",
+      "tt.....",
+      "t......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "archer-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#3d7a4a",
+    "B": "#5ea06a",
+    "n": "#285634"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "archer-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#3d7a4a",
+    "B": "#5ea06a",
+    "n": "#285634"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 15,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "archer-a",
+   "duration": 200,
+   "palette": {
+    "b": "#3d7a4a",
+    "B": "#5ea06a",
+    "n": "#285634"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 12,
+     "rows": [
+      "..o.",
+      ".ot.",
+      "ot..",
+      "tw..",
+      "twww",
+      "tw..",
+      "ot..",
+      ".ot.",
+      "..o."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "cavalry-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a8a",
+    "B": "#9c5aae",
+    "n": "#552660"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 0,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": -3,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "cavalry-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a8a",
+    "B": "#9c5aae",
+    "n": "#552660"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": -2,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "cavalry-a",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a8a",
+    "B": "#9c5aae",
+    "n": "#552660"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 15,
+     "y": 6,
+     "rows": [
+      ".....ww",
+      "....ww.",
+      "...tW..",
+      "..tt...",
+      ".tt....",
+      "tt.....",
+      "t......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gunner-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a3a",
+    "B": "#8a7a55",
+    "n": "#4a3e26"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 12,
+     "rows": [
+      "....W",
+      "...W.",
+      "..T..",
+      ".T...",
+      "TT..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gunner-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a3a",
+    "B": "#8a7a55",
+    "n": "#4a3e26"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 13,
+     "rows": [
+      "....W",
+      "...W.",
+      "..T..",
+      ".T...",
+      "TT..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gunner-a",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a3a",
+    "B": "#8a7a55",
+    "n": "#4a3e26"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      ".....oddo.....",
+      "....oddddo....",
+      ".oddddddddddo.",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 12,
+     "rows": [
+      ".....zx",
+      "..WWWWz",
+      "TTTT...",
+      "T......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "leeJM-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#d85a48",
+    "n": "#7e1e18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 8,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "leeJM-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#d85a48",
+    "n": "#7e1e18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "leeJM-a",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#d85a48",
+    "n": "#7e1e18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 8,
+     "rows": [
+      ".....w",
+      "....ww",
+      "...ww.",
+      "..ww..",
+      ".yy...",
+      "yy....",
+      "T....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "choiYD-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#2f6aa8",
+    "B": "#4f8ac8",
+    "n": "#1f4a7e",
+    "r": "#3fa0e0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "choiYD-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#2f6aa8",
+    "B": "#4f8ac8",
+    "n": "#1f4a7e",
+    "r": "#3fa0e0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 15,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "choiYD-a",
+   "duration": 200,
+   "palette": {
+    "b": "#2f6aa8",
+    "B": "#4f8ac8",
+    "n": "#1f4a7e",
+    "r": "#3fa0e0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 12,
+     "rows": [
+      "..o.",
+      ".ot.",
+      "ot..",
+      "tw..",
+      "twww",
+      "tw..",
+      "ot..",
+      ".ot.",
+      "..o."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kimJS-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#2f7a4f",
+    "B": "#4f9a6a",
+    "n": "#1f5634",
+    "r": "#f0c03a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": -1,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 6,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kimJS-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#2f7a4f",
+    "B": "#4f9a6a",
+    "n": "#1f5634",
+    "r": "#f0c03a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 0,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 7,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kimJS-a",
+   "duration": 200,
+   "palette": {
+    "b": "#2f7a4f",
+    "B": "#4f9a6a",
+    "n": "#1f5634",
+    "r": "#f0c03a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 0,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 6,
+     "rows": [
+      "...w",
+      "..w.",
+      ".w..",
+      "yy..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "yiSS-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#e06a50",
+    "n": "#7e1e18",
+    "h": "#1a1a22"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 2,
+     "rows": [
+      ".yrrr",
+      ".trrr",
+      ".trr.",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "yiSS-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#e06a50",
+    "n": "#7e1e18",
+    "h": "#1a1a22"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 3,
+     "rows": [
+      ".yrrr",
+      ".trrr",
+      ".trr.",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".t...",
+      ".T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "yiSS-a",
+   "duration": 200,
+   "palette": {
+    "b": "#b8322a",
+    "B": "#e06a50",
+    "n": "#7e1e18",
+    "h": "#1a1a22"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "......rr......",
+      "......rr......",
+      ".....oyyo.....",
+      "....oyHHyo....",
+      "...oWwwwwWo...",
+      "..oWwwwwwwWo..",
+      "..oW......Wo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 0,
+     "rows": [
+      ".yrrrr",
+      ".trrrr",
+      ".trrr.",
+      ".t....",
+      ".t....",
+      ".t....",
+      ".t....",
+      ".t....",
+      ".t....",
+      ".t....",
+      ".T...."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "militia-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a",
+    "y": "#8a7a5a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..occcccccco.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 12,
+     "rows": [
+      "ww",
+      ".w",
+      ".t",
+      ".t",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "militia-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a",
+    "y": "#8a7a5a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 7,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..occcccccco.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 13,
+     "rows": [
+      "ww",
+      ".w",
+      ".t",
+      ".t",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "militia-a",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a",
+    "y": "#8a7a5a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 5,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..occcccccco.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 10,
+     "rows": [
+      "ww..",
+      "..w.",
+      "..t.",
+      ".t..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "milLead-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...obbbbbbo...",
+      "..obbbbbbbbo..",
+      "..onnnnnnnno..",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..orrrrrrrro.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 11,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "milLead-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...obbbbbbo...",
+      "..obbbbbbbbo..",
+      "..onnnnnnnno..",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 7,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..orrrrrrrro.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 12,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "milLead-a",
+   "duration": 200,
+   "palette": {
+    "b": "#e8e2d0",
+    "B": "#ffffff",
+    "n": "#b8b09a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...obbbbbbo...",
+      "..obbbbbbbbo..",
+      "..onnnnnnnno..",
+      "..oooooooooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 5,
+     "rows": [
+      "......oo......",
+      ".....oKKo.....",
+      "...oKKKKKKo...",
+      "..orrrrrrrro.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      "...w",
+      "..w.",
+      ".w..",
+      "yy..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ming-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#c03a2a",
+    "B": "#e05a40",
+    "n": "#8a2218"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      ".....oyyo.....",
+      "....oyyyyo....",
+      "...oYyyyyYo...",
+      "..oY......Yo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 2,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ming-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#c03a2a",
+    "B": "#e05a40",
+    "n": "#8a2218"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      ".....oyyo.....",
+      "....oyyyyo....",
+      "...oYyyyyYo...",
+      "..oY......Yo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 3,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ming-a",
+   "duration": 200,
+   "palette": {
+    "b": "#c03a2a",
+    "B": "#e05a40",
+    "n": "#8a2218"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      ".....oyyo.....",
+      "....oyyyyo....",
+      "...oYyyyyYo...",
+      "..oY......Yo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 9,
+     "rows": [
+      ".....ww",
+      "....ww.",
+      "...tW..",
+      "..tt...",
+      ".tt....",
+      "tt.....",
+      "t......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ship-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 12,
+     "rows": [
+      "..............o.............",
+      ".............oco............",
+      "............occco...........",
+      "...........occccco..........",
+      "..........occccccco.........",
+      "..............t.............",
+      "....oooooooooooooooooooo....",
+      "...otttttttttttttttttttto...",
+      "...oTtTtTtTtTtTtTtTtTtTto...",
+      "....oTTTTTTTTTTTTTTTTTTo....",
+      ".....oooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ship-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 13,
+     "rows": [
+      "..............o.............",
+      ".............oco............",
+      "............occco...........",
+      "...........occccco..........",
+      "..........occccccco.........",
+      "..............t.............",
+      "....oooooooooooooooooooo....",
+      "...otttttttttttttttttttto...",
+      "...oTtTtTtTtTtTtTtTtTtTto...",
+      "....oTTTTTTTTTTTTTTTTTTo....",
+      ".....oooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ship-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 12,
+     "rows": [
+      "..............o.............",
+      ".............oco............",
+      "............occco...........",
+      "...........occccco..........",
+      "..........occccccco.........",
+      "..............t.............",
+      "....oooooooooooooooooooo....",
+      "...otttttttttttttttttttto...",
+      "...oTtTtTtTtTtTtTtTtTtTto...",
+      "....oTTTTTTTTTTTTTTTTTTo....",
+      ".....oooooooooooooooooo....."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 24,
+     "y": 16,
+     "rows": [
+      "zx",
+      "xz"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "panok-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      ".............rr.............",
+      ".............tt.............",
+      ".......oooooottoooooo.......",
+      ".......orrrrrrrrrrrro.......",
+      ".......otTtTtTtTtTtTo.......",
+      ".....oooooooooooooooooo.....",
+      ".....orrrrrrrrrrrrrrrro.....",
+      "..ooottttttttttttttttttooo..",
+      ".otttTttTttTttTttTttTttttto.",
+      ".oTtwtTtwtTtwtTtwtTtwtTtTo..",
+      "..oTTTTTTTTTTTTTTTTTTTTTo...",
+      "...ooooooooooooooooooooo...."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "panok-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 12,
+     "rows": [
+      ".............rr.............",
+      ".............tt.............",
+      ".......oooooottoooooo.......",
+      ".......orrrrrrrrrrrro.......",
+      ".......otTtTtTtTtTtTo.......",
+      ".....oooooooooooooooooo.....",
+      ".....orrrrrrrrrrrrrrrro.....",
+      "..ooottttttttttttttttttooo..",
+      ".otttTttTttTttTttTttTttttto.",
+      ".oTtwtTtwtTtwtTtwtTtwtTtTo..",
+      "..oTTTTTTTTTTTTTTTTTTTTTo...",
+      "...ooooooooooooooooooooo...."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "panok-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      ".............rr.............",
+      ".............tt.............",
+      ".......oooooottoooooo.......",
+      ".......orrrrrrrrrrrro.......",
+      ".......otTtTtTtTtTtTo.......",
+      ".....oooooooooooooooooo.....",
+      ".....orrrrrrrrrrrrrrrro.....",
+      "..ooottttttttttttttttttooo..",
+      ".otttTttTttTttTttTttTttttto.",
+      ".oTtwtTtwtTtwtTtwtTtwtTtTo..",
+      "..oTTTTTTTTTTTTTTTTTTTTTo...",
+      "...ooooooooooooooooooooo...."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 24,
+     "y": 15,
+     "rows": [
+      "zx",
+      "xz"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "turtle-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      "............................",
+      "..........w..w..w..w........",
+      ".......ooooooooooooooo......",
+      "......ogqgqgqgqgqgqgqgo.oo..",
+      ".....ogqgqgqgqgqgqgqgqgorro.",
+      "....ooooooooooooooooooooyro.",
+      "....orrrrrrrrrrrrrrrrrrrooo.",
+      "..ooottttttttttttttttttooo..",
+      ".otttwtttwtttwtttwtttwttto..",
+      ".oTtTtTtTtTtTtTtTtTtTtTto...",
+      "..oTTTTTTTTTTTTTTTTTTTTo....",
+      "...oooooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "turtle-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 12,
+     "rows": [
+      "............................",
+      "..........w..w..w..w........",
+      ".......ooooooooooooooo......",
+      "......ogqgqgqgqgqgqgqgo.oo..",
+      ".....ogqgqgqgqgqgqgqgqgorro.",
+      "....ooooooooooooooooooooyro.",
+      "....orrrrrrrrrrrrrrrrrrrooo.",
+      "..ooottttttttttttttttttooo..",
+      ".otttwtttwtttwtttwtttwttto..",
+      ".oTtTtTtTtTtTtTtTtTtTtTto...",
+      "..oTTTTTTTTTTTTTTTTTTTTo....",
+      "...oooooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "turtle-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      "............................",
+      "..........w..w..w..w........",
+      ".......ooooooooooooooo......",
+      "......ogqgqgqgqgqgqgqgo.oo..",
+      ".....ogqgqgqgqgqgqgqgqgorro.",
+      "....ooooooooooooooooooooyro.",
+      "....orrrrrrrrrrrrrrrrrrrooo.",
+      "..ooottttttttttttttttttooo..",
+      ".otttwtttwtttwtttwtttwttto..",
+      ".oTtTtTtTtTtTtTtTtTtTtTto...",
+      "..oTTTTTTTTTTTTTTTTTTTTo....",
+      "...oooooooooooooooooooo....."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 24,
+     "y": 15,
+     "rows": [
+      "zx",
+      "xz"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "rocket-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      "..w.w.w.w.w.......",
+      "..t.t.t.t.t.......",
+      ".ooooooooooooo....",
+      ".oTtTtTtTtTtTo....",
+      ".oTtTtTtTtTtTo....",
+      ".ooooooooooooo....",
+      "...ott.....ott.tt.",
+      "..oTTTo...oTTTo.tT",
+      "..oTyTo...oTyTo...",
+      "...ooo.....ooo...."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "rocket-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      "..w.w.w.w.w.......",
+      "..t.t.t.t.t.......",
+      ".ooooooooooooo....",
+      ".oTtTtTtTtTtTo....",
+      ".oTtTtTtTtTtTo....",
+      ".ooooooooooooo....",
+      "...ott.....ott.tt.",
+      "..oTTTo...oTTTo.tT",
+      "..oTyTo...oTyTo...",
+      "...ooo.....ooo...."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "rocket-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      "..w.w.w.w.w.......",
+      "..t.t.t.t.t.......",
+      ".ooooooooooooo....",
+      ".oTtTtTtTtTtTo....",
+      ".oTtTtTtTtTtTo....",
+      ".ooooooooooooo....",
+      "...ott.....ott.tt.",
+      "..oTTTo...oTTTo.tT",
+      "..oTyTo...oTyTo...",
+      "...ooo.....ooo...."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 11,
+     "rows": [
+      "..z.z.z.z.z",
+      "..x.x.x.x.x"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "mingGun-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 13,
+     "rows": [
+      ".........rrr......",
+      ".........rr.......",
+      ".........t........",
+      ".oooooooooooo.....",
+      "oYyyyyyyyyyyyo....",
+      "oYyYyyyyyyyyyyoo..",
+      ".oooooooooooo.....",
+      "....ott..ott......",
+      "...oTTTooTTTo.....",
+      "...oTyTooTyTo.....",
+      "....ooo..ooo......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "mingGun-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 13,
+     "rows": [
+      ".........rrr......",
+      ".........rr.......",
+      ".........t........",
+      ".oooooooooooo.....",
+      "oYyyyyyyyyyyyo....",
+      "oYyYyyyyyyyyyyoo..",
+      ".oooooooooooo.....",
+      "....ott..ott......",
+      "...oTTTooTTTo.....",
+      "...oTyTooTyTo.....",
+      "....ooo..ooo......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "mingGun-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 13,
+     "rows": [
+      ".........rrr......",
+      ".........rr.......",
+      ".........t........",
+      ".oooooooooooo.....",
+      "oYyyyyyyyyyyyo....",
+      "oYyYyyyyyyyyyyoo..",
+      ".oooooooooooo.....",
+      "....ott..ott......",
+      "...oTTTooTTTo.....",
+      "...oTyTooTyTo.....",
+      "....ooo..ooo......"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 10,
+     "rows": [
+      "zxz",
+      "xzx"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "castle-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 10,
+     "rows": [
+      "..........oooooooo..........",
+      "........ooRRRRRRRRoo........",
+      "......ooRRRRRRRRRRRRoo......",
+      "....ooKKKKKKKKKKKKKKKKoo....",
+      ".......orrrrrrrrrrrro.......",
+      ".......orcrcrcrcrcrro.......",
+      "..oo.oo.oo.oo.oo.oo.oo.oo...",
+      "..oaaoaaoaaoaaoaaoaaoaaao...",
+      "..oaaaaaaaaaaaaaaaaaaaaao...",
+      "..oalaaalaaaoooaalaaalaao...",
+      "..oaaaaaaaaoKKKoaaaaaaaao...",
+      "..oaaalaaaoKKKKKoaaalaaao...",
+      "..oaaaaaaaoKKKKKoaaaaaaao...",
+      "..oAAAAAAAoKKKKKoAAAAAAAo...",
+      "..ooooooooooooooooooooooo..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "castle-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 10,
+     "rows": [
+      "..........oooooooo..........",
+      "........ooRRRRRRRRoo........",
+      "......ooRRRRRRRRRRRRoo......",
+      "....ooKKKKKKKKKKKKKKKKoo....",
+      ".......orrrrrrrrrrrro.......",
+      ".......orcrcrcrcrcrro.......",
+      "..oo.oo.oo.oo.oo.oo.oo.oo...",
+      "..oaaoaaoaaoaaoaaoaaoaaao...",
+      "..oaaaaaaaaaaaaaaaaaaaaao...",
+      "..oalaaalaaaoooaalaaalaao...",
+      "..oaaaaaaaaoKKKoaaaaaaaao...",
+      "..oaaalaaaoKKKKKoaaalaaao...",
+      "..oaaaaaaaoKKKKKoaaaaaaao...",
+      "..oAAAAAAAoKKKKKoAAAAAAAo...",
+      "..ooooooooooooooooooooooo..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "castle-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 10,
+     "rows": [
+      "..........oooooooo..........",
+      "........ooRRRRRRRRoo........",
+      "......ooRRRRRRRRRRRRoo......",
+      "....ooKKKKKKKKKKKKKKKKoo....",
+      ".......orrrrrrrrrrrro.......",
+      ".......orcrcrcrcrcrro.......",
+      "..oo.oo.oo.oo.oo.oo.oo.oo...",
+      "..oaaoaaoaaoaaoaaoaaoaaao...",
+      "..oaaaaaaaaaaaaaaaaaaaaao...",
+      "..oalaaalaaaoooaalaaalaao...",
+      "..oaaaaaaaaoKKKoaaaaaaaao...",
+      "..oaaalaaaoKKKKKoaaalaaao...",
+      "..oaaaaaaaoKKKKKoaaaaaaao...",
+      "..oAAAAAAAoKKKKKoAAAAAAAo...",
+      "..ooooooooooooooooooooooo..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokou-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a4a",
+    "B": "#8a7a68",
+    "n": "#4a3e32",
+    "p": "#5a4a3a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 11,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokou-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a4a",
+    "B": "#8a7a68",
+    "n": "#4a3e32",
+    "p": "#5a4a3a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 12,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokou-a",
+   "duration": 200,
+   "palette": {
+    "b": "#6a5a4a",
+    "B": "#8a7a68",
+    "n": "#4a3e32",
+    "p": "#5a4a3a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      "...w",
+      "..w.",
+      ".w..",
+      "yy..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouA-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a5a",
+    "B": "#7a8a78",
+    "n": "#3e4a3e",
+    "r": "#e0a030"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 14,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouA-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a5a",
+    "B": "#7a8a78",
+    "n": "#3e4a3e",
+    "r": "#e0a030"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 15,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouA-a",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a5a",
+    "B": "#7a8a78",
+    "n": "#3e4a3e",
+    "r": "#e0a030"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 5,
+     "y": 12,
+     "rows": [
+      "..o.",
+      ".ot.",
+      "ot..",
+      "tw..",
+      "twww",
+      "tw..",
+      "ot..",
+      ".ot.",
+      "..o."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouB-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#4a2a2a",
+    "B": "#6a4040",
+    "n": "#2e1818"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 8,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouB-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#4a2a2a",
+    "B": "#6a4040",
+    "n": "#2e1818"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wokouB-a",
+   "duration": 200,
+   "palette": {
+    "b": "#4a2a2a",
+    "B": "#6a4040",
+    "n": "#2e1818"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "...oKKKKKKo...",
+      "..oKKKKKKKKo..",
+      "..orrrrrrrro..",
+      "...........rr."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 8,
+     "rows": [
+      ".....w",
+      "....ww",
+      "...ww.",
+      "..ww..",
+      ".yy...",
+      "yy....",
+      "T....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jur-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#7a5a3a",
+    "B": "#9a7a58",
+    "n": "#553c24",
+    "M": "#4a3a30",
+    "N": "#2e241e",
+    "m": "#6a5a4a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 6,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jur-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#7a5a3a",
+    "B": "#9a7a58",
+    "n": "#553c24",
+    "M": "#4a3a30",
+    "N": "#2e241e",
+    "m": "#6a5a4a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 2,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 7,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jur-a",
+   "duration": 200,
+   "palette": {
+    "b": "#7a5a3a",
+    "B": "#9a7a58",
+    "n": "#553c24",
+    "M": "#4a3a30",
+    "N": "#2e241e",
+    "m": "#6a5a4a"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 2,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 6,
+     "rows": [
+      "...w",
+      "..w.",
+      ".w..",
+      "yy..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurA-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a7a",
+    "B": "#7a8a9a",
+    "n": "#3e4a56",
+    "M": "#9a8a7a",
+    "N": "#6a5a4a",
+    "m": "#b8a898"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 9,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurA-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a7a",
+    "B": "#7a8a9a",
+    "n": "#3e4a56",
+    "M": "#9a8a7a",
+    "N": "#6a5a4a",
+    "m": "#b8a898"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 10,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 2,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurA-a",
+   "duration": 200,
+   "palette": {
+    "b": "#5a6a7a",
+    "B": "#7a8a9a",
+    "n": "#3e4a56",
+    "M": "#9a8a7a",
+    "N": "#6a5a4a",
+    "m": "#b8a898"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 3,
+     "y": 9,
+     "rows": [
+      "..o.",
+      ".ot.",
+      "ot..",
+      "tw..",
+      "twww",
+      "tw..",
+      "ot..",
+      ".ot.",
+      "..o."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 2,
+     "rows": [
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurC-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a2a",
+    "B": "#9a5a48",
+    "n": "#552418"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "......rr......",
+      ".....oyyo.....",
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 8,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurC-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a2a",
+    "B": "#9a5a48",
+    "n": "#552418"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "......rr......",
+      ".....oyyo.....",
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jurC-a",
+   "duration": 200,
+   "palette": {
+    "b": "#7a3a2a",
+    "B": "#9a5a48",
+    "n": "#552418"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "......rr......",
+      ".....oyyo.....",
+      "....oFFFFo....",
+      "...oFGFFGFo...",
+      "..oFFFFFFFFo..",
+      "..oGGGGGGGGo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 8,
+     "rows": [
+      ".....w",
+      "....ww",
+      "...ww.",
+      "..ww..",
+      ".yy...",
+      "yy....",
+      "T....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gun-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#3a3a4a",
+    "B": "#5a5a6a",
+    "n": "#26262e",
+    "d": "#3a2a1e"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "......oo......",
+      "....oddddo....",
+      "..oddddddddo..",
+      ".odddddddddddo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 12,
+     "rows": [
+      "....W",
+      "...W.",
+      "..T..",
+      ".T...",
+      "TT..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gun-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#3a3a4a",
+    "B": "#5a5a6a",
+    "n": "#26262e",
+    "d": "#3a2a1e"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 7,
+     "rows": [
+      "......oo......",
+      "....oddddo....",
+      "..oddddddddo..",
+      ".odddddddddddo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 13,
+     "rows": [
+      "....W",
+      "...W.",
+      "..T..",
+      ".T...",
+      "TT..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gun-a",
+   "duration": 200,
+   "palette": {
+    "b": "#3a3a4a",
+    "B": "#5a5a6a",
+    "n": "#26262e",
+    "d": "#3a2a1e"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 5,
+     "rows": [
+      "......oo......",
+      "....oddddo....",
+      "..oddddddddo..",
+      ".odddddddddddo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 12,
+     "rows": [
+      ".....zx",
+      "..WWWWz",
+      "TTTT...",
+      "T......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "samurai-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#2a2a3a",
+    "B": "#4a4a5a",
+    "n": "#1a1a24",
+    "y": "#b02a24"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 6,
+     "rows": [
+      "....oooooo....",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 2,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "samurai-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#2a2a3a",
+    "B": "#4a4a5a",
+    "n": "#1a1a24",
+    "y": "#b02a24"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 3,
+     "rows": [
+      "w",
+      "w",
+      "W",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "t",
+      "T",
+      "T",
+      "T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "samurai-a",
+   "duration": 200,
+   "palette": {
+    "b": "#2a2a3a",
+    "B": "#4a4a5a",
+    "n": "#1a1a24",
+    "y": "#b02a24"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 5,
+     "rows": [
+      "....oooooo....",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 9,
+     "rows": [
+      ".....ww",
+      "....ww.",
+      "...tW..",
+      "..tt...",
+      ".tt....",
+      "tt.....",
+      "t......"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpGen-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#8a1a1a",
+    "B": "#b03030",
+    "n": "#5a1010"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 8,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 4,
+     "rows": [
+      "..yy......yy..",
+      "...yy....yy...",
+      "....yoooooy...",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 8,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpGen-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#8a1a1a",
+    "B": "#b03030",
+    "n": "#5a1010"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 21,
+     "rows": [
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 9,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 7,
+     "y": 5,
+     "rows": [
+      "..yy......yy..",
+      "...yy....yy...",
+      "....yoooooy...",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 19,
+     "y": 9,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpGen-a",
+   "duration": 200,
+   "palette": {
+    "b": "#8a1a1a",
+    "B": "#b03030",
+    "n": "#5a1010"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 7,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno..",
+      "...oppppppo...",
+      "...oppo.oppo..",
+      "...offo.offo..",
+      "...oooo.oooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 8,
+     "y": 3,
+     "rows": [
+      "..yy......yy..",
+      "...yy....yy...",
+      "....yoooooy...",
+      "...oddddddo...",
+      "..oddddddddo..",
+      ".odd......ddo."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 8,
+     "rows": [
+      ".....w",
+      "....ww",
+      "...ww.",
+      "..ww..",
+      ".yy...",
+      "yy....",
+      "T....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpShip-i0",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      ".............o..............",
+      "..........ooocooo...........",
+      "..........occccco...........",
+      "..........occKcco...........",
+      "..........occccco...........",
+      "..........ooocooo...........",
+      ".............t..............",
+      "....oooooooooooooooooooo....",
+      "...oKKKKKKKKKKKKKKKKKKKKo...",
+      "...oKdKdKdKdKdKdKdKdKdKKo...",
+      "....oKKKKKKKKKKKKKKKKKKo....",
+      ".....oooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpShip-i1",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 12,
+     "rows": [
+      ".............o..............",
+      "..........ooocooo...........",
+      "..........occccco...........",
+      "..........occKcco...........",
+      "..........occccco...........",
+      "..........ooocooo...........",
+      ".............t..............",
+      "....oooooooooooooooooooo....",
+      "...oKKKKKKKKKKKKKKKKKKKKo...",
+      "...oKdKdKdKdKdKdKdKdKdKKo...",
+      "....oKKKKKKKKKKKKKKKKKKo....",
+      ".....oooooooooooooooooo....."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "jpShip-a",
+   "duration": 200,
+   "ops": [
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 11,
+     "rows": [
+      ".............o..............",
+      "..........ooocooo...........",
+      "..........occccco...........",
+      "..........occKcco...........",
+      "..........occccco...........",
+      "..........ooocooo...........",
+      ".............t..............",
+      "....oooooooooooooooooooo....",
+      "...oKKKKKKKKKKKKKKKKKKKKo...",
+      "...oKdKdKdKdKdKdKdKdKdKKo...",
+      "....oKKKKKKKKKKKKKKKKKKo....",
+      ".....oooooooooooooooooo....."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 0,
+     "y": 15,
+     "rows": [
+      "zx",
+      "xz"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qing-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#3a5aa8",
+    "B": "#5a7ac8",
+    "n": "#263e7e",
+    "y": "#f0c03a",
+    "M": "#3a2e28",
+    "N": "#1e1814",
+    "m": "#5a4a40"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 0,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 6,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qing-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#3a5aa8",
+    "B": "#5a7ac8",
+    "n": "#263e7e",
+    "y": "#f0c03a",
+    "M": "#3a2e28",
+    "N": "#1e1814",
+    "m": "#5a4a40"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 7,
+     "rows": [
+      ".w",
+      ".w",
+      ".w",
+      "Ww",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qing-a",
+   "duration": 200,
+   "palette": {
+    "b": "#3a5aa8",
+    "B": "#5a7ac8",
+    "n": "#263e7e",
+    "y": "#f0c03a",
+    "M": "#3a2e28",
+    "N": "#1e1814",
+    "m": "#5a4a40"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 17,
+     "y": 6,
+     "rows": [
+      "...w",
+      "..w.",
+      ".w..",
+      "yy..",
+      "T..."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingA-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#c8a030",
+    "B": "#e8c050",
+    "n": "#8a6a18",
+    "M": "#c8c0b0",
+    "N": "#8a8278",
+    "m": "#e8e0d0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 9,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 0,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingA-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#c8a030",
+    "B": "#e8c050",
+    "n": "#8a6a18",
+    "M": "#c8c0b0",
+    "N": "#8a8278",
+    "m": "#e8e0d0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 10,
+     "rows": [
+      ".o",
+      "ot",
+      "t.",
+      "t.",
+      "t.",
+      "t.",
+      "ot",
+      ".o"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingA-a",
+   "duration": 200,
+   "palette": {
+    "b": "#c8a030",
+    "B": "#e8c050",
+    "n": "#8a6a18",
+    "M": "#c8c0b0",
+    "N": "#8a8278",
+    "m": "#e8e0d0"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 3,
+     "y": 9,
+     "rows": [
+      "..o.",
+      ".ot.",
+      "ot..",
+      "tw..",
+      "twww",
+      "tw..",
+      "ot..",
+      ".ot.",
+      "..o."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..obBbbbbnbo..",
+      ".osbBbbbbnbso.",
+      "..obbbbbbnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 1,
+     "rows": [
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oddddddo...",
+      "..oyyyyyyyyo.."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingG-i0",
+   "duration": 200,
+   "palette": {
+    "b": "#d8b030",
+    "B": "#f0d060",
+    "n": "#9a7a18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "...oNo.oNo.oNo.oNo..",
+      "...oNo.oNo.oNo.oNo..",
+      "...ooo.ooo.ooo.ooo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 3,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": -2,
+     "rows": [
+      ".......y......",
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oyyyyyyo...",
+      "..oyddddddyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 3,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingG-i1",
+   "duration": 200,
+   "palette": {
+    "b": "#d8b030",
+    "B": "#f0d060",
+    "n": "#9a7a18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": -1,
+     "rows": [
+      ".......y......",
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oyyyyyyo...",
+      "..oyddddddyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 18,
+     "y": 4,
+     "rows": [
+      ".w",
+      "ww",
+      "ww",
+      "ww",
+      "ww",
+      "Ww",
+      "yy",
+      "yy",
+      ".T"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "qingG-a",
+   "duration": 200,
+   "palette": {
+    "b": "#d8b030",
+    "B": "#f0d060",
+    "n": "#9a7a18"
+   },
+   "ops": [
+    {
+     "op": "grid",
+     "x": 4,
+     "y": 15,
+     "rows": [
+      "..............oo....",
+      ".............oMMo...",
+      "..ooooooooooooMMMo..",
+      ".oMMMMMMMMMMMMMmMMo.",
+      "oMMMMMMMMMMMMMMoMMMo",
+      "oNoMMMMMMMMMMMMo.oo.",
+      ".o.oNMMMMMMMMNo.....",
+      "..oNo..oNo.oNo..oNo.",
+      ".oNo....oNooNo...oNo",
+      ".oo......ooooo....oo"
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": 4,
+     "rows": [
+      "....oooooo....",
+      "...osssssso...",
+      "..osssssssso..",
+      "..osssssssso..",
+      "..ossosssoso..",
+      "..osssssssso..",
+      "...oSssssSo...",
+      "....oooooo....",
+      "...obbbbbbo...",
+      "..oyBbybbnyo..",
+      ".osbBbbbbnbso.",
+      "..obybbybnbo..",
+      "..onnnyynnno.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 6,
+     "y": -1,
+     "rows": [
+      ".......y......",
+      "......rr......",
+      ".....rrrr.....",
+      "....orrrro....",
+      "...oyyyyyyo...",
+      "..oyddddddyo.."
+     ]
+    },
+    {
+     "op": "grid",
+     "x": 16,
+     "y": 5,
+     "rows": [
+      ".....w",
+      "....ww",
+      "...ww.",
+      "..ww..",
+      ".yy...",
+      "yy....",
+      "T....."
+     ]
+    }
+   ]
+  }
+ ],
+ "animations": {
+  "spear-idle": {
+   "frames": [
+    "spear-i0",
+    "spear-i1"
+   ]
+  },
+  "spear-atk": {
+   "frames": [
+    "spear-a"
+   ],
+   "loop": false
+  },
+  "archer-idle": {
+   "frames": [
+    "archer-i0",
+    "archer-i1"
+   ]
+  },
+  "archer-atk": {
+   "frames": [
+    "archer-a"
+   ],
+   "loop": false
+  },
+  "cavalry-idle": {
+   "frames": [
+    "cavalry-i0",
+    "cavalry-i1"
+   ]
+  },
+  "cavalry-atk": {
+   "frames": [
+    "cavalry-a"
+   ],
+   "loop": false
+  },
+  "gunner-idle": {
+   "frames": [
+    "gunner-i0",
+    "gunner-i1"
+   ]
+  },
+  "gunner-atk": {
+   "frames": [
+    "gunner-a"
+   ],
+   "loop": false
+  },
+  "leeJM-idle": {
+   "frames": [
+    "leeJM-i0",
+    "leeJM-i1"
+   ]
+  },
+  "leeJM-atk": {
+   "frames": [
+    "leeJM-a"
+   ],
+   "loop": false
+  },
+  "choiYD-idle": {
+   "frames": [
+    "choiYD-i0",
+    "choiYD-i1"
+   ]
+  },
+  "choiYD-atk": {
+   "frames": [
+    "choiYD-a"
+   ],
+   "loop": false
+  },
+  "kimJS-idle": {
+   "frames": [
+    "kimJS-i0",
+    "kimJS-i1"
+   ]
+  },
+  "kimJS-atk": {
+   "frames": [
+    "kimJS-a"
+   ],
+   "loop": false
+  },
+  "yiSS-idle": {
+   "frames": [
+    "yiSS-i0",
+    "yiSS-i1"
+   ]
+  },
+  "yiSS-atk": {
+   "frames": [
+    "yiSS-a"
+   ],
+   "loop": false
+  },
+  "militia-idle": {
+   "frames": [
+    "militia-i0",
+    "militia-i1"
+   ]
+  },
+  "militia-atk": {
+   "frames": [
+    "militia-a"
+   ],
+   "loop": false
+  },
+  "milLead-idle": {
+   "frames": [
+    "milLead-i0",
+    "milLead-i1"
+   ]
+  },
+  "milLead-atk": {
+   "frames": [
+    "milLead-a"
+   ],
+   "loop": false
+  },
+  "ming-idle": {
+   "frames": [
+    "ming-i0",
+    "ming-i1"
+   ]
+  },
+  "ming-atk": {
+   "frames": [
+    "ming-a"
+   ],
+   "loop": false
+  },
+  "ship-idle": {
+   "frames": [
+    "ship-i0",
+    "ship-i1"
+   ]
+  },
+  "ship-atk": {
+   "frames": [
+    "ship-a"
+   ],
+   "loop": false
+  },
+  "panok-idle": {
+   "frames": [
+    "panok-i0",
+    "panok-i1"
+   ]
+  },
+  "panok-atk": {
+   "frames": [
+    "panok-a"
+   ],
+   "loop": false
+  },
+  "turtle-idle": {
+   "frames": [
+    "turtle-i0",
+    "turtle-i1"
+   ]
+  },
+  "turtle-atk": {
+   "frames": [
+    "turtle-a"
+   ],
+   "loop": false
+  },
+  "rocket-idle": {
+   "frames": [
+    "rocket-i0",
+    "rocket-i1"
+   ]
+  },
+  "rocket-atk": {
+   "frames": [
+    "rocket-a"
+   ],
+   "loop": false
+  },
+  "mingGun-idle": {
+   "frames": [
+    "mingGun-i0",
+    "mingGun-i1"
+   ]
+  },
+  "mingGun-atk": {
+   "frames": [
+    "mingGun-a"
+   ],
+   "loop": false
+  },
+  "castle-idle": {
+   "frames": [
+    "castle-i0",
+    "castle-i1"
+   ]
+  },
+  "castle-atk": {
+   "frames": [
+    "castle-a"
+   ],
+   "loop": false
+  },
+  "wokou-idle": {
+   "frames": [
+    "wokou-i0",
+    "wokou-i1"
+   ]
+  },
+  "wokou-atk": {
+   "frames": [
+    "wokou-a"
+   ],
+   "loop": false
+  },
+  "wokouA-idle": {
+   "frames": [
+    "wokouA-i0",
+    "wokouA-i1"
+   ]
+  },
+  "wokouA-atk": {
+   "frames": [
+    "wokouA-a"
+   ],
+   "loop": false
+  },
+  "wokouB-idle": {
+   "frames": [
+    "wokouB-i0",
+    "wokouB-i1"
+   ]
+  },
+  "wokouB-atk": {
+   "frames": [
+    "wokouB-a"
+   ],
+   "loop": false
+  },
+  "jur-idle": {
+   "frames": [
+    "jur-i0",
+    "jur-i1"
+   ]
+  },
+  "jur-atk": {
+   "frames": [
+    "jur-a"
+   ],
+   "loop": false
+  },
+  "jurA-idle": {
+   "frames": [
+    "jurA-i0",
+    "jurA-i1"
+   ]
+  },
+  "jurA-atk": {
+   "frames": [
+    "jurA-a"
+   ],
+   "loop": false
+  },
+  "jurC-idle": {
+   "frames": [
+    "jurC-i0",
+    "jurC-i1"
+   ]
+  },
+  "jurC-atk": {
+   "frames": [
+    "jurC-a"
+   ],
+   "loop": false
+  },
+  "gun-idle": {
+   "frames": [
+    "gun-i0",
+    "gun-i1"
+   ]
+  },
+  "gun-atk": {
+   "frames": [
+    "gun-a"
+   ],
+   "loop": false
+  },
+  "samurai-idle": {
+   "frames": [
+    "samurai-i0",
+    "samurai-i1"
+   ]
+  },
+  "samurai-atk": {
+   "frames": [
+    "samurai-a"
+   ],
+   "loop": false
+  },
+  "jpGen-idle": {
+   "frames": [
+    "jpGen-i0",
+    "jpGen-i1"
+   ]
+  },
+  "jpGen-atk": {
+   "frames": [
+    "jpGen-a"
+   ],
+   "loop": false
+  },
+  "jpShip-idle": {
+   "frames": [
+    "jpShip-i0",
+    "jpShip-i1"
+   ]
+  },
+  "jpShip-atk": {
+   "frames": [
+    "jpShip-a"
+   ],
+   "loop": false
+  },
+  "qing-idle": {
+   "frames": [
+    "qing-i0",
+    "qing-i1"
+   ]
+  },
+  "qing-atk": {
+   "frames": [
+    "qing-a"
+   ],
+   "loop": false
+  },
+  "qingA-idle": {
+   "frames": [
+    "qingA-i0",
+    "qingA-i1"
+   ]
+  },
+  "qingA-atk": {
+   "frames": [
+    "qingA-a"
+   ],
+   "loop": false
+  },
+  "qingG-idle": {
+   "frames": [
+    "qingG-i0",
+    "qingG-i1"
+   ]
+  },
+  "qingG-atk": {
+   "frames": [
+    "qingG-a"
+   ],
+   "loop": false
+  }
+ }
+}
