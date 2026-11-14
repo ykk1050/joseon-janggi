@@ -12,7 +12,8 @@ const st=(ch,i)=>CHAPTERS[ch].stages[i];
 const tests=JSON.parse(process.argv[2]);
 for(const [label,ch,i,army,extra] of tests){
   let enemies, opts={}, players=P(army);
-  if(CHAPTERS[ch].siege){enemies=CHAPTERS[ch].waves[i];opts={surviveRounds:CHAPTERS[ch].surviveRounds,...(extra||{})};players.push({type:'castle',x:3,y:5,star:1,items:[]});}
-  else {enemies=st(ch,i).enemies;opts={mult:st(ch,i).mult};}
+  const C=CHAPTERS[ch];
+  if(C.siege){enemies=C.waves[i];opts={surviveRounds:C.surviveRounds,castleHpMul:C.cannonDay&&i+1>=C.cannonDay?C.cannonHp:0,...(extra||{})};players.push({type:'castle',x:3,y:5,star:1,items:[]});}
+  else {enemies=st(ch,i).enemies;const cells={};(st(ch,i).forest||[]).forEach(([x,y])=>cells[x+','+y]='forest');opts={mult:st(ch,i).mult,cells,...(extra||{})};}
   console.log(label.padEnd(28),run(players,enemies,opts).join(' '));
 }

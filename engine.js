@@ -35,7 +35,8 @@ function activeBuffs(counts) {
 function starMul(star) { return star === 3 ? 3.2 : star === 2 ? 1.8 : 1; }
 
 /* players: [{type, star, x, y, items:[]}], enemies: [[type, x, y]]
-   opts: { mult, atkMul, hpMul, surviveRounds, maxRounds } */
+   opts: { mult, atkMul, hpMul, surviveRounds, maxRounds,
+           startMana(작전 회의 보상), castleHpMul(대포 맞은 성), cells({'x,y':'forest'}) } */
 function createBattle(players, enemies, opts = {}) {
   const units = [];
   let id = 0;
@@ -56,6 +57,7 @@ function createBattle(players, enemies, opts = {}) {
       skillPow: 1 + 0.4 * has('powder'), regen: 0.08 * has('ginseng'),
       shield: 0, stun: 0, buffAtk: 1, items: it.slice(), fixed: !!d.fixed, splash: !!d.splash,
       crit: 0.1, alive: true, moved: false, done: false,
+      antiBoard: d.antiBoard || 0, rush: !!d.rush, ambush: false,
     };
   };
   for (const p of players) {
@@ -74,7 +76,11 @@ function createBattle(players, enemies, opts = {}) {
   }
   const m = opts.mult || 1;
   for (const [type, x, y] of enemies) units.push(make('e', type, 1, x, y, m, m, []));
-  return { units, round: 1, side: 'p', over: false, result: null, buffs, counts,
+  for (const u of units) {
+    if (u.side === 'p' && !u.fixed && u.maxMana && opts.startMana) u.mana = Math.min(u.maxMana, u.mana + opts.startMana);
+    if (u.fixed && opts.castleHpMul) u.hp = Math.round(u.maxHp * opts.castleHpMul);
+  }
+  return { units, round: 1, side: 'p', over: false, result: null, buffs, counts, cells: opts.cells || {},
     surviveRounds: opts.surviveRounds || 0, maxRounds: opts.maxRounds || MAX_ROUNDS };
 }
 
@@ -107,11 +113,25 @@ function reachable(b, u) {
   }
   return out;
 }
+// ───────── 역사 규칙 ─────────
+const traitsOf = (u) => UNITS[u.type].traits || [];
+const cellOf = (b, p) => (b.cells && b.cells[p.x + ',' + p.y]) || '';
+// 의병: 숲 칸에 숨으면 바로 옆이 아닌 적은 찾지 못함
+function hiddenFrom(b, pos, o) { return o.side === 'p' && traitsOf(o).includes('의병') && cellOf(b, o) === 'forest' && hexDist(pos, o) >= 2; }
+// 학익진: 수군 배 3척 이상이 한 적을 함께 겨누고 있음
+function craneCount(b, t) { return b.units.filter(a => a.alive && a.side !== t.side && traitsOf(a).includes('수군') && hexDist(a, t) <= a.range).length; }
+function craneMul(b, u, t) {
+  if (!traitsOf(u).includes('수군') || craneCount(b, t) < 3) return 1;
+  return b.units.some(a => a.alive && a.side === u.side && a.type === 'yiSS') ? 1.5 : 1.3;
+}
+
 // pos 자리에서 공격할 수 있는 적
-function targetsFrom(b, u, pos = u) { return enemiesOf(b, u).filter(o => hexDist(pos, o) <= u.range); }
+function targetsFrom(b, u, pos = u) { return enemiesOf(b, u).filter(o => hexDist(pos, o) <= u.range && !hiddenFrom(b, pos, o)); }
 
 function dealDamage(b, ev, src, tgt, amount, opts = {}) {
   if (!tgt.alive) return;
+  // 판옥선·거북선: 바로 옆에 붙어 올라타려는 공격을 덜 받음
+  if (tgt.antiBoard && src.range <= 1 && hexDist(src, tgt) <= 1) { amount *= 1 - tgt.antiBoard; ev.push({ k: 'rule', rule: 'board', id: tgt.id }); }
   let dmg = amount * (0.92 + Math.random() * 0.16);
   let crit = false;
   if (!opts.noCrit && Math.random() < src.crit) { dmg *= 1.6; crit = true; }
@@ -202,7 +222,10 @@ function doAttack(b, u, t) {
   const hits = [t];
   if (u.splash) for (const o of b.units) if (o.alive && o.side === t.side && o !== t && hexDist(o, t) === 1) hits.push(o);
   ev.push({ k: 'atk', from: u.id, to: t.id, ranged: u.range > 1 });
-  hits.forEach((h, i) => dealDamage(b, ev, u, h, u.atk * u.buffAtk * (i === 0 ? 1 : 0.5)));
+  let mul = craneMul(b, u, t);
+  if (mul > 1) ev.push({ k: 'rule', rule: 'crane', id: u.id, to: t.id });
+  if (u.ambush) { mul *= 1.5; u.ambush = false; ev.push({ k: 'rule', rule: 'ambush', id: u.id, to: t.id }); }
+  hits.forEach((h, i) => dealDamage(b, ev, u, h, u.atk * u.buffAtk * mul * (i === 0 ? 1 : 0.5)));
   if (u.maxMana) u.mana = Math.min(u.maxMana, u.mana + MANA_ATK);
   u.done = true;
   checkEnd(b, ev);
@@ -227,6 +250,7 @@ function beginTurn(b, side) {
   for (const u of b.units) {
     if (!u.alive || u.side !== side) continue;
     u.moved = false; u.done = false;
+    u.ambush = traitsOf(u).includes('의병') && cellOf(b, u) === 'forest';   // 숲에 숨은 채 차례를 시작하면 매복
     if (u.regen) heal(ev, u, u.maxHp * u.regen);
     if (u.stun > 0) { u.stun--; u.done = true; ev.push({ k: 'rest', id: u.id }); }
   }
@@ -258,13 +282,18 @@ function checkEnd(b, ev) {
 
 // ───────── 생각하는 군사 (적, 그리고 「자동」 버튼) ─────────
 function pickTarget(u, list) {
-  // 한 번에 쓰러뜨릴 수 있는 적 → 체력이 가장 적은 적 (성은 맨 나중)
+  // 한 번에 쓰러뜨릴 수 있는 적 → 체력이 가장 적은 적 (성은 맨 나중, 청 기병은 성 먼저)
   const dmg = u.atk * u.buffAtk;
-  return list.slice().sort((a, c) => ((a.hp + a.shield <= dmg ? 0 : 1) - (c.hp + c.shield <= dmg ? 0 : 1)) || ((a.fixed ? 1 : 0) - (c.fixed ? 1 : 0)) || (a.hp + a.shield - c.hp - c.shield))[0];
+  const castleFirst = u.rush ? -1 : 1;
+  return list.slice().sort((a, c) => (u.rush ? 0 : ((a.hp + a.shield <= dmg ? 0 : 1) - (c.hp + c.shield <= dmg ? 0 : 1))) || castleFirst * ((a.fixed ? 1 : 0) - (c.fixed ? 1 : 0)) || (a.hp + a.shield - c.hp - c.shield))[0];
 }
 function planMove(b, u) {
-  const foes = enemiesOf(b, u);
+  let foes = enemiesOf(b, u).filter(o => !hiddenFrom(b, u, o));
+  if (!foes.length) foes = enemiesOf(b, u);
   if (!foes.length) return null;
+  // 청 기병: 우리 군사를 지나쳐 성을 향해 곧장 달림
+  const castle = u.rush && foes.find(o => o.fixed);
+  if (castle) foes = [castle];
   const cells = [{ x: u.x, y: u.y, d: 0 }].concat(reachable(b, u));
   let best = null, bs = -1e9;
   for (const c of cells) {

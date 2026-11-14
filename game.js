@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.004';
+const VERSION = 'v1.005';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -50,8 +50,8 @@ function showStory(lines, done) {
   const box = $('#story');
   const render = () => {
     const l = lines[i], who = $('#storyWho');
-    who.textContent = l.who;
-    who.className = 'story-who' + (['세종','인조'].includes(l.who) ? ' king' : l.who === '안내' ? ' guide' : '');
+    who.textContent = l.who + (l.more ? ' · 📜 더 알아보기' : '');
+    who.className = 'story-who' + (['세종','인조'].includes(l.who) ? ' king' : l.who === '안내' ? ' guide' : l.who === '성 밖 소식' ? ' news' : '');
     $('#storyText').textContent = l.text;
     $('#storyPage').textContent = (i + 1) + ' / ' + lines.length;
     $('#btnStoryNext').textContent = i === lines.length - 1 ? '확인 ✔' : '다음 ▶';
@@ -64,21 +64,63 @@ function showStory(lines, done) {
 function modal(html, bind) { $('#modalBox').innerHTML = html; $('#modal').classList.remove('hidden'); bind && bind($('#modalBox')); }
 function closeModal() { $('#modal').classList.add('hidden'); }
 
-function showQuiz(qz, done) {
-  if (!qz) { done(); return; }
+function showQuiz(qz, done, o = {}) {
+  if (!qz) { done(false); return; }
   const order = qz.a.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
-  modal(`<h3>📜 역사 퀴즈</h3><p class="q">${qz.q}</p><div>${order.map(i => `<button class="btn choice" data-i="${i}">${qz.a[i]}</button>`).join('')}</div><div id="qAfter"></div>`, (box) => {
+  modal(`<h3>${o.title || '📜 역사 퀴즈'}${o.tag ? ` <span class="qtag">${o.tag}</span>` : ''}</h3>${o.sub ? `<p class="muted small">${o.sub}</p>` : ''}<p class="q">${qz.q}</p><div>${order.map(i => `<button class="btn choice" data-i="${i}">${qz.a[i]}</button>`).join('')}</div><div id="qAfter"></div>`, (box) => {
     box.querySelectorAll('.choice').forEach(b => b.onclick = () => {
       const pick = +b.dataset.i;
       box.querySelectorAll('.choice').forEach(x => { x.disabled = true; if (+x.dataset.i === qz.ok) x.classList.add('right'); });
       let msg;
-      if (pick === qz.ok) { play('coin'); S.gold += 2; updateTop(); msg = '<b>정답! 군량 +2</b>'; }
-      else { b.classList.add('wrong'); play('error'); msg = '<b>아쉬워요! 정답을 확인해 보세요.</b>'; }
+      if (pick === qz.ok) { play('coin'); S.gold += 2; updateTop(); msg = `<b>정답! 군량 +2${o.okMore || ''}</b>`; }
+      else { b.classList.add('wrong'); play('error'); msg = `<b>아쉬워요! 정답을 확인해 보세요.${o.wrongMore || ''}</b>`; }
       box.querySelector('#qAfter').innerHTML = `<div class="why">${msg}<br>${qz.why}</div><p><button class="btn big" id="qNext">다음</button></p>`;
-      box.querySelector('#qNext').onclick = () => { closeModal(); done(); };
+      box.querySelector('#qNext').onclick = () => { closeModal(); done(pick === qz.ok); };
     });
   });
+}
+
+// ───────── 작전 회의: 전투 전에 앞에서 배운 것을 떠올리기 ─────────
+// 단계 퀴즈는 그 단계 바로 뒤가 아니라 다음 전투 전에 물어봄(시간을 두고 떠올리면 오래 기억해요).
+// 틀린 문제는 S.retry에 남아 다음 작전 회의에 다시 나옴.
+const BRIEF_MANA = 20;
+function quizByKey(k) {
+  if (EXTRA_QUIZ[k]) return { qz: EXTRA_QUIZ[k], ch: EXTRA_QUIZ[k].ch };
+  for (const c of CHAPTERS) for (const st of (c.stages || [])) if (st.id === k) return { qz: st.quiz, ch: c.id };
+  return null;
+}
+const quizReady = (k) => { const r = quizByKey(k); return r && r.qz && (r.ch === chap().id || save.cleared[r.ch]); };
+function runBrief(keys, done, final) {
+  const list = [];
+  S.retry.forEach(k => { if (list.length < 2 && !list.includes(k)) list.push(k); });
+  keys.forEach(k => { if (list.length < 3 && !list.includes(k) && quizReady(k)) list.push(k); });
+  if (final) S.retry.forEach(k => { if (!list.includes(k)) list.push(k); });
+  if (!list.length) return done();
+  let ok = 0, i = 0;
+  const next = () => {
+    if (i >= list.length) {
+      if (!final) {
+        S.briefMana = ok * BRIEF_MANA;
+        toast(ok ? `🗺 작전 성공! 이번 전투에서 모든 군사의 마나 +${S.briefMana}` : '🗺 틀린 문제는 다음 작전 회의에서 다시 나와요', 2400);
+      }
+      return done();
+    }
+    const k = list[i++], qz = quizByKey(k).qz, again = S.retry.includes(k);
+    showQuiz(qz, (right) => {
+      S.quizLog.total++;
+      if (right) { ok++; S.quizLog.ok++; S.retry = S.retry.filter(x => x !== k); }
+      else if (!S.retry.includes(k)) S.retry.push(k);
+      next();
+    }, {
+      title: `${final ? '📜 마지막 점검' : '🗺 작전 회의'} ${i}/${list.length}`,
+      tag: [again ? '🔁 다시 풀기' : '', qz.more ? '📜 더 알아보기' : ''].filter(Boolean).join(' · '),
+      sub: i === 1 ? (final ? '이번 장에서 배운 것을 마지막으로 떠올려 봐요.' : '싸우기 전에, 지난번에 배운 것을 떠올려 봐요. 맞힐 때마다 🌾 군량 +2, 그리고 이번 전투에서 모든 군사의 마나가 더 찬 채로 시작해요!') : '',
+      okMore: final ? '' : ` · 마나 +${BRIEF_MANA}`,
+      wrongMore: final ? '' : ' 이 문제는 다음 작전 회의에 다시 나와요.',
+    });
+  };
+  next();
 }
 
 // ───────── 시작 화면, 장 선택 ─────────
@@ -104,16 +146,28 @@ function startChapter(i) {
   const c = CHAPTERS[i];
   S = { ch: i, stage: 0, day: 1, gold: c.startGold, level: c.startLevel, xp: 0, streak: 0,
         bench: Array(BENCH).fill(null), board: [], items: [], shop: [], phase: 'prep',
-        sel: null, info: null, maps: [], food: 100, wood: 100, held: 0, meetBuff: null, speed: 1, firstRoll: true };
+        sel: null, info: null, maps: [], food: 100, wood: 100, held: 0, meetBuff: null, speed: 1, firstRoll: true,
+        retry: [], briefMana: 0, quizLog: { ok: 0, total: 0 }, seen: new Set(), said: new Set() };
   show('game');
   $('#tbSiege').classList.toggle('hidden', !c.siege);
   updateTop();
   showStory(c.intro, () => c.siege ? startDay(1) : startStage(0));
 }
-function startStage(i) { S.stage = i; S.firstRoll = true; showStory(stage().pre, () => enterPrep(true)); }
+function startStage(i) {
+  S.stage = i; S.firstRoll = true; S.briefMana = 0;
+  showStory(stage().pre, () => runBrief(stage().brief || [], () => enterPrep(true)));
+}
 function startDay(d) {
-  S.day = d; updateTop();
-  showStory([{ who:'안내', text:`${d}일째 아침이에요. 🍚 식량 ${S.food}, 🔥 땔감 ${S.wood} 남았어요.` }], () => enterPrep(true));
+  const c = chap();
+  S.day = d; S.briefMana = 0; updateTop();
+  const lines = [{ who:'안내', text:`${d}일째 아침이에요. 🍚 식량 ${S.food}, 🔥 땔감 ${S.wood} 남았어요.` }].concat((c.news && c.news[d]) || []);
+  showStory(lines, () => runBrief((c.dayBrief && c.dayBrief[d]) || [], () => enterPrep(true)));
+}
+// 이 단계 판의 지형 칸 (지금은 숲)
+function cellsNow() {
+  const st = stage(), m = {};
+  if (st && st.forest) st.forest.forEach(([x, y]) => { m[x + ',' + y] = 'forest'; });
+  return m;
 }
 function enemiesNow() {
   const c = chap();
@@ -309,14 +363,15 @@ window.addEventListener('resize', sizeBoard);
 function boardBase() {
   const c = chap();
   const terrain = c.siege ? 'siege' : stage().terrain;
+  const cells = cellsNow();
   const b = $('#board');
   b.className = 'board ' + terrain + ' bg-' + (c.siege ? 'snow' : stage().bg);
-  let cells = '';
+  let html = '';
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
     const mine = y >= 3;
-    cells += `<div class="hex ${mine ? 'mine' : 'foe'}${c.siege && y === 5 ? ' wall' : ''}" data-x="${x}" data-y="${y}" style="left:${hexLeft(x, y)}%;top:${hexTop(y)}%;width:${HW}%;height:${HH}%"></div>`;
+    html += `<div class="hex ${mine ? 'mine' : 'foe'}${c.siege && y === 5 ? ' wall' : ''}${cells[x + ',' + y] ? ' ' + cells[x + ',' + y] : ''}" data-x="${x}" data-y="${y}" style="left:${hexLeft(x, y)}%;top:${hexTop(y)}%;width:${HW}%;height:${HH}%"></div>`;
   }
-  b.innerHTML = cells + '<div class="frontline"></div>';
+  b.innerHTML = html + '<div class="frontline"></div>';
   b.querySelectorAll('.hex').forEach(h => h.onclick = () => tapCell(+h.dataset.x, +h.dataset.y));
 }
 function renderBoardPrep() {
@@ -405,7 +460,7 @@ function renderInfo() {
     <div class="stats">❤ ${Math.round(d.hp * m)} · ⚔ ${Math.round(d.atk * m * ATK_SCALE)} · 사거리 ${rng}${d.fixed ? '' : ` · 이동 ${moveOf(d)}칸`}</div>
     ${I.live ? `<div class="stats now">지금 ❤ ${I.live.hp} / ${I.live.maxHp}${I.live.shield > 0 ? ` 🛡${Math.round(I.live.shield)}` : ''}${I.live.maxMana ? ` · 마나 ${I.live.mana} / ${I.live.maxMana}` : ''}</div>` : ''}
     <div class="stats">${(d.traits || []).map(t => TRAITS[t].icon + t).join(' ')}</div></div></div>
-    ${sk ? `<div class="skill"><b>💥 ${sk.name}</b>${sk.desc ? ' — ' + sk.desc : ''}</div>` : ''}${items}<p class="fact">📜 ${d.fact}</p>`;
+    ${sk ? `<div class="skill"><b>💥 ${sk.name}</b>${sk.desc ? ' — ' + sk.desc : ''}</div>` : ''}${d.rule ? `<div class="rule">${d.rule}</div>` : ''}${items}<p class="fact">📜 ${d.fact}</p>`;
 }
 function updateTop() {
   const c = chap();
@@ -430,6 +485,29 @@ function renderAll() {
   S.mergedUid = null;
 }
 setInterval(() => { const b = $('#board'); if (b) b.classList.toggle('beat'); document.body.classList.toggle('beat'); }, 420);
+
+// ───────── 역사 한마디 (전투 중 말풍선, 하나씩 차례로) ─────────
+const sayQ = [];
+let sayOn = false;
+function say(type, html, more) {
+  sayQ.push({ type, html, more });
+  if (!sayOn) nextSay();
+}
+function sayRule(k) {
+  const r = RULE_SAY[k];
+  if (!r || S.said.has(k)) return;
+  S.said.add(k); say(r.type, r.text, r.more);
+}
+function nextSay() {
+  const s = sayQ.shift();
+  if (!s) { sayOn = false; return; }
+  sayOn = true;
+  const el = document.createElement('div');
+  el.className = 'saying';
+  el.innerHTML = `${s.type ? `<span class="mini ${UNITS[s.type].side}">${spriteHTML(s.type)}</span>` : ''}<p>${s.more ? '<span class="qtag">📜 더 알아보기</span> ' : ''}${s.html}</p>`;
+  $('.board-col').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => { el.remove(); nextSay(); }, 400); }, 4600);
+}
 
 // ───────── 전투 (장기처럼 차례를 번갈아) ─────────
 $('#btnFight').onclick = () => {
@@ -456,8 +534,10 @@ function startBattle() {
   if (c.siege) {
     players.push({ type: 'castle', star: 1, x: 3, y: 5 });
     const m = siegeMul();
-    opts = { surviveRounds: c.surviveRounds, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp };
+    opts = { surviveRounds: c.surviveRounds, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp,
+             castleHpMul: c.cannonDay && S.day >= c.cannonDay ? c.cannonHp : 0 };
   } else opts = { mult: stage().mult };
+  opts.startMana = S.briefMana; opts.cells = cellsNow();
   const bt = createBattle(players, enemiesNow(), opts);
   S.battle = bt;
   S.bs = { sel: null, mode: null, busy: true, finished: false };
@@ -465,6 +545,11 @@ function startBattle() {
   $('#board').insertAdjacentHTML('beforeend', bt.units.map((u, i) => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, bars: true, items: u.items, odd: i & 1 })).join(''));
   syncBars();
   renderTraits(); renderBench();
+  // 역사 한마디: 처음 만나는 적
+  [...new Set(bt.units.filter(u => u.side === 'e').map(u => u.type))].filter(t => !S.seen.has(t)).slice(0, 2)
+    .forEach(t => { S.seen.add(t); say(t, `<b>${UNITS[t].name}</b> — ${UNITS[t].fact}`); });
+  bt.units.filter(u => u.side === 'e').forEach(u => S.seen.add(u.type));
+  if (bt.units.some(u => u.rush)) sayRule('rush');
   playerTurn();
 }
 function playerTurn() {
@@ -487,12 +572,13 @@ function renderBattle() {
     el.classList.toggle('done', mine && bt.side === 'p' && !canAct(u));
     el.classList.toggle('sel', u === sel);
     el.classList.toggle('sk-ready', u.alive && skillReady(u));
-    el.classList.remove('tgt');
+    el.classList.toggle('hidden-in', u.alive && u.side === 'p' && traitsOf(u).includes('의병') && cellOf(bt, u) === 'forest');
+    el.classList.remove('tgt', 'crane');
   }
   const targets = sel && myTurn ? targetsFrom(bt, sel) : [];
   if (sel && myTurn) {
     if (bs.mode !== 'skill') reachable(bt, sel).forEach(p => hexEl(p.x, p.y).classList.add('mv'));
-    targets.forEach(t => { hexEl(t.x, t.y).classList.add('tg'); pieceEl(t.id).classList.add('tgt'); });
+    targets.forEach(t => { hexEl(t.x, t.y).classList.add('tg'); pieceEl(t.id).classList.add('tgt'); if (craneMul(bt, sel, t) > 1) pieceEl(t.id).classList.add('crane'); });
   }
   // 버튼
   const bSk = $('#btnSkill');
@@ -515,6 +601,7 @@ function renderBattle() {
   else if (bs.mode === 'skill') hint = `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르세요.`;
   else if (!sel.moved) hint = targets.length ? '파란 칸을 누르면 이동, 빨간 칸의 적을 누르면 공격해요.' : '파란 칸을 눌러 이동하세요. 적이 사거리 안에 오면 빨갛게 빛나요.';
   else hint = targets.length ? '빨간 칸의 적을 눌러 공격하세요.' : '공격할 수 있는 적이 없어요.';
+  if (sel && myTurn && targets.some(t => craneMul(bt, sel, t) > 1)) hint += ' 🪶 「학익진」 표시가 있는 적은 더 세게 칠 수 있어요!';
   $('#battleHint').textContent = hint;
 }
 function tapBattle(x, y) {
@@ -694,9 +781,15 @@ function drawEvents(ev) {
       const u = bt.units[e.id];
       const sk = SKILLS[UNITS[u.type].skill];
       floatText(u, sk.name + '!', 'cast ' + u.side);
+      if (u.side === 'p' && !S.said.has('sk-' + u.type)) { S.said.add('sk-' + u.type); say(u.type, `<b>${UNITS[u.type].name}</b> — ${UNITS[u.type].fact}`); }
       if (e.big) { banner(`${UNITS[u.type].name} — ${sk.name}!`, u.side); const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); play('boom', .6); }
       else play('ok', .35);
       if (sk.fx) (e.targets || []).slice(0, 4).forEach((id, i) => setTimeout(() => playFx(sk.fx, bt.units[id], e.big ? 1.15 : .85), i * 90));
+    } else if (e.k === 'rule') {
+      const u = bt.units[e.id];
+      if (e.rule === 'crane') floatText(u, '🪶 학익진!', 'cast p');
+      else if (e.rule === 'ambush') floatText(u, '🌲 매복!', 'cast p');
+      sayRule(e.rule);
     } else if (e.k === 'rest') {
       floatText(bt.units[e.id], '기절해서 쉬어요', 'cast ' + bt.units[e.id].side);
     } else if (e.k === 'stun') {
@@ -769,7 +862,6 @@ function afterStage(won) {
   if (won) steps.push((n) => pickItem(n));
   steps.push((n) => showStory(lines, n));
   if (st.map) steps.push((n) => showMap(st.map, n));
-  steps.push((n) => showQuiz(st.quiz, n));
   steps.push((n) => { if (st.reward.xp) addXp(st.reward.xp); n(); });
   seq(steps, () => { if (S.stage + 1 < c.stages.length) startStage(S.stage + 1); else endChapter(); });
 }
@@ -778,7 +870,8 @@ function endChapter() {
   const steps = [(n) => showStory(c.outro, n)];
   if (c.id === 1) steps.push((n) => showMap('all', n));
   if (c.damage) steps.push((n) => showDamage('전쟁의 결과', c.damage, n));
-  if (c.endQuiz) steps.push((n) => showQuiz(c.endQuiz, n));
+  steps.push((n) => runBrief(c.endBrief || [], n, true));
+  if (c.endQuiz) steps.push((n) => showQuiz(c.endQuiz, () => n()));
   steps.push((n) => showSummary(c, n));
   seq(steps, () => { save.cleared[c.id] = true; writeSave(); renderChapters(); show('chapters'); });
 }
@@ -850,7 +943,8 @@ function surrender(early) {
         box.querySelector('#eNext').onclick = () => { closeModal(); n(); };
       });
     },
-    (n) => showQuiz(c.endQuiz, n),
+    (n) => runBrief([], n, true),
+    (n) => showQuiz(c.endQuiz, () => n()),
     (n) => showSummary(c, n),
   ], () => { save.cleared[c.id] = true; writeSave(); renderChapters(); show('chapters'); });
 }
@@ -892,7 +986,7 @@ function syncSoundBtn() { $('#btnSound').textContent = save.sound ? '🔊 소리
 $('#btnMenu').onclick = () => { syncSoundBtn(); $('#menu').classList.remove('hidden'); };
 $('#btnCloseMenu').onclick = () => $('#menu').classList.add('hidden');
 $('#btnSound').onclick = () => { save.sound = !save.sound; writeSave(); syncSoundBtn(); };
-function stopAll() { $('#menu').classList.add('hidden'); bTok++; if (S) backToBoard(); closeModal(); $('#story').classList.add('hidden'); }
+function stopAll() { $('#menu').classList.add('hidden'); bTok++; sayQ.length = 0; if (S) backToBoard(); closeModal(); $('#story').classList.add('hidden'); }
 $('#btnRestartCh').onclick = () => { stopAll(); startChapter(S.ch); };
 $('#btnToChapters').onclick = () => { stopAll(); renderChapters(); show('chapters'); };
 
