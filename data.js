@@ -15,18 +15,18 @@ const UNITS = {
   // 2등급
   cavalry: { side:'p', name:'기병',   cost:2, hp:75,  atk:10, range:1, cd:2, move:2, traits:['관군'], skill:'charge',
              fact:'말을 탄 군사예요. 빠르게 달려가 싸워요.' },
-  ship:    { side:'p', name:'병선',   cost:2, hp:80,  atk:8,  range:2, cd:2, move:1, traits:['관군'], skill:'shipCannon',
+  ship:    { side:'p', name:'병선',   cost:2, hp:80,  atk:8,  range:2, cd:2, move:1, traits:['관군'], skill:'shipCannon', naval:true, carry:2, rule:'⛵ 물 칸에만 다녀요. 군사 2명을 태워 바다를 건너고, 땅에 닿으면 군사를 내려 줘요.',
              fact:'바다를 건너 쓰시마섬으로 간 조선의 배예요.' },
   gunner:  { side:'p', name:'포수',   cost:2, hp:45,  atk:12, range:3, cd:2, move:1, traits:['관군'], skill:'snipe',
              fact:'임진왜란 뒤 조선도 조총을 쓰는 군사를 길렀어요.' },
-  panok:   { side:'p', name:'판옥선', cost:2, hp:95,  atk:10, range:2, cd:2, move:1, traits:['수군'], skill:'panokFire', antiBoard:0.4, rule:'🛡 크고 튼튼해서, 바로 옆에 붙은 적의 공격을 덜 받아요.',
+  panok:   { side:'p', name:'판옥선', cost:2, hp:95,  atk:10, range:2, cd:2, move:1, traits:['수군'], skill:'panokFire', antiBoard:0.4, naval:true, rule:'🛡 크고 튼튼해서, 바로 옆에 붙은 적의 공격을 덜 받아요.',
              fact:'조선 수군의 크고 튼튼한 배예요. 대포를 쏘아요.' },
   ming:    { side:'p', name:'명군',   cost:2, hp:90,  atk:10, range:1, cd:2, move:1, traits:['명군'], skill:'mingShield',
              fact:'조선을 도우러 온 명나라 군사예요.' },
   // 3등급
   rocket:  { side:'p', name:'신기전', cost:3, hp:35,  atk:8,  range:4, cd:3, move:1, traits:['화약'], splash:true, siege:true, skill:'rocketBarrage',
              fact:'세종 때 만든 로켓 화살이에요. 한 번에 여러 적을 맞혀요.' },
-  turtle:  { side:'p', name:'거북선', cost:3, hp:150, atk:13, range:1, cd:2, move:1, traits:['수군'], skill:'turtleRam', antiBoard:0.5, rule:'🛡 덮개가 있어서, 바로 옆에 붙은 적의 공격을 아주 덜 받아요.',
+  turtle:  { side:'p', name:'거북선', cost:3, hp:150, atk:13, range:1, cd:2, move:1, traits:['수군'], skill:'turtleRam', antiBoard:0.5, naval:true, rule:'🛡 덮개가 있어서, 바로 옆에 붙은 적의 공격을 아주 덜 받아요.',
              fact:'지붕을 덮어 적이 올라타기 어려운 배예요. 이순신 수군의 자랑이에요.' },
   milLead: { side:'p', name:'의병장', cost:3, hp:115, atk:12, range:1, cd:2, move:1, traits:['의병'], skill:'uprising', rule:'🌲 숲 칸에 숨으면 멀리 있는 적이 찾지 못해요. 숨어 있다가 치면 「매복」!',
              fact:'의병을 이끈 사람이에요. 고향 땅을 잘 알아 적을 놀라게 했어요.' },
@@ -40,7 +40,7 @@ const UNITS = {
   kimJS:   { side:'p', name:'김종서', cost:4, hp:135, atk:12, range:1, cd:2, move:2, traits:['장수'], general:true, skill:'tumenRally',
              fact:'두만강 쪽의 여진을 몰아내는 데 앞장선 장수예요.' },
   // 5등급
-  yiSS:    { side:'p', name:'이순신', cost:5, hp:150, atk:15, range:3, cd:2, move:1, traits:['수군','장수'], general:true, skill:'crane', rule:'🪶 수군 배 3척이 한 적을 함께 겨누면 「학익진」! 이순신이 있으면 더 세게 쳐요.',
+  yiSS:    { side:'p', name:'이순신', cost:5, hp:150, atk:15, range:3, cd:2, move:1, traits:['수군','장수'], general:true, skill:'crane', naval:true, rule:'🪶 수군 배 3척이 한 적을 함께 겨누면 「학익진」! 이순신이 있으면 더 세게 쳐요.',
              fact:'수군을 이끌고 바다에서 일본군을 물리친 장수예요. 「학익진」은 학이 날개를 편 모양으로 적을 둘러싸는 진법이에요.' },
   wall:    { side:'e', name:'성벽', hp:110, atk:0, range:0, cd:99, move:0, traits:[], fixed:true, wall:true,
              rule:'🧱 명 포병·신기전 같은 대포·화약 무기는 성벽을 잘 부숴요. 다른 군사는 조금밖에 못 깎아요.',
@@ -67,7 +67,7 @@ const UNITS = {
              fact:'칼과 창을 든 일본군이에요.' },
   jpGen:   { side:'e', name:'일본 장수', hp:190, atk:14, range:1, cd:2, move:1, general:true, skill:'eStun',
              fact:'많은 군사를 이끌고 조선을 침략한 일본군 장수예요.' },
-  jpShip:  { side:'e', name:'일본 배',  hp:80,  atk:10, range:1, cd:2, move:1, rule:'⚓ 배를 붙여 올라타 싸우려고 해요.',
+  jpShip:  { side:'e', name:'일본 배',  hp:80,  atk:10, range:1, cd:2, move:1, naval:true, rule:'⚓ 배를 붙여 올라타 싸우려고 해요.',
              fact:'일본군을 싣고 바다를 건너온 배예요.' },
   qing:    { side:'e', name:'청 기병',  hp:80,  atk:11, range:1, cd:2, move:2, skill:'eStun', rush:true, rule:'🐎 우리 군사를 지나쳐 성을 향해 곧장 달려요. 길목을 막으세요!',
              fact:'청은 여진이 세운 나라예요. 말을 탄 군사가 아주 강했어요.' },
@@ -134,7 +134,7 @@ const TRAITS = {
   '명군': { icon:'🤝', steps:[2], desc:'명군 2명: 명군 공격력 +30%' },
   '화약': { icon:'💥', steps:[], desc:'주변 적에게도 피해를 줘요' },
 };
-const CRISIS_DESC = '수군·의병·명군 효과가 모두 켜지면 「위기 극복」: 모든 아군 공격력·체력 +20%';
+const CRISIS_DESC = '⚓ 수군의 승리(2-2) + ✊ 의병의 승리(2-3) + 🤝 명군 2명 = 「위기 극복」: 모든 아군 공격력·체력 +20%';
 
 // ───────── 장(챕터)과 단계 ─────────
 // enemies: [유닛 id, 열(0~5), 행(0~2)]
@@ -153,7 +153,8 @@ const CHAPTERS = [
     ],
     stages: [
       {
-        id:'1-1', bg:'sea', feature:'leeJM', title:'쓰시마섬을 공격하라', terrain:'sea', mult:0.7,
+        id:'1-1', bg:'landing', feature:'leeJM', title:'쓰시마섬을 공격하라', terrain:'sea', mult:0.7,
+        sea:true, land:[[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[2,2],[3,2],[4,2]],
         leader:'wokouB',                                   // 이 적을 쓰러뜨리면 남은 왜구가 항복
         forest:[[0,0],[6,0]],                              // 섬의 숲·바위 — 매복 자리
         ambush:{ round:2, units:[['wokou',0,0],['wokou',6,0]] },
@@ -162,7 +163,8 @@ const CHAPTERS = [
         pre:[
           { who:'이야기', text:'바닷가 마을을 노략질하던 왜구의 소굴은 쓰시마섬이었어요.' },
           { who:'세종', text:'왜구의 소굴인 쓰시마섬을 공격하라!' },
-          { who:'안내', text:'이번 전투는 바다 위에서 벌어져요. 「병선」과 장수 「이종무」(4등급)를 써 보세요.' },
+          { who:'안내', text:'쓰시마섬은 바다 건너에 있어요. 군사는 바다를 걸어서 건널 수 없으니 「병선」이 꼭 필요해요!' },
+          { who:'안내', text:'⛵ 병선을 바다 칸에 놓고, 군사를 병선 위에 놓으면 배에 타요(1척에 2명). 배가 섬에 닿으면 군사가 내려서 싸워요.' },
           { who:'안내', text:'👑 왜구 두목을 쓰러뜨리면 남은 왜구가 항복해요. 섬의 숲을 조심하세요!' },
           { who:'이야기', more:true, text:'1419년, 장수 이종무는 배 200여 척과 군사 1만 7천여 명을 이끌고 쓰시마섬으로 떠났어요.' },
         ],
@@ -264,18 +266,19 @@ const CHAPTERS = [
                why:'일본군은 조총이라는 새로운 무기를 갖추고 있었어요.' },
       },
       {
-        id:'2-2', bg:'sea', feature:'yiSS', brief:['2-1'], title:'바다를 지켜라 — 이순신의 수군', terrain:'sea', mult:1.1,
-        pool:['panok','turtle','yiSS','archer','spear'],
-        enemies:[['jpShip',0,1],['jpShip',2,1],['jpShip',4,1],['gun',1,0],['gun',4,0]],
+        id:'2-2', bg:'sea', feature:'yiSS', brief:['2-1'], title:'바다를 지켜라 — 이순신의 수군', terrain:'sea', mult:1.7, sea:true,
+        pool:['panok','turtle','yiSS','ship'],
+        enemies:[['jpShip',0,1],['jpShip',2,1],['jpShip',4,1],['jpShip',1,0],['jpShip',5,0]],
         pre:[
           { who:'이야기', text:'바다에서는 이순신이 이끄는 수군이 일본군을 막았어요.' },
-          { who:'안내', text:'⚓ 수군 2명이 모이면 수군의 공격력이 올라가요. 이순신(5등급)은 수군 2명 몫!' },
+          { who:'안내', text:'이번 싸움은 모두 바다예요. 배만 나설 수 있어요! ⚓ 수군 2명이 모이면 수군의 공격력이 올라가요. 이순신(5등급)은 수군 2명 몫!' },
           { who:'안내', text:'🪶 수군 배 3척이 한 적을 함께 겨누면 「학익진」! 그 적을 더 세게 쳐요. 판옥선·거북선은 바로 옆에 붙은 적의 공격을 덜 받으니, 멀리서 둘러싸 보세요.' },
         ],
         win:[
           { who:'이야기', text:'이순신이 이끄는 수군이 바다에서 일본군을 물리쳤어요!' },
           { who:'이야기', more:true, text:'이순신은 옥포에서 첫 승리를 거둔 뒤, 사천·당포·한산도·부산포에서 잇달아 이겼어요. 거북선은 사천 해전에서 처음 싸움에 나섰어요.' },
-          { who:'안내', text:'승리 보상: 경험치 +4' },
+          { who:'이야기', text:'바닷길이 막히자 일본군은 식량과 무기를 제대로 실어 나르지 못하게 됐어요.' },
+          { who:'안내', text:'⚓ 「수군의 승리」를 얻었어요! 이제부터 일본군이 조금 약해져요. 승리 보상: 경험치 +4' },
         ],
         reward:{ xp:4 },
         quiz:{ q:'임진왜란 때 바다에서 활약한 수군을 이끈 사람은 누구일까요?', a:['세종','이순신','인조'], ok:1,
@@ -283,8 +286,8 @@ const CHAPTERS = [
       },
       {
         id:'2-3', bg:'field', brief:['2-2','crane'], title:'의병이 일어나다',
-        forest:[[0,3],[1,3],[5,3],[6,3],[3,2],[1,5],[5,5]], terrain:'land', mult:1.2,
-        pool:['militia','milLead','panok','turtle','yiSS','spear','archer'],
+        forest:[[0,3],[1,3],[5,3],[6,3],[3,2],[1,5],[5,5]], terrain:'land', mult:0.8,
+        pool:['militia','milLead','spear','archer','cavalry'],
         enemies:[['samurai',1,1],['samurai',2,1],['samurai',4,1],['gun',0,0],['gun',3,0],['gun',5,0],['samurai',3,1]],
         pre:[
           { who:'이야기', text:'나라를 지키려고 백성들이 스스로 군대를 만들어 일어났어요. 이들을 「의병」이라고 해요.' },
@@ -293,20 +296,20 @@ const CHAPTERS = [
         ],
         win:[
           { who:'이야기', text:'의병들이 곳곳에서 일본군을 무찔렀어요!' },
-          { who:'안내', text:'승리 보상: 경험치 +2' },
+          { who:'안내', text:'✊ 「의병의 승리」를 얻었어요! 승리 보상: 경험치 +2' },
         ],
         reward:{ xp:2 },
         quiz:{ q:'나라를 지키려고 백성들이 스스로 일어나 만든 군대를 무엇이라고 할까요?', a:['명군','수군','의병'], ok:2,
                why:'나라를 지키려고 스스로 일어난 백성의 군대를 의병이라고 해요.' },
       },
       {
-        id:'2-4', bg:'field', brief:['2-3'], title:'명군과 함께, 위기를 이겨 내라', terrain:'land', mult:1.35,
+        id:'2-4', bg:'field', brief:['2-3'], title:'명군과 함께, 위기를 이겨 내라', terrain:'land', mult:0.6,
         walls:[[0,2],[1,2],[2,2],[4,2],[5,2],[6,2]],      // 가운데(3,2)는 성문
-        pool:['ming','mingGun','militia','milLead','panok','turtle','yiSS'],
+        pool:['ming','mingGun','militia','milLead','spear','archer'],
         enemies:[['jpGen',2,1],['samurai',0,1],['samurai',1,1],['samurai',4,1],['samurai',5,1],['gun',0,0],['gun',2,0],['gun',3,0],['gun',5,0]],
         pre:[
           { who:'이야기', text:'명나라 군대가 조선을 도우러 왔어요.' },
-          { who:'안내', text:'⚓ 수군, ✊ 의병, 🤝 명군 효과를 모두 켜면 「위기 극복」! 모든 군사가 강해져요.' },
+          { who:'안내', text:'바다에서는 수군이(⚓), 곳곳에서는 의병이(✊) 이미 이겼어요. 이제 🤝 명군 2명이 모이면 「위기 극복」! 모든 군사가 강해져요.' },
           { who:'안내', text:'🧱 일본군이 성벽 뒤에 있어요. 명 포병의 대포는 성벽을 잘 부숴요!' },
           { who:'이야기', more:true, text:'조선군과 명군은 함께 큰 대포를 쏘아 일본군이 차지했던 평양성을 되찾았어요.' },
         ],
@@ -427,6 +430,9 @@ const EXTRA_QUIZ = {
 // ───────── 역사 한마디 (전투 중 말풍선) ─────────
 // 규칙이 처음 쓰일 때 한 번씩 보여 줌. more:true = 📜 더 알아보기
 const RULE_SAY = {
+  landing:   { type:'leeJM', more:true, text:'상륙! 배가 섬에 닿자 군사들이 내렸어요. 이종무는 배 200여 척에 군사를 싣고 쓰시마섬으로 건너갔어요.' },
+  sink:      { type:'ship', more:false, text:'배가 가라앉으면 타고 있던 군사도 함께 잃어요. 배를 잘 지켜 주세요!' },
+  supply:    { type:'panok', more:true, text:'수군이 바닷길을 막아서 일본군이 식량과 무기를 실어 나르기 어려워졌어요. 그래서 일본군이 조금 약해졌어요.' },
   surrender: { type:'leeJM', more:false, text:'두목이 쓰러지자 왜구가 항복했어요! 세종 때 조선은 쓰시마섬을 공격하여 왜구로부터 항복을 받았어요.' },
   ambushE:   { type:'wokou', more:true, text:'쓰시마 사람들이 험한 곳에 숨어 있다가 조선군을 공격했어요. 조선군도 큰 피해를 입었대요.' },
   river:     { type:'jur', more:false, text:'강을 건너는 군사는 강 칸에서 한 번 멈춰야 해요. 여진은 강 건너에 살고 있었어요.' },

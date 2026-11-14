@@ -63,7 +63,7 @@ const ROCK = ['.OOo.', 'OoqqO', 'Ooooo', '.OOO.'];
 const REED = ['k.k', 'kGk', '.G.', '.G.'];
 const WAVE = ['..ww..', '.w..w.', 'w....x'];
 
-function sea() {
+function sea(islands = true) {
   const G = makeGrid('c');
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const t = y / H + (noise(x, y, 18, 3) - 0.5) * 0.25;
@@ -73,11 +73,13 @@ function sea() {
   // 물결
   for (let j = 0; j < 46; j++) { const x = Math.floor(hash(j, 1, 11) * (W - 6)), y = Math.floor(hash(j, 2, 11) * (H - 3)); stamp(G, x, y, WAVE); }
   // 쓰시마 쪽 바위섬(왼쪽 위)과 조선 쪽 섬(오른쪽 아래)
-  ellipse(G, 14, 10, 20, 12, (x, y, d) => (d > 0.8 ? 's' : noise(x, y, 4, 7) > 0.5 ? 'o' : 'O'));
-  ellipse(G, 10, 6, 12, 7, (x, y) => (noise(x, y, 3, 8) > 0.45 ? 'g' : 'G'));
-  stamp(G, 6, 0, PINE); stamp(G, 14, 1, PINE);
-  ellipse(G, 184, 132, 22, 14, (x, y, d) => (d > 0.78 ? 's' : noise(x, y, 4, 9) > 0.5 ? 'h' : 'g'));
-  stamp(G, 178, 122, PINE); stamp(G, 186, 124, PINE);
+  if (islands) {
+    ellipse(G, 14, 10, 20, 12, (x, y, d) => (d > 0.8 ? 's' : noise(x, y, 4, 7) > 0.5 ? 'o' : 'O'));
+    ellipse(G, 10, 6, 12, 7, (x, y) => (noise(x, y, 3, 8) > 0.45 ? 'g' : 'G'));
+    stamp(G, 6, 0, PINE); stamp(G, 14, 1, PINE);
+    ellipse(G, 184, 132, 22, 14, (x, y, d) => (d > 0.78 ? 's' : noise(x, y, 4, 9) > 0.5 ? 'h' : 'g'));
+    stamp(G, 178, 122, PINE); stamp(G, 186, 124, PINE);
+  }
   ellipse(G, 178, 8, 9, 5, (x, y, d) => (d > 0.7 ? 'x' : 'o'));
   for (const [x, y] of [[176, 5], [181, 7]]) put(G, x, y, 'q');
   return G;
@@ -160,7 +162,29 @@ function snowFort() {
   return G;
 }
 
-const scenes = { sea: sea(), river: river(false), riverN: river(true), field: field(), snow: snowFort() };
+// 1-1 상륙전: 위쪽은 쓰시마섬(땅), 아래쪽은 바다. 섬 가운데가 바다 쪽으로 튀어나온 모래사장(상륙 자리)
+// 해안선은 data.js 1-1의 land 칸(0~1행 전부 + 2행 2~4열)과 맞춤
+function landing() {
+  const G = sea(false);
+  const coast = (x) => 46 + 26 * Math.exp(-(((x - 90) / 45) ** 2));
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const c = coast(x);
+    if (y > c + 3) continue;
+    if (y > c - 1) { G[y][x] = hash(x, y, 101) > 0.5 ? 'w' : 'x'; continue; }      // 파도 거품
+    if (y > c - 6) { G[y][x] = hash(x, y, 102) > 0.35 ? 's' : 'S'; continue; }     // 모래사장
+    const n = noise(x, y, 7, 103);
+    G[y][x] = n > 0.66 ? 'H' : n > 0.4 ? 'h' : n > 0.2 ? 'g' : 'G';
+  }
+  // 섬의 숲(매복 자리: 왼쪽 위·오른쪽 위)과 바위
+  for (const [x, y] of [[2, 2], [10, 4], [5, 12], [168, 2], [178, 6], [184, 12]]) stamp(G, x, y, PINE);
+  for (const [x, y] of [[40, 8], [140, 14], [70, 4]]) stamp(G, x, y, ROCK);
+  // 왜구 마을의 초가집
+  const HUT = ['..RRRR..', '.RyyyyR.', 'RyyyyyyR', '.rrrrrr.', '.rRrrRr.', '.rrrrrr.'];
+  for (const [x, y] of [[60, 18], [104, 14], [124, 26]]) stamp(G, x, y, HUT);
+  return G;
+}
+
+const scenes = { sea: sea(false), landing: landing(), river: river(false), riverN: river(true), field: field(), snow: snowFort() };
 const frames = Object.entries(scenes).map(([name, G]) => ({ name, duration: 1000, ops: [{ op: 'grid', x: 0, y: 0, rows: G.map(r => r.join('')) }] }));
 const recipe = { version: 1, name: 'backgrounds', width: W, height: H, palette, frames };
 fs.writeFileSync(path.join(__dirname, 'backgrounds.json'), JSON.stringify(recipe));

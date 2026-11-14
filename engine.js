@@ -41,8 +41,10 @@ function starMul(star) { return star === 3 ? 3.2 : star === 2 ? 1.8 : 1; }
 function createBattle(players, enemies, opts = {}) {
   const units = [];
   let id = 0;
-  const counts = countTraits(players.filter(p => !UNITS[p.type].fixed));
+  const all = players.flatMap(p => [p].concat(p.cargo || []));
+  const counts = countTraits(all.filter(p => !UNITS[p.type].fixed));
   const buffs = activeBuffs(counts);
+  if (opts.crisis !== undefined) buffs.crisis = !!opts.crisis;   // 2장: 수군·의병의 승리를 쌓아 두고 명군이 모이면 켜짐
   const make = (side, type, star, x, y, hpM, atM, items) => {
     const d = UNITS[type];
     const it = items || [];
@@ -61,7 +63,7 @@ function createBattle(players, enemies, opts = {}) {
       antiBoard: d.antiBoard || 0, rush: !!d.rush, ambush: false, wall: !!d.wall,
     };
   };
-  for (const p of players) {
+  const statMul = (p) => {
     const d = UNITS[p.type];
     let hpM = starMul(p.star), atM = starMul(p.star);
     if (!d.fixed) {
@@ -73,10 +75,18 @@ function createBattle(players, enemies, opts = {}) {
       if (buffs.crisis) { hpM *= 1.2; atM *= 1.2; }
       hpM *= (opts.hpMul || 1); atM *= (opts.atkMul || 1);
     }
-    units.push(make('p', p.type, p.star || 1, p.x, p.y, hpM, atM, p.items));
+    return [hpM, atM];
+  };
+  for (const p of players) {
+    const [hpM, atM] = statMul(p);
+    const u = make('p', p.type, p.star || 1, p.x, p.y, hpM, atM, p.items);
+    // 배에 탄 군사: 판 밖에 두었다가 배가 땅에 닿으면 내림
+    u.cargo = (p.cargo || []).map(c => { const [h, a] = statMul(c); return make('p', c.type, c.star || 1, -1, -1, h, a, c.items); });
+    units.push(u);
   }
   const m = opts.mult || 1;
   for (const [type, x, y] of enemies) units.push(make('e', type, 1, x, y, m, m, []));
+  units.forEach((u, i) => { u.id = i; (u.cargo || []).forEach(c => { c.id = -1; }); });   // id = 목록 순서 (배에 탄 군사는 내릴 때 붙임)
   for (const u of units) {
     if (u.side === 'p' && !u.fixed && u.maxMana && opts.startMana) u.mana = Math.min(u.maxMana, u.mana + opts.startMana);
     if (u.fixed && u.side === 'p' && opts.castleHpMul) u.hp = Math.round(u.maxHp * opts.castleHpMul);
@@ -85,6 +95,7 @@ function createBattle(players, enemies, opts = {}) {
   const b = { units, round: 1, side: 'p', over: false, result: null, buffs, counts, cells: Object.assign({}, opts.cells || {}),
     leader: opts.leader || null, forts: 0, surviveRounds: opts.surviveRounds || 0, maxRounds: opts.maxRounds || MAX_ROUNDS };
   // 싸우는 중에 적이 새로 나타남(매복)
+  b.unload = (ship, ev) => unloadShip(b, ship, ev);
   b.spawn = (type, x, y) => {
     if (unitAt(b, x, y)) return null;
     const u = make('e', type, 1, x, y, m, m, []);
@@ -117,7 +128,7 @@ function reachable(b, u) {
       const o = unitAt(b, n.x, n.y);
       if (o && o.side !== u.side) continue;
       const cell = cellOf(b, n);
-      if (cell === 'rock') continue;
+      if (!canStandType(u.type, cell)) continue;
       seen.set(k, step);
       if (!(cell === 'river' || (cell === 'paddy' && u.mv >= 3))) next.push(n);
       if (!o) out.push({ x: n.x, y: n.y, d: step });
@@ -127,6 +138,9 @@ function reachable(b, u) {
   return out;
 }
 // ───────── 역사 규칙 ─────────
+// 배(naval)는 물 칸에만, 군사는 땅 칸에만 설 수 있음
+const isNaval = (type) => !!UNITS[type].naval;
+function canStandType(type, cell) { return isNaval(type) ? cell === 'water' : cell !== 'water' && cell !== 'rock'; }
 const traitsOf = (u) => UNITS[u.type].traits || [];
 const cellOf = (b, p) => (b.cells && b.cells[p.x + ',' + p.y]) || '';
 // 의병: 숲 칸에 숨으면 바로 옆이 아닌 적은 찾지 못함
@@ -160,6 +174,7 @@ function dealDamage(b, ev, src, tgt, amount, opts = {}) {
   ev.push({ k: 'dmg', id: tgt.id, dmg, crit, skill: !!opts.skill });
   if (tgt.hp <= 0) {
     tgt.alive = false; tgt.hp = 0; ev.push({ k: 'die', id: tgt.id });
+    if (tgt.cargo && tgt.cargo.length) { tgt.cargo = []; ev.push({ k: 'rule', rule: 'sink', id: tgt.id }); }
     if (b.leader && tgt.side === 'e' && tgt.type === b.leader) b.surrender = true;   // 두목이 쓰러지면 항복
   }
 }
@@ -228,6 +243,20 @@ function castSkill(b, ev, u, target) {
   ev[ev.findIndex(e => e.k === 'cast' && e.id === u.id)].targets = hit.map(h => h.id);
 }
 
+// 상륙: 배 옆의 빈 땅 칸에 타고 있던 군사를 내림 (내린 군사는 그 차례에 움직일 수 있음)
+function unloadShip(b, ship, ev) {
+  if (!ship.alive || !ship.cargo || !ship.cargo.length) return;
+  for (const n of neighbors(ship.x, ship.y)) {
+    if (!ship.cargo.length) break;
+    const c = ship.cargo[0];
+    if (unitAt(b, n.x, n.y) || !canStandType(c.type, cellOf(b, n))) continue;
+    ship.cargo.shift();
+    c.x = n.x; c.y = n.y; c.id = b.units.length; c.moved = false; c.done = false;
+    b.units.push(c);
+    ev.push({ k: 'land', id: c.id, from: ship.id, x: n.x, y: n.y });
+  }
+}
+
 // ───────── 행동 (화면에서 부르는 것) ─────────
 function doMove(b, u, x, y) {
   const ev = [];
@@ -237,6 +266,7 @@ function doMove(b, u, x, y) {
   const cell = cellOf(b, u);
   if (u.side === 'p' && cell === 'site') { b.cells[x + ',' + y] = 'fort'; b.forts++; ev.push({ k: 'fort', id: u.id, x, y, n: b.forts }); }
   if (cell === 'river') ev.push({ k: 'rule', rule: 'river', id: u.id });
+  unloadShip(b, u, ev);
   if (cell === 'paddy' && u.mv >= 3) ev.push({ k: 'rule', rule: 'paddy', id: u.id });
   return ev;
 }
@@ -278,6 +308,7 @@ function beginTurn(b, side) {
     if (u.regen) heal(ev, u, u.maxHp * u.regen);
     if (u.stun > 0) { u.stun--; u.done = true; ev.push({ k: 'rest', id: u.id }); }
   }
+  for (const u of b.units.slice()) if (u.alive && u.side === side) unloadShip(b, u, ev);
   return ev;
 }
 // 차례 끝: 적 차례가 끝나면 한 바퀴(라운드)가 지나감
@@ -328,6 +359,7 @@ function planMove(b, u) {
     if (inRange) s = 1000 + (u.range > 1 ? near * 5 : -near) - c.d * 0.5;   // 활·총은 멀찍이, 칼·창은 바짝
     else s = -near * 10 - Math.min(...foes.map(o => eucl(c, o))) - c.d * 0.1;
     if (u.side === 'p' && cellOf(b, c) === 'site') s += 30;   // 진터는 차지하고 싶음
+    if (u.cargo && u.cargo.length && neighbors(c.x, c.y).some(n => !unitAt(b, n.x, n.y) && canStandType(u.cargo[0].type, cellOf(b, n)))) s += 3000;   // 상륙할 곳
     if (s > bs + 1e-6) { bs = s; best = c; }
   }
   return best && (best.x !== u.x || best.y !== u.y) ? best : null;
@@ -363,10 +395,11 @@ function stageCells(st, pass) {
   const m = {};
   const put = (list, k) => (list || []).forEach(([x, y]) => { m[x + ',' + y] = k; });
   if (!st) return m;
+  if (st.sea) { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) m[x + ',' + y] = 'water'; (st.land || []).forEach(([x, y]) => { delete m[x + ',' + y]; }); }
   put(st.forest, 'forest'); put(st.river, 'river'); put(st.sites, 'site');
   if (st.pass && pass) put(st.pass[pass], pass === 'hill' ? 'rock' : 'paddy');
   return m;
 }
 function stageEnemies(st) { return st.enemies.concat((st.walls || []).map(([x, y]) => ['wall', x, y])); }
 
-if (typeof module !== 'undefined') module.exports = { createBattle, beginTurn, endTurn, aiAct, autoTurn };
+if (typeof module !== 'undefined') module.exports = { createBattle, beginTurn, endTurn, aiAct, autoTurn, canStandType };

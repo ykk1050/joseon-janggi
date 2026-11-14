@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.008';
+const VERSION = 'v1.009';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -202,7 +202,7 @@ function startChapter(i) {
   S = { ch: i, stage: 0, day: 1, gold: c.startGold, level: c.startLevel, xp: 0, streak: 0,
         bench: Array(BENCH).fill(null), board: [], items: [], shop: [], phase: 'prep',
         sel: null, info: null, maps: [], food: 100, wood: 100, held: 0, meetBuff: null, speed: 1, firstRoll: true,
-        retry: [], briefMana: 0, quizLog: { ok: 0, total: 0 }, seen: new Set(), said: new Set() };
+        retry: [], briefMana: 0, quizLog: { ok: 0, total: 0 }, seen: new Set(), said: new Set(), flags: {} };
   show('game');
   $('#tbSiege').classList.toggle('hidden', !c.siege);
   updateTop();
@@ -210,6 +210,7 @@ function startChapter(i) {
 }
 function startStage(i) {
   S.stage = i; S.firstRoll = true; S.briefMana = 0; S.pass = null;
+  fixDeployment();
   showStory(stage().pre, () => runBrief(stage().brief || [], () => choosePass(() => enterPrep(true))));
 }
 function startDay(d) {
@@ -230,6 +231,25 @@ function choosePass(done) {
     });
   });
 }
+// 판에 설 수 없는 군사(땅 판의 배, 바다 판의 군사)를 대기석으로 옮김. 자리가 없으면 팔아서 군량으로
+function fixDeployment() {
+  const cells = cellsNow();
+  const moved = [];
+  S.board = S.board.filter(o => {
+    if (canStandType(o.u.type, cells[o.x + ',' + o.y] || '')) return true;
+    [o.u].concat(o.u.cargo || []).forEach(u => { const fit = u === o.u ? u : Object.assign(u, {}); toBench(fit, moved); });
+    o.u.cargo = [];
+    return false;
+  });
+  if (moved.length) toast(moved.join(' · '), 2600);
+}
+function toBench(u, log) {
+  const i = S.bench.indexOf(null);
+  if (i >= 0) { S.bench[i] = u; if (log) log.push(`${UNITS[u.type].name} → 대기석`); }
+  else { S.gold += sellPrice(u); u.items.forEach(it => S.items.push(it)); if (log) log.push(`${UNITS[u.type].name} 팔기 +${sellPrice(u)}`); }
+}
+const cellAt = (x, y) => cellsNow()[x + ',' + y] || '';
+const deployed = () => S.board.reduce((n, o) => n + 1 + ((o.u.cargo || []).length), 0);
 // 이 단계 판의 지형 칸
 function cellsNow() { return chap().siege ? {} : stageCells(stage(), S.pass); }
 function enemiesNow() {
@@ -280,7 +300,7 @@ function addXp(n) {
 
 function allOwned() {
   const r = [];
-  S.board.forEach((b, i) => r.push({ where: 'board', i, u: b.u }));
+  S.board.forEach((b, i) => { r.push({ where: 'board', i, u: b.u }); (b.u.cargo || []).forEach((c, j) => r.push({ where: 'cargo', ship: b.u, j, u: c })); });
   S.bench.forEach((u, i) => { if (u) r.push({ where: 'bench', i, u }); });
   return r;
 }
@@ -314,6 +334,7 @@ function tryMerge() {
       keep.u.star++;
       gone.forEach(o => { o.u.items.forEach(it => { if (keep.u.items.length < 3) keep.u.items.push(it); else S.items.push(it); }); });
       gone.forEach(o => { if (o.where === 'bench') S.bench[o.i] = null; });
+      gone.filter(o => o.where === 'cargo').forEach(o => { o.ship.cargo = o.ship.cargo.filter(c => c !== o.u); });
       const rm = new Set(gone.filter(o => o.where === 'board').map(o => o.u.uid));
       S.board = S.board.filter(b => !rm.has(b.u.uid));
       play('ok'); toast(`✨ ${UNITS[keep.u.type].name} ${'★'.repeat(keep.u.star)} 합체!`);
@@ -326,7 +347,12 @@ $('#btnSell').onclick = () => {
   if (!S.sel || S.sel.item !== undefined || S.phase !== 'prep') return;
   let u;
   if (S.sel.where === 'bench') { u = S.bench[S.sel.i]; S.bench[S.sel.i] = null; }
-  else { u = S.board[S.sel.i].u; S.board.splice(S.sel.i, 1); }
+  else {
+    u = S.board[S.sel.i].u;
+    if ((u.cargo || []).length && S.bench.filter(x => !x).length < u.cargo.length) { play('error'); toast('먼저 배에 탄 군사를 대기석으로 내려 주세요'); return; }
+    (u.cargo || []).forEach(c => toBench(c)); u.cargo = [];
+    S.board.splice(S.sel.i, 1);
+  }
   const refund = sellPrice(u);
   u.items.forEach(it => S.items.push(it));
   S.gold += refund; S.sel = null; S.info = null; play('coin', .5); toast(`군량 +${refund}` + (u.items.length ? ' · 아이템은 돌려받았어요' : ''));
@@ -356,8 +382,29 @@ function tapCell(x, y) {
     return;
   }
   if (castleCell(x, y)) { S.info = { type: 'castle' }; S.sel = null; renderAll(); return; }
-  if (S.sel && S.sel.item === undefined && cellsNow()[x + ',' + y] === 'rock') { play('error'); toast('바위 칸에는 군사를 놓을 수 없어요'); return; }
   const bi = boardAt(x, y);
+  const moving = S.sel && S.sel.item === undefined ? selectedUnit() : null;
+  if (moving && !(bi >= 0 && S.board[bi].u === moving)) {
+    const cell = cellAt(x, y);
+    const there = bi >= 0 ? S.board[bi].u : null;
+    // 군사를 병선 위에 놓으면 배에 탐
+    if (there && !UNITS[moving.type].naval && UNITS[there.type].carry && cell === 'water') {
+      there.cargo = there.cargo || [];
+      if (there.cargo.length >= UNITS[there.type].carry) { play('error'); toast(`${UNITS[there.type].name}에는 ${UNITS[there.type].carry}명까지 탈 수 있어요`); return; }
+      if (S.sel.where === 'bench') { if (deployed() >= S.level) { play('error'); toast(`지금은 ${S.level}명까지 놓을 수 있어요. 「레벨업」을 해 보세요!`); return; } S.bench[S.sel.i] = null; }
+      else S.board.splice(S.sel.i, 1);
+      there.cargo.push(moving); play('place'); toast(`⛵ ${UNITS[moving.type].name}이(가) ${UNITS[there.type].name}에 탔어요`); S.sel = null; renderAll(); return;
+    }
+    if (!there && !canStandType(moving.type, cell)) {
+      play('error');
+      toast(cell === 'rock' ? '바위 칸에는 군사를 놓을 수 없어요'
+        : UNITS[moving.type].naval ? '배는 물 칸에만 놓을 수 있어요'
+        : chap().stages && stage() && stage().pool.some(t => UNITS[t].carry) ? '군사는 바다를 걸어서 건널 수 없어요. 병선 위에 놓아 배에 태워 보세요! (1척에 2명)' : '이 판의 바다에는 배만 나설 수 있어요', 2600);
+      return;
+    }
+    if (there && S.sel.where === 'board') { const from = S.board[S.sel.i]; if (!canStandType(there.type, cellAt(from.x, from.y))) { play('error'); toast('그 자리는 서로 바꿀 수 없어요'); return; } }
+    if (there && S.sel.where === 'bench' && !canStandType(moving.type, cell)) { play('error'); toast('그 칸에는 놓을 수 없어요'); return; }
+  }
   if (S.sel && S.sel.item !== undefined) { if (bi >= 0) giveItem(S.board[bi].u); renderAll(); return; }
   if (!S.sel) { if (bi >= 0) { S.sel = { where: 'board', i: bi }; S.info = { unit: S.board[bi].u }; play('click'); } renderAll(); return; }
   if (S.sel.where === 'board') {
@@ -369,7 +416,7 @@ function tapCell(x, y) {
     const u = S.bench[S.sel.i];
     if (bi >= 0) { const o = S.board[bi]; S.bench[S.sel.i] = o.u; o.u = u; }
     else {
-      if (S.board.length >= S.level) { play('error'); toast(`지금은 ${S.level}명까지 놓을 수 있어요. 「레벨업」을 해 보세요!`); return; }
+      if (deployed() >= S.level) { play('error'); toast(`지금은 ${S.level}명까지 놓을 수 있어요. 「레벨업」을 해 보세요!`); return; }
       S.board.push({ u, x, y }); S.bench[S.sel.i] = null;
     }
   }
@@ -386,6 +433,8 @@ function tapBench(i) {
     S.sel = null;
   } else {
     const b = S.board[S.sel.i];
+    if (!u && (b.u.cargo || []).length) { const c = b.u.cargo.pop(); S.bench[i] = c; S.sel = null; play('place'); toast(`${UNITS[c.type].name}이(가) 배에서 내렸어요`); renderAll(); return; }
+    if (u && !canStandType(u.type, cellAt(b.x, b.y))) { play('error'); toast('그 군사는 그 칸에 설 수 없어요'); return; }
     if (u) { S.bench[i] = b.u; b.u = u; } else { S.bench[i] = b.u; S.board.splice(S.sel.i, 1); }
     S.sel = null;
   }
@@ -411,7 +460,8 @@ function pieceHTML(type, star, o = {}) {
   const stars = star > 1 ? `<div class="stars s${star}">${'★'.repeat(star)}</div>` : '';
   const bars = o.bars ? `<div class="bars"><div class="hpb"><i class="hp"></i><i class="sh"></i></div>${d.skill ? '<div class="mpb"><i class="mp"></i></div>' : ''}</div>` : '';
   const items = o.items && o.items.length ? `<div class="its">${o.items.map(it => `<span>${ITEMS[it].icon}</span>`).join('')}</div>` : '';
-  return `<div class="${cls}" ${pos} ${o.id !== undefined ? `data-id="${o.id}"` : ''}>${tier ? `<div class="base" style="--tc:${TIER_COLORS[tier]}"></div>` : '<div class="base enemy"></div>'}${spriteHTML(type)}${stars}${bars}${items}</div>`;
+  const cargo = o.cargo && o.cargo.length ? `<div class="cargo">${o.cargo.map(c => `<span class="mini p">${spriteHTML(c.type)}</span>`).join('')}</div>` : '';
+  return `<div class="${cls}" ${pos} ${o.id !== undefined ? `data-id="${o.id}"` : ''}>${tier ? `<div class="base" style="--tc:${TIER_COLORS[tier]}"></div>` : '<div class="base enemy"></div>'}${spriteHTML(type)}${stars}${bars}${items}${cargo}</div>`;
 }
 
 function sizeBoard() {
@@ -420,6 +470,7 @@ function sizeBoard() {
   const k = (w * HW / 100) * 1.25 / SPRITE.w;
   document.documentElement.style.setProperty('--k', k + 'px');
   document.documentElement.style.setProperty('--hexw', (w * HW / 100) + 'px');
+  document.documentElement.style.setProperty('--kcargo', (k * 0.55) + 'px');
   const sw = ($('#bench').clientWidth - 30) / 6;
   document.documentElement.style.setProperty('--kb', Math.min(k, sw * 0.9 / SPRITE.w) + 'px');
 }
@@ -445,9 +496,14 @@ function renderBoardPrep() {
   let html = '';
   enemiesNow().forEach(([t, x, y], i) => { html += pieceHTML(t, 1, { x, y, cls: 'preview', odd: i & 1 }); });
   if (chap().siege) html += pieceHTML('castle', 1, { x: 3, y: 5 });
-  S.board.forEach((o, i) => { html += pieceHTML(o.u.type, o.u.star, { x: o.x, y: o.y, items: o.u.items, sel: S.sel && S.sel.where === 'board' && S.sel.i === i, odd: i & 1, cls: o.u.uid === S.mergedUid ? 'merged' : '' }); });
+  S.board.forEach((o, i) => { html += pieceHTML(o.u.type, o.u.star, { x: o.x, y: o.y, items: o.u.items, cargo: o.u.cargo, sel: S.sel && S.sel.where === 'board' && S.sel.i === i, odd: i & 1, cls: o.u.uid === S.mergedUid ? 'merged' : '' }); });
   b.insertAdjacentHTML('beforeend', html);
-  if (S.sel && S.sel.item === undefined) b.querySelectorAll('.hex.mine').forEach(h => { if (!castleCell(+h.dataset.x, +h.dataset.y) && !h.classList.contains('rock')) h.classList.add('hl'); });
+  const su = selectedUnit();
+  if (su) b.querySelectorAll('.hex.mine').forEach(h => {
+    const x = +h.dataset.x, y = +h.dataset.y, bi = boardAt(x, y), there = bi >= 0 ? S.board[bi].u : null;
+    const boardable = there && !UNITS[su.type].naval && UNITS[there.type].carry && (there.cargo || []).length < UNITS[there.type].carry;
+    if (!castleCell(x, y) && (canStandType(su.type, cellAt(x, y)) || boardable)) h.classList.add('hl');
+  });
   if (S.sel && S.sel.item !== undefined) b.querySelectorAll('.piece.p').forEach(p => p.classList.add('can-item'));
 }
 function renderBench() {
@@ -495,7 +551,7 @@ function renderTraits() {
   const counts = countTraits(S.board.map(b => ({ type: b.u.type })));
   const buffs = activeBuffs(counts);
   const shown = new Set(['관군','장수']);
-  if (S.ch === 1) ['수군','의병','명군'].forEach(t => shown.add(t));
+  if (S.ch === 1) (stage() && stage().sea ? ['수군'] : ['의병','명군']).forEach(t => shown.add(t));
   Object.keys(counts).forEach(t => shown.add(t));
   let h = '<b>시너지</b>';
   shown.forEach(t => {
@@ -503,13 +559,17 @@ function renderTraits() {
     const on = buffs[t] > 0;
     h += `<div class="trait ${on ? 'on' : ''}"><span class="ti">${tr.icon}</span><span>${t}</span><span class="cnt">${counts[t] || 0} / ${tr.steps.join('·')}</span><div class="tdesc">${tr.desc}</div></div>`;
   });
-  if (S.ch === 1) h += `<div class="crisis ${buffs.crisis ? 'on' : ''}">${buffs.crisis ? '🔥 위기 극복! 모든 군사 강화' : CRISIS_DESC}</div>`;
+  if (S.ch === 1) {
+    const on = crisisNow(counts);
+    h += `<div class="crisis ${on ? 'on' : ''}">${on ? '🔥 위기 극복! 모든 군사 강화' : '<b>위기 극복까지</b>'}<br>${S.flags.navy ? '✅' : '⬜'} ⚓ 수군의 승리(2-2) · ${S.flags.militia ? '✅' : '⬜'} ✊ 의병의 승리(2-3) · ${(counts['명군'] || 0) >= 2 ? '✅' : '⬜'} 🤝 명군 2명</div>`;
+  }
   if (chap().siege) {
     const m = siegeMul();
     h += `<div class="crisis">배고픔: 공격력 ×${m.atk.toFixed(2)} · 추위: 체력 ×${m.hp.toFixed(2)}${S.meetBuff === 'fight' ? '<br>회의 결과: 공격력 +20%' : ''}</div>`;
   }
   $('#traitPanel').innerHTML = h;
 }
+function crisisNow(counts) { return S.ch === 1 && !!S.flags.navy && !!S.flags.militia && (counts['명군'] || 0) >= 2; }
 function renderInfo() {
   const el = $('#infoPanel');
   const I = S.info;
@@ -536,7 +596,7 @@ function updateTop() {
   const need = XP_NEED[S.level] || 1;
   $('#tbXp').style.width = (S.level >= MAX_LEVEL ? 100 : S.xp / need * 100) + '%';
   $('#tbXpText').textContent = S.level >= MAX_LEVEL ? 'MAX' : `${S.xp}/${need}`;
-  $('#tbCap').textContent = `${S.board.length}/${S.level}`;
+  $('#tbCap').textContent = `${S.phase === 'battle' ? S.board.length : deployed()}/${S.level}`;
   const st = $('#tbStreak');
   if (Math.abs(S.streak) >= 2) { st.classList.remove('hidden'); st.textContent = S.streak > 0 ? `🔥 ${S.streak}연승` : `💧 ${-S.streak}연패`; } else st.classList.add('hidden');
   const interest = Math.min(3, Math.floor(S.gold / 10));
@@ -594,7 +654,8 @@ function startBattle() {
   $('#battleControls').classList.remove('hidden');
   $('#game').classList.add('in-battle');
   const c = chap();
-  const players = S.board.map(b => ({ type: b.u.type, star: b.u.star, x: b.x, y: b.y, items: b.u.items }));
+  const players = S.board.map(b => ({ type: b.u.type, star: b.u.star, x: b.x, y: b.y, items: b.u.items,
+    cargo: (b.u.cargo || []).map(c => ({ type: c.type, star: c.star, items: c.items })) }));
   let opts;
   if (c.siege) {
     players.push({ type: 'castle', star: 1, x: 3, y: 5 });
@@ -604,15 +665,21 @@ function startBattle() {
   } else opts = { mult: stage().mult };
   opts.startMana = S.briefMana; opts.cells = cellsNow();
   if (!c.siege) { opts.leader = stage().leader; opts.weak = stage().weak; }
+  if (S.ch === 1) {
+    opts.crisis = crisisNow(countTraits(players.flatMap(p => [p].concat(p.cargo))));
+    if (S.flags.navy && stage().id !== '2-2') opts.mult *= 0.92;   // 바닷길이 막혀 일본군 보급이 끊김
+  }
   const bt = createBattle(players, enemiesNow(), opts);
   S.battle = bt;
   S.bs = { sel: null, mode: null, busy: true, finished: false };
   boardBase();
-  $('#board').insertAdjacentHTML('beforeend', bt.units.map((u, i) => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, bars: true, items: u.items, odd: i & 1 })).join(''));
+  $('#board').insertAdjacentHTML('beforeend', bt.units.map((u, i) => pieceHTML(u.type, u.star, { x: u.x, y: u.y, id: u.id, bars: true, items: u.items, cargo: u.cargo, odd: i & 1 })).join(''));
   syncBars();
   renderTraits(); renderBench();
   // 역사 한마디: 처음 만나는 적
   if (bt.buffs.crisis) sayRule('crisis');
+  if (S.ch === 1 && S.flags.navy && stage().id !== '2-2') sayRule('supply');
+  if (players.some(p => p.cargo.length)) say('ship', '⛵ 배가 땅(섬)에 닿으면 타고 있던 군사가 내려요. 배를 해안으로 몰아 보세요!');
   if (bt.leader) say(bt.leader, `<b>👑 ${UNITS[bt.leader].name}</b>를 쓰러뜨리면 남은 적이 항복해요!`);
   if (Object.values(bt.cells).includes('site')) say(null, `🚩 강 건너 깃발 자리에 군사를 세우면 ${stage().fortWord || '진'}을 세워요. ${stage().siteName}를 세워 보세요!`);
   [...new Set(bt.units.filter(u => u.side === 'e' && !u.wall).map(u => u.type))].filter(t => !S.seen.has(t)).slice(0, 2)
@@ -867,12 +934,19 @@ function drawEvents(ev) {
       const h = hexEl(e.x, e.y); if (h) { h.classList.remove('site'); h.classList.add('fort'); }
       floatText(bt.units[e.id], `🏯 진 ${e.n}곳!`, 'cast p'); play('coin', .5);
       sayRule(stage() && stage().id === '1-3' ? 'fort3' : 'fort1');
+    } else if (e.k === 'land') {
+      const u = bt.units[e.id], ship = bt.units[e.from];
+      $('#board').insertAdjacentHTML('beforeend', pieceHTML(u.type, u.star, { x: ship.x, y: ship.y, id: u.id, bars: true, items: u.items, cls: 'spawn' }));
+      const sEl = pieceEl(ship.id); if (sEl) { const cg = sEl.querySelector('.cargo .mini'); if (cg) cg.remove(); }
+      requestAnimationFrame(() => requestAnimationFrame(() => { const el = pieceEl(u.id); if (el) { el.style.left = hexLeft(e.x, e.y) + '%'; el.style.top = hexTop(e.y) + '%'; } }));
+      floatText(u, '⛵ 상륙!', 'cast p'); play('place', .6); sayRule('landing');
     } else if (e.k === 'surrender') {
       banner('왜구가 항복했어요!', 'p'); sayRule('surrender');
     } else if (e.k === 'rule') {
       const u = bt.units[e.id];
       if (e.rule === 'crane') floatText(u, '🪶 학익진!', 'cast p');
       else if (e.rule === 'ambush') floatText(u, '🌲 매복!', 'cast p');
+      else if (e.rule === 'sink') { floatText(u, '배가 가라앉았어요…', 'cast ' + u.side); const el = pieceEl(u.id); if (el) { const cg = el.querySelector('.cargo'); if (cg) cg.remove(); } }
       sayRule(e.rule);
     } else if (e.k === 'rest') {
       floatText(bt.units[e.id], '기절해서 쉬어요', 'cast ' + bt.units[e.id].side);
@@ -941,6 +1015,8 @@ function enterPrep(newShop) {
 }
 function afterStage(won) {
   const c = chap(), st = stage();
+  if (won && st.id === '2-2') S.flags.navy = true;
+  if (won && st.id === '2-3') S.flags.militia = true;
   let lines = st.scripted ? (won ? st.win.concat(st.lose.slice(1)) : st.lose) : st.win;
   const forts = S.battle ? S.battle.forts : 0;
   if (won && forts) { S.gold += forts; updateTop(); lines = [{ who:'안내', text:`🏯 ${stage().fortWord || '진'}을 ${forts}곳 세웠어요! 군량 +${forts}` }].concat(lines); }
@@ -1089,10 +1165,14 @@ $('#titleArmy').innerHTML = ['yiSS','turtle','spear','archer','militia'].map(t =
   $('#story').classList.add('hidden');
   if (CHAPTERS[ch].siege) { S.day = 1; } else { S.stage = +(q.get('st') || 0); }
   S.level = 5; S.gold = 23; S.streak = 2;
-  const army = { 0: [['leeJM',3,4,1],['spear',2,3,2],['ship',4,3,1],['archer',3,5,1],['rocket',1,5,1]],
-                 1: [['yiSS',3,5,1],['turtle',3,3,2],['panok',4,4,1],['militia',2,3,1],['ming',5,3,1]],
-                 2: [['spear',2,4,2],['spear',4,4,1],['archer',2,5,1],['gunner',4,5,1],['spear',3,4,1]] }[ch];
-  S.board = army.map(([t, x, y, s]) => ({ u: Object.assign(newUnit(t, s), { items: t === 'leeJM' || t === 'yiSS' ? ['sword', 'book'] : [] }), x, y }));
+  const st = CHAPTERS[ch].stages ? CHAPTERS[ch].stages[S.stage] : null;
+  const army = st && st.sea && st.id === '1-1' ? [['ship',2,4,1,['leeJM','spear']],['ship',4,4,1,['archer','spear']],['ship',3,5,1]]
+    : st && st.sea ? [['yiSS',3,5,1],['turtle',3,3,2],['panok',4,4,1],['panok',2,4,1],['ship',5,3,1]]
+    : ch === 2 ? [['spear',2,4,2],['spear',4,4,1],['archer',2,5,1],['gunner',4,5,1],['spear',3,4,1]]
+    : ch === 1 ? [['ming',3,3,2],['mingGun',3,5,1],['militia',2,3,1],['milLead',4,4,1],['ming',5,3,1]]
+    : [['kimJS',3,4,1],['spear',2,3,2],['cavalry',4,3,1],['archer',3,5,1],['rocket',1,5,1]];
+  S.flags = { navy: true, militia: true };
+  S.board = army.map(([t, x, y, s, cg]) => ({ u: Object.assign(newUnit(t, s), { items: UNITS[t].general ? ['sword', 'book'] : [], cargo: (cg || []).map(c => newUnit(c)) }), x, y }));
   S.bench[0] = newUnit('spear'); S.bench[1] = newUnit('cavalry');
   S.items = ['armor', 'powder', 'ginseng'];
   enterPrep(true);
