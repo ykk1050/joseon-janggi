@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.014';
+const VERSION = 'v1.015';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -927,9 +927,11 @@ function tapBattle(x, y) {
   else if (bs.ghost) { showGhost(null); renderBattle(); }
 }
 function act(ev) {
-  drawEvents(ev); syncBars();
+  const d = drawEvents(ev);
   S.bs.sel = null; S.bs.mode = null;
-  afterAction();
+  if (!d) { syncBars(); return afterAction(); }
+  S.bs.busy = true; renderBattle();
+  later(() => { S.bs.busy = false; syncBars(); afterAction(); }, d);
 }
 function afterAction() {
   const bt = S.battle;
@@ -974,8 +976,8 @@ function runUnits(list, done) {
     const r = aiAct(bt, u);
     drawEvents(r.moveEv);
     later(() => {
-      drawEvents(r.actEv); syncBars(); renderBattle();
-      later(() => step(i + 1), r.actEv.length ? 450 : 150);
+      const d = drawEvents(r.actEv); if (!d) syncBars(); renderBattle();
+      later(() => step(i + 1), d ? d + 200 : r.actEv.length ? 450 : 150);
     }, r.moveEv.length ? 360 : 80);
   };
   step(0);
@@ -1074,7 +1076,16 @@ function banner(text, side) {
 }
 function drawEvents(ev) {
   const bt = S.battle;
-  for (const e of ev) {
+  for (let ei = 0; ei < ev.length; ei++) {
+    const e = ev[ei];
+    if (e.k === 'cast' && UNITS[bt.units[e.id].type].skill === 'crane') {
+      const u = bt.units[e.id];
+      if (u.side === 'p' && !S.said.has('sk-' + u.type)) { S.said.add('sk-' + u.type); say(u.type, `<b>${UNITS[u.type].name}</b> — ${UNITS[u.type].fact}`); }
+      const d = craneShow(u, e.targets || []);
+      const rest = ev.slice(ei + 1);
+      later(() => { drawEvents(rest); syncBars(); }, d.hit);
+      return d.total;
+    }
     if (e.k === 'move') {
       const el = pieceEl(e.id);
       if (el) {
@@ -1131,7 +1142,7 @@ function drawEvents(ev) {
       banner('왜구가 항복했어요!', 'p'); sayRule('surrender');
     } else if (e.k === 'rule') {
       const u = bt.units[e.id];
-      if (e.rule === 'crane') floatText(u, '🪶 학익진!', 'cast p');
+      if (e.rule === 'crane') { floatText(u, '🪶 학익진!', 'cast p'); craneSupport(u, bt.units[e.to]); }
       else if (e.rule === 'ambush') floatText(u, '🌲 매복!', 'cast p');
       else if (e.rule === 'sink') { floatText(u, '배가 가라앉았어요…', 'cast ' + u.side); const el = pieceEl(u.id); if (el) { const cg = el.querySelector('.cargo'); if (cg) cg.remove(); } }
       sayRule(e.rule);
@@ -1143,6 +1154,113 @@ function drawEvents(ev) {
       e.ids.forEach(id => playFx('blessing', bt.units[id], .7));
     }
   }
+  return 0;
+}
+
+// ───────── 학익진 연출 ─────────
+// 포탄 하나 (판 % 좌표에서 % 좌표로)
+function fireBall(A, T, delay = 0) {
+  setTimeout(() => {
+    const board = $('#board');
+    const f = document.createElement('div'); f.className = 'muzzle'; f.style.left = A.x + '%'; f.style.top = A.y + '%';
+    board.appendChild(f); setTimeout(() => f.remove(), 260);
+    const s = document.createElement('div'); s.className = 'shot ball big';
+    s.style.left = A.x + '%'; s.style.top = A.y + '%'; s.style.transition = 'left .26s linear, top .26s ease-in';
+    board.appendChild(s);
+    requestAnimationFrame(() => requestAnimationFrame(() => { s.style.left = T.x + '%'; s.style.top = T.y + '%'; }));
+    setTimeout(() => s.remove(), 300);
+  }, delay);
+}
+// 보통 공격에서 학익진이 되면: 그 적을 겨누던 다른 수군 배도 함께 포를 쏨
+function craneSupport(u, t) {
+  if (!t) return;
+  const bt = S.battle;
+  bt.units.filter(a => a.alive && a !== u && a.side === u.side && traitsOf(a).includes('수군') && hexDist(a, t) <= a.range).forEach((a, i) => {
+    const el = pieceEl(a.id), A = centerOf(a), T = centerOf(t);
+    faceTo(el, A.x, T.x);
+    if (el) { el.classList.remove('atk-r'); void el.offsetWidth; el.classList.add('atk-r'); setTimeout(() => el.classList.remove('atk-r'), 420); }
+    fireBall(A, T, 60 + i * 70);
+  });
+}
+// 필살기 학익진: 우리 배들이 학 날개 모양으로 적을 넓게 둘러싸고, 모든 배가 한꺼번에 포를 쏨
+// (화면 연출만. 배의 실제 자리는 바뀌지 않음). hit: 포탄이 닿는 때, total: 연출이 끝나는 때 (ms)
+function craneShow(lead, ids) {
+  const bt = S.battle, board = $('#board');
+  const tg = ids.map(id => bt.units[id]).filter(t => t);
+  if (!tg.length) return { hit: 0, total: 0 };
+  const W = board.clientWidth, H = board.clientHeight;
+  const cs = tg.map(centerOf);
+  const C = { x: cs.reduce((a, c) => a + c.x, 0) / cs.length, y: cs.reduce((a, c) => a + c.y, 0) / cs.length };
+  // 날개 크기(px): 가장 먼 적까지 + 한 칸 반
+  const far = Math.max(...cs.map(c => Math.hypot((c.x - C.x) * W / 100, (c.y - C.y) * H / 100)));
+  const R = Math.max(far + W * HW / 100 * 1.5, W * 0.26);
+  const real = bt.units.filter(a => a.alive && a.side === lead.side && UNITS[a.type].naval);
+  let N = Math.max(5, real.length); if (N % 2 === 0) N++;
+  // 자리: 왼쪽 위(200°)에서 아래를 돌아 오른쪽 위(-20°)까지, 가운데가 이순신
+  const slots = [];
+  for (let i = 0; i < N; i++) {
+    const th = (200 - 220 * i / (N - 1)) * Math.PI / 180;
+    let x = C.x + Math.cos(th) * R / W * 100, y = C.y + Math.sin(th) * R * 0.78 / H * 100;
+    x = Math.min(100 - HW * 0.45, Math.max(HW * 0.45, x)); y = Math.min(100 - HH * 0.35, Math.max(HH * 0.45, y));
+    slots.push({ x, y });
+  }
+  const mid = (N - 1) / 2, order = [mid]; for (let k = 1; order.length < N; k++) { if (mid - k >= 0) order.push(mid - k); if (mid + k < N) order.push(mid + k); }
+  const ships = [lead, ...real.filter(a => a !== lead)];
+  const moved = [], phantoms = [];
+  board.classList.add('crane-mode');
+  order.forEach((si, k) => {
+    const P = slots[si];
+    const zi = zOf(Math.max(0, Math.min(ROWS - 1, Math.round((P.y - HH / 2) / (0.75 * HH)))));
+    if (k < ships.length) {
+      const a = ships[k], el = pieceEl(a.id); if (!el) return;
+      const A = centerOf(a);
+      el.style.transition = 'translate .65s ease-in-out, opacity .5s';
+      el.style.translate = `${(P.x - A.x) / HW * 100}% ${(P.y - A.y) / HH * 100}%`;
+      el.style.zIndex = zi; faceTo(el, P.x, C.x);
+      moved.push({ el, a, P });
+    } else {
+      // 함께 온 다른 판옥선들 (그림만): 판 아래에서 들어옴
+      board.insertAdjacentHTML('beforeend', pieceHTML(k % 3 === 2 ? 'turtle' : 'panok', 1, { x: 0, y: 0, cls: 'phantom' }));
+      const el = board.lastElementChild;
+      el.style.transition = 'left .7s ease-out, top .7s ease-out, opacity .5s';
+      el.style.left = (P.x - HW / 2) + '%'; el.style.top = '104%'; el.style.zIndex = zi; el.style.opacity = '0';
+      faceTo(el, P.x, C.x);
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.top = (P.y - HH / 2) + '%'; el.style.opacity = '1'; }));
+      phantoms.push({ el, P });
+    }
+  });
+  // 학 날개 선
+  const pts = slots.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+  board.insertAdjacentHTML('beforeend', `<svg class="crane-wing" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${pts}" /></svg><div class="crane-label" style="left:${Math.min(70, Math.max(30, C.x))}%;top:${Math.min(92, Math.max(...slots.map(p => p.y)) + HH * 0.55)}%"><b>${UNITS[lead.type].name} — 학익진!</b><small>학이 날개를 펴듯 적을 둘러싸고 한꺼번에 포를 쏘아라!</small></div>`);
+  play('place', .5);
+  const HIT = 1050, TOTAL = 2200;
+  // 모든 배가 한꺼번에 포를 쏨: 배마다 적 하나씩 나눠 겨눔(적이 더 많으면 한 배가 여러 발)
+  later(() => {
+    const shooters = [...moved.map(m => m.P), ...phantoms.map(p => p.P)];
+    moved.forEach(m => { m.el.classList.remove('atk-r'); void m.el.offsetWidth; m.el.classList.add('atk-r'); setTimeout(() => m.el.classList.remove('atk-r'), 420); });
+    phantoms.forEach(p => { p.el.classList.add('atk-r'); setTimeout(() => p.el.classList.remove('atk-r'), 420); });
+    const n = Math.max(shooters.length, tg.length);
+    for (let i = 0; i < n; i++) fireBall(shooters[i % shooters.length], cs[i % cs.length], (i % 4) * 25);
+    play('boom', .6); setTimeout(() => play('boom', .5), 90);
+  }, 750);
+  later(() => {
+    tg.forEach((t, i) => { setTimeout(() => playFx('cartoon-pow', t, 1.1), i * 30); aoeFlash(t, 0); });
+    board.classList.remove('shake'); void board.offsetWidth; board.classList.add('shake'); play('boom', .7);
+  }, HIT);
+  // 제자리로
+  later(() => {
+    moved.forEach(m => { m.el.style.translate = ''; m.el.style.zIndex = zOf(m.a.y); faceTo(m.el, centerOf(m.a).x, m.a.side === 'p' ? 999 : -999); });
+    phantoms.forEach(p => { p.el.style.top = '104%'; p.el.style.opacity = '0'; });
+    const w = board.querySelector('.crane-wing'), l = board.querySelector('.crane-label');
+    if (w) w.classList.add('out'); if (l) l.classList.add('out');
+  }, 1650);
+  setTimeout(() => {
+    moved.forEach(m => { m.el.style.transition = ''; });
+    phantoms.forEach(p => p.el.remove());
+    board.querySelectorAll('.crane-wing, .crane-label').forEach(e => e.remove());
+    board.classList.remove('crane-mode');
+  }, (TOTAL + 300) / (S.speed || 1));
+  return { hit: HIT, total: TOTAL };
 }
 
 // ───────── 전투가 끝난 뒤 ─────────

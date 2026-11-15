@@ -166,3 +166,21 @@ body { background: #1b120c radial-gradient(ellipse at 50% -10%, rgba(231,191,85,
 .piece.pv-tgt .spr { filter: drop-shadow(0 0 3px #ff9a2e) drop-shadow(0 0 6px #ff9a2e); }
 .piece.pv-tgt::after { content: "⚔"; position: absolute; left: 50%; bottom: calc(var(--hexw, 60px) * .27 + var(--k) * 31 + var(--hexw, 60px) * .1); transform: translateX(-50%); z-index: 5; font-size: calc(var(--hexw, 60px) * .26); line-height: 1; padding: 2px 5px; border-radius: 8px; background: rgba(160, 60, 10, .9); color: #fff; box-shadow: 0 0 0 2px #ffcf7a; animation: pvBob .7s ease-in-out infinite; pointer-events: none; }
 @keyframes pvBob { 50% { translate: 0 -12%; } }
+
+/* ── v1.015 학익진 연출 ── */
+.board.crane-mode::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, rgba(10, 30, 60, 0) 30%, rgba(10, 30, 60, .45) 100%); animation: craneDim .4s ease-out; }
+@keyframes craneDim { from { opacity: 0; } }
+.crane-wing { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; overflow: visible; }
+.crane-wing polyline { fill: none; stroke: #fff6d8; stroke-width: 3; stroke-dasharray: 8 6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(127, 208, 255, .9)); animation: craneDraw .7s ease-out both; }
+@keyframes craneDraw { from { opacity: 0; stroke-dashoffset: 80; } to { opacity: .95; stroke-dashoffset: 0; } }
+.crane-wing.out, .crane-label.out { opacity: 0; transition: opacity .45s; }
+.crane-label { position: absolute; transform: translate(-50%, -50%); z-index: 34; pointer-events: none; white-space: nowrap; font-family: var(--serif); font-weight: 900; font-size: calc(var(--hexw, 60px) * .24); color: #fff3c0; background: rgba(20, 50, 90, .88); padding: 3px 12px; border-radius: 10px; box-shadow: 0 0 0 2px #e8c35a; animation: bannerIn 1.4s forwards; }
+.piece.phantom { pointer-events: none; }
+.piece.phantom .base { display: none; }
+.shot.ball.big { width: 14px; height: 14px; margin: -7px 0 0 -7px; }
+.muzzle { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; z-index: 30; pointer-events: none; background: radial-gradient(circle, #fff6c0 0, #ffb030 40%, rgba(255, 90, 20, 0) 70%); animation: muzzle .26s ease-out forwards; }
+@keyframes muzzle { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.crane-label { display: grid; gap: 2px; text-align: center; animation: craneLabel 1.9s forwards; }
+.crane-label b { font-size: calc(var(--hexw, 60px) * .3); }
+.crane-label small { font-family: var(--body2, inherit); font-weight: 700; font-size: calc(var(--hexw, 60px) * .17); color: #e8f2ff; }
+@keyframes craneLabel { 0% { transform: translate(-50%, -50%) scale(.6); opacity: 0; } 12% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; } 20%, 85% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
