@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.012';
+const VERSION = 'v1.013';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -350,6 +350,12 @@ function rollShop() {
   const st = stage();
   if (S.firstRoll && st && st.feature && !allOwned().some(o => o.u.type === st.feature)) S.shop[SHOP_N - 1] = st.feature;
   S.firstRoll = false;
+  // 바다를 건너야 하는 단계: 배가 없으면 상점에 배를 꼭 하나 보여 줌 (배 없이는 군사가 섬에 갈 수 없음)
+  const naval = pool.filter(u => UNITS[u].naval);
+  if (st && st.sea && naval.length && !S.shop.some(u => u && UNITS[u].naval) && !allOwned().some(o => UNITS[o.u.type].naval)) {
+    const cheap = Math.min(...naval.map(u => UNITS[u].cost));
+    S.shop[0] = rnd(naval.filter(u => UNITS[u].cost === cheap));
+  }
 }
 $('#btnReroll').onclick = () => {
   if (S.phase !== 'prep') return;
