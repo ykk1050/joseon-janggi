@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.010';
+const VERSION = 'v1.011';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -10,7 +10,7 @@ const hexTop = (y) => y * 0.75 * HH;
 
 // ───────── 저장 ─────────
 const SAVE_KEY = 'joseonJanggi';
-let save = { cleared: {}, best3: 0, sound: true };
+let save = { cleared: {}, best3: 0, sound: true, music: true };
 try { const v = JSON.parse(localStorage.getItem(SAVE_KEY)); if (v) save = Object.assign(save, v); } catch (e) {}
 function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
 
@@ -21,8 +21,66 @@ let lastHit = 0;
 function play(n, vol = 0.6) {
   if (!save.sound) return;
   if (n === 'hit' || n === 'boom') { const t = performance.now(); if (t - lastHit < 80) return; lastHit = t; }
+  if (n === 'win' || n === 'lose') musicDuck();
   try { const a = SND[n].cloneNode(); a.volume = vol; a.play().catch(() => {}); } catch (e) {}
 }
+
+// ───────── 배경 음악 (art/gen-bgm.js로 코드로 직접 만든 국악풍 곡, 끊김 없이 되풀이) ─────────
+// title: 시작·장 고르기(평조 대금) / prep: 군사 준비(굿거리) / battle: 전투(자진모리 태평소·북) / siege: 남한산성(계면조 해금)
+const BGM_VOL = 0.42;
+const BGM = { ctx: null, master: null, cur: null, want: null, bufs: {}, loading: {}, nodes: null };
+function bgmCtx() {
+  if (BGM.ctx) return BGM.ctx;
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  BGM.ctx = new AC(); BGM.master = BGM.ctx.createGain(); BGM.master.gain.value = BGM_VOL; BGM.master.connect(BGM.ctx.destination);
+  return BGM.ctx;
+}
+function bgmLoad(n) {
+  if (!BGM.loading[n]) BGM.loading[n] = fetch('sounds/bgm-' + n + '.mp3').then(r => r.arrayBuffer())
+    .then(a => new Promise((ok, no) => BGM.ctx.decodeAudioData(a, ok, no))).then(b => (BGM.bufs[n] = b))
+    .catch(() => { delete BGM.loading[n]; return null; });
+  return BGM.loading[n];
+}
+function bgmFadeOut(nodes, sec = 1) {
+  if (!nodes) return; const t = BGM.ctx.currentTime;
+  try { nodes.g.gain.cancelScheduledValues(t); nodes.g.gain.setValueAtTime(nodes.g.gain.value, t); nodes.g.gain.linearRampToValueAtTime(0, t + sec); nodes.src.stop(t + sec + 0.05); } catch (e) {}
+}
+function music(name) {
+  if (name) BGM.want = name;
+  if (!save.music || !BGM.ctx || BGM.ctx.state !== 'running') return;
+  if (BGM.cur === BGM.want) return;
+  const n = BGM.want; BGM.cur = n;
+  bgmFadeOut(BGM.nodes); BGM.nodes = null;
+  bgmLoad(n).then(buf => {
+    if (!buf || BGM.cur !== n || !save.music) return;
+    const src = BGM.ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const g = BGM.ctx.createGain(); const t = BGM.ctx.currentTime;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + 1.5);
+    src.connect(g); g.connect(BGM.master); src.start(t);
+    BGM.nodes = { src, g };
+  });
+}
+function musicStop() { if (BGM.ctx) bgmFadeOut(BGM.nodes, 0.4); BGM.nodes = null; BGM.cur = null; }
+// 승리·패배 음악이 나올 때 잠깐 작게
+function musicDuck(sec = 3) {
+  if (!BGM.master) return; const t = BGM.ctx.currentTime, g = BGM.master.gain;
+  g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(BGM_VOL * 0.25, t + 0.3);
+  g.setValueAtTime(BGM_VOL * 0.25, t + sec); g.linearRampToValueAtTime(BGM_VOL, t + sec + 1.5);
+}
+const prepTrack = () => (S && chap().siege ? 'siege' : 'prep');
+// 브라우저는 처음 터치한 뒤에만 소리를 낼 수 있음
+function musicUnlock() {
+  const c = bgmCtx(); if (!c) return;
+  const go = () => music();
+  if (c.state !== 'running') c.resume().then(go, () => {}); else go();
+}
+document.addEventListener('pointerdown', musicUnlock, true);
+document.addEventListener('keydown', musicUnlock, true);
+document.addEventListener('visibilitychange', () => {
+  if (!BGM.ctx) return;
+  if (document.hidden) BGM.ctx.suspend().catch(() => {}); else BGM.ctx.resume().then(() => music(), () => {});
+});
 
 // ───────── 상태 ─────────
 let S = null;
@@ -35,6 +93,7 @@ const rnd = (a) => a[Math.floor(Math.random() * a.length)];
 function show(id) {
   ['title','chapters','game'].forEach(s => $('#' + s).classList.toggle('hidden', s !== id));
   if (id === 'game') requestAnimationFrame(sizeBoard);
+  music(id === 'game' ? prepTrack() : 'title');
 }
 document.querySelectorAll('.ver').forEach(e => e.textContent = VERSION);
 function toast(msg, ms = 1500) {
@@ -655,6 +714,7 @@ const selU = () => (S.bs.sel !== null ? S.battle.units[S.bs.sel] : null);
 function startBattle() {
   play('ok');
   S.phase = 'battle'; S.sel = null; bTok++;
+  music('battle');
   $('#prepControls').classList.add('hidden');
   $('#battleControls').classList.remove('hidden');
   $('#game').classList.add('in-battle');
@@ -987,7 +1047,7 @@ function pickItem(done) {
   });
 }
 function backToBoard() {
-  S.phase = 'prep';
+  S.phase = 'prep'; music(prepTrack());
   $('#game').classList.remove('in-battle');
   $('#prepControls').classList.remove('hidden');
   $('#battleControls').classList.add('hidden');
@@ -1150,7 +1210,15 @@ function showMap(key, done) {
 }
 
 // ───────── 메뉴 ─────────
-function syncSoundBtn() { $('#btnSound').textContent = save.sound ? '🔊 소리 끄기' : '🔇 소리 켜기'; }
+function syncSoundBtn() {
+  $('#btnSound').textContent = save.sound ? '🔊 효과음 끄기' : '🔇 효과음 켜기';
+  $('#btnMusic').textContent = save.music ? '🎵 음악 끄기' : '🔇 음악 켜기';
+  $('#btnMusicT').textContent = save.music ? '🎵 음악 켜짐' : '🔇 음악 꺼짐';
+}
+function toggleMusic() { save.music = !save.music; writeSave(); syncSoundBtn(); if (save.music) { BGM.cur = null; musicUnlock(); } else musicStop(); }
+$('#btnMusic').onclick = toggleMusic;
+$('#btnMusicT').onclick = (e) => { e.stopPropagation(); toggleMusic(); };
+syncSoundBtn();
 $('#btnMenu').onclick = () => { syncSoundBtn(); $('#menu').classList.remove('hidden'); };
 $('#btnCloseMenu').onclick = () => $('#menu').classList.add('hidden');
 $('#btnSound').onclick = () => { save.sound = !save.sound; writeSave(); syncSoundBtn(); };

@@ -364,3 +364,4 @@ body.beat .mini:nth-child(odd) .spr { background-position: calc(var(--x1) * var(
 .ans { text-align: left; margin: 6px 0; padding-left: 20px; }
 @media (max-width: 600px) { .mrow { flex-direction: column; align-items: stretch; } .mbtns { justify-content: flex-end; } }
 .piece .spr.wallblock { width: calc(28 * var(--k)); height: calc(26 * var(--k)); }
+.music-corner { position: absolute; top: 10px; right: 10px; z-index: 5; font-size: .85rem; padding: 6px 12px; }

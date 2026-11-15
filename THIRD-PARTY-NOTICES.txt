@@ -15,6 +15,11 @@ Pixelbolt로 그려 낸 결과물이고, 필살기 이펙트(img/fx/)는 pixelfx
 직접 만든 코드(game-art-tools/ai-pixel/ai_pixel.py)로 배경 지우기·도트 격자 맞추기·색 수 줄이기를 해 만든 것입니다.
 
 
+0. 배경 음악
+------------
+sounds/bgm-title.mp3, bgm-prep.mp3, bgm-battle.mp3, bgm-siege.mp3
+이 게임을 위해 코드(art/gen-bgm.js)로 직접 만든 곡입니다. 외부 음원·녹음·샘플을 쓰지 않았습니다.
+
 1. 효과음
 ---------
 효과음: Kenney (www.kenney.nl), CC0 1.0
