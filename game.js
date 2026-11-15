@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.013';
+const VERSION = 'v1.014';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -18,11 +18,18 @@ function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)
 const SND = {};
 ['click','ok','place','hit','boom','coin','page','error','win','lose'].forEach(n => { SND[n] = new Audio('sounds/' + n + '.mp3'); SND[n].preload = 'auto'; });
 let lastHit = 0;
+const SNDPOOL = {};
 function play(n, vol = 0.6) {
   if (!save.sound) return;
   if (n === 'hit' || n === 'boom') { const t = performance.now(); if (t - lastHit < 80) return; lastHit = t; }
   if (n === 'win' || n === 'lose') musicDuck();
-  try { const a = SND[n].cloneNode(); a.volume = vol; a.play().catch(() => {}); } catch (e) {}
+  // 소리마다 재생기 4개를 돌려 씀 (매번 새로 만들면 안드로이드 크롬에서 재생기 수 제한에 걸림)
+  try {
+    const pool = SNDPOOL[n] || (SNDPOOL[n] = []);
+    let a = pool.find(x => x.paused || x.ended);
+    if (!a) { if (pool.length < 4) { a = SND[n].cloneNode(); pool.push(a); } else { a = pool[0]; pool.push(pool.shift()); } }
+    a.currentTime = 0; a.volume = vol; a.play().catch(() => {});
+  } catch (e) {}
 }
 
 // ───────── 배경 음악 (art/gen-bgm.js로 코드로 직접 만든 국악풍 곡, 끊김 없이 되풀이) ─────────
@@ -791,7 +798,7 @@ function renderBattle() {
   const board = $('#board');
   const myTurn = bt.side === 'p' && !bs.busy && !bt.over;
   board.querySelectorAll('.hex.mv, .hex.tg').forEach(h => h.classList.remove('mv', 'tg'));
-  bs.aim = null; showAoe(null);
+  bs.aim = null; showAoe(null); showGhost(null);
   for (const u of bt.units) {
     const el = pieceEl(u.id); if (!el) continue;
     const mine = u.alive && u.side === 'p' && !u.fixed;
@@ -826,25 +833,66 @@ function renderBattle() {
   else if (bs.busy) hint = '우리 군사가 움직이고 있어요…';
   else if (!sel) hint = '빛나는 군사를 눌러 고르세요. (흐린 군사는 이번 차례에 이미 움직였어요)';
   else if (bs.mode === 'skill') hint = splashOf(sel, true) ? `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르면, 그 적과 바로 옆 칸까지 함께 맞는 곳이 노랗게 보여요.` : `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르세요.`;
-  else if (!sel.moved) hint = targets.length ? '파란 칸을 누르면 이동, 빨간 칸의 적을 누르면 공격해요.' : '파란 칸을 눌러 이동하세요. 적이 사거리 안에 오면 빨갛게 빛나요.';
+  else if (!sel.moved) hint = (targets.length ? '빨간 칸의 적을 누르면 공격해요. ' : '') + (lastPointer === 'mouse' ? '파란 칸에 마우스를 올리면 갈 자리와 칠 수 있는 적이 보이고, 누르면 이동해요.' : '파란 칸을 한 번 누르면 갈 자리와 칠 수 있는 적이 보이고, 한 번 더 누르면 이동해요.');
   else hint = targets.length ? '빨간 칸의 적을 눌러 공격하세요.' : '공격할 수 있는 적이 없어요.';
   if (sel && myTurn && targets.some(t => craneMul(bt, sel, t) > 1)) hint += ' 🪶 「학익진」 표시가 있는 적은 더 세게 칠 수 있어요!';
   $('#battleHint').textContent = hint;
 }
 // 마우스를 적 위에 올리면 범위 공격이 맞을 칸을 미리 보여 줌
+// ── 이동 미리 보기: 갈 칸에 반투명 군사 + 그 자리에서 칠 수 있는 적 표시 ──
+let lastPointer = 'mouse';
+$('#board').addEventListener('pointerdown', (ev) => { lastPointer = ev.pointerType || 'mouse'; }, true);
+function showGhost(sel, p) {
+  const board = $('#board');
+  board.querySelectorAll('.piece.ghost').forEach(e => e.remove());
+  board.querySelectorAll('.hex.ghost-at, .hex.pv-tg').forEach(h => h.classList.remove('ghost-at', 'pv-tg'));
+  board.querySelectorAll('.piece.pv-tgt').forEach(e => e.classList.remove('pv-tgt'));
+  if (!S.bs) return [];
+  S.bs.ghost = p ? { x: p.x, y: p.y } : null;
+  if (!sel || !p) return [];
+  board.insertAdjacentHTML('beforeend', pieceHTML(sel.type, sel.star, { x: p.x, y: p.y, cls: 'ghost' }));
+  const g = board.querySelector('.piece.ghost'), me = pieceEl(sel.id);
+  if (me && me.classList.contains('face-l')) g.classList.add('face-l');
+  if (me && me.classList.contains('face-r')) g.classList.add('face-r');
+  faceTo(g, hexLeft(sel.x, sel.y), hexLeft(p.x, p.y));
+  hexEl(p.x, p.y).classList.add('ghost-at');
+  const ts = targetsFrom(S.battle, sel, p);
+  ts.forEach(t => { hexEl(t.x, t.y).classList.add('pv-tg'); const el = pieceEl(t.id); if (el) el.classList.add('pv-tgt'); });
+  return ts;
+}
+function ghostHint(ts, touch) {
+  const again = touch ? ' 같은 칸을 한 번 더 누르면 이동해요.' : '';
+  $('#battleHint').textContent = ts.length
+    ? `👣 이 자리로 가면 ⚔ 표시가 있는 적 ${ts.length}명을 공격할 수 있어요.${again}${touch ? ' (⚔ 적을 누르면 가서 바로 공격)' : ''}`
+    : `👣 이 자리에서는 공격할 수 있는 적이 없어요.${again}`;
+}
+// 마우스: 올려 둔 칸에 따라 이동 미리 보기, 적 위에서는 범위 공격 미리 보기
 $('#board').addEventListener('pointermove', (ev) => {
-  if (ev.pointerType !== 'mouse' || !S || S.phase !== 'battle' || !S.battle || !S.bs || S.bs.aim != null) return;
+  if (ev.pointerType !== 'mouse' || !S || S.phase !== 'battle' || !S.battle || !S.bs || S.bs.aim != null || S.bs.busy) return;
   const sel = selU(); if (!sel || S.battle.side !== 'p') return;
   const h = ev.target.closest && ev.target.closest('.hex');
-  const u = h ? unitAt(S.battle, +h.dataset.x, +h.dataset.y) : null;
+  const x = h ? +h.dataset.x : -1, y = h ? +h.dataset.y : -1;
+  const u = h ? unitAt(S.battle, x, y) : null;
   const r = splashOf(sel, S.bs.mode === 'skill');
   showAoe(u && r && u.side !== sel.side && hexDist(sel, u) <= sel.range ? u : null, r);
+  if (S.bs.mode === 'skill') return;
+  const g = S.bs.ghost;
+  if (h && !u && reachable(S.battle, sel).some(p => p.x === x && p.y === y)) {
+    if (!g || g.x !== x || g.y !== y) ghostHint(showGhost(sel, { x, y }), false);
+  } else if (g && !(u && u.side !== sel.side)) { showGhost(null); renderBattle(); }
 });
 function tapBattle(x, y) {
   const bt = S.battle, bs = S.bs, sel = selU();
   const u = unitAt(bt, x, y);
   if (u) { S.info = { unit: { type: u.type, star: u.star, items: u.items }, live: u }; renderInfo(); }
   if (bt.side !== 'p' || bs.busy || bt.over) return;
+  if (sel && u && u.side !== sel.side && bs.ghost && targetsFrom(bt, sel, bs.ghost).some(t => t.id === u.id) && (lastPointer !== 'mouse' || hexDist(sel, u) > sel.range)) {
+    const g = bs.ghost; showGhost(null); play('place', .5);
+    drawEvents(doMove(bt, sel, g.x, g.y));
+    bs.busy = true; renderBattle();
+    setTimeout(() => { bs.busy = false; renderBattle(); tapBattle(x, y); }, 420);
+    return;
+  }
   if (sel && u && u.side !== sel.side && hexDist(sel, u) <= sel.range) {
     const skill = bs.mode === 'skill', r = splashOf(sel, skill);
     // 범위 공격은 먼저 맞을 칸을 보여 주고, 같은 적을 한 번 더 누르면 실행
@@ -858,6 +906,11 @@ function tapBattle(x, y) {
   }
   if (bs.mode === 'skill') { bs.mode = null; renderBattle(); return; }
   if (sel && !u && reachable(bt, sel).some(p => p.x === x && p.y === y)) {
+    const touch = lastPointer !== 'mouse';
+    if (touch && !(bs.ghost && bs.ghost.x === x && bs.ghost.y === y)) {
+      play('click', .3); ghostHint(showGhost(sel, { x, y }), true); return;
+    }
+    showGhost(null);
     play('place', .5);
     drawEvents(doMove(bt, sel, x, y));
     // 옮긴 뒤 할 수 있는 일이 없으면 이 군사의 차례는 끝
@@ -871,6 +924,7 @@ function tapBattle(x, y) {
     return;
   }
   if (u && u.side === 'e' && sel) { play('error', .4); toast(`너무 멀어요! ${UNITS[sel.type].name}의 사거리는 ${sel.range}칸이에요`); }
+  else if (bs.ghost) { showGhost(null); renderBattle(); }
 }
 function act(ev) {
   drawEvents(ev); syncBars();
