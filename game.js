@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.009';
+const VERSION = 'v1.010';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -449,6 +449,11 @@ function tapItem(i) {
 // ───────── 그림 조각 ─────────
 function spriteHTML(type) {
   if (UNITS[type].wall) return '<div class="spr wallblock"></div>';
+  // 고해상도 도트 그림(Gemini 원화): 사람·말은 키 31칸, 배·기계·성은 너비 fitW칸에 맞춤 (옛 28칸 그림의 --k 기준)
+  const hd = typeof HD !== 'undefined' && HD[type];
+  if (hd) {
+    const s = hd.fitW ? hd.fitW / hd.w : 31 / hd.h;
+    return `<div class="spr hd${hd.fitW ? ' ship' : ''}" style="background-image:url(${hd.img});width:calc(var(--k) * ${(hd.w * s).toFixed(2)});height:calc(var(--k) * ${(hd.h * s).toFixed(2)})"></div>`; }
   const f0 = SPRITE.frames[type + '-i0'], f1 = SPRITE.frames[type + '-i1'], fa = SPRITE.frames[type + '-a'];
   return `<div class="spr" style="--x0:${f0[0]};--y0:${f0[1]};--x1:${f1[0]};--y1:${f1[1]};--xa:${fa[0]};--ya:${fa[1]}"></div>`;
 }

@@ -107,3 +107,14 @@ body { background: #1b120c radial-gradient(ellipse at 50% -10%, rgba(231,191,85,
 .piece .cargo { position: absolute; bottom: 30%; left: 50%; transform: translateX(-50%); display: flex; gap: 0; z-index: 3; pointer-events: none; }
 .piece .cargo .mini { --k: var(--kcargo, 1.6px); margin: 0 -12%; }
 .slot .piece .cargo .mini { --k: calc(var(--kcargo, 1.6px) * .8); }
+
+/* 고해상도 도트 캐릭터 (Gemini 원화) */
+.spr.hd { background-size: 100% 100% !important; background-position: center bottom !important; image-rendering: pixelated; translate: 0 0; }
+.piece .spr.hd { animation: hdIdle 1.8s ease-in-out infinite; }
+.piece.odd .spr.hd { animation-delay: -.9s; }
+.piece.e .spr.hd, .mini.e .spr.hd { transform: none; scale: -1 1; }
+.piece.atk .spr.hd { rotate: 9deg; translate: 6% -4%; }
+.piece.e.atk .spr.hd { rotate: -9deg; }
+.spr.hd.ship { animation-name: hdSail; }
+@keyframes hdIdle { 50% { translate: 0 -3%; } }
+@keyframes hdSail { 50% { translate: 0 -2%; rotate: -1.5deg; } }
