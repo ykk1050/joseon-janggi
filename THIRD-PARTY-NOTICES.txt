@@ -4,8 +4,8 @@
 이 게임의 코드, 육각 판, 지도 그림은 직접 만들었습니다.
 군사 도트 그림(img/units.png)은 직접 쓴 조각 설계(art/gen-sprites.js)를,
 지형 칸 그림(img/tiles/)은 직접 쓴 설계(art/gen-tiles.js)를 Pixelbolt로 그려 낸 결과물입니다.
-전투장 배경(img/bg/)은 직접 쓴 설계(art/gen-backgrounds.js)를
-Pixelbolt로 그려 낸 결과물이고, 필살기 이펙트(img/fx/)는 pixelfx로 만든 결과물입니다.
+전투장 배경(img/bg/)은 직접 쓴 설계(art/gen-backgrounds.js)로 만든 Pixelbolt 레시피를
+그려 낸 결과물이고, 필살기 이펙트(img/fx/)는 pixelfx로 만든 결과물입니다.
 아래는 게임에 함께 들어 있는 외부 자료와 도구의 고지문입니다.
 
 

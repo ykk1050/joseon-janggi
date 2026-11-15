@@ -184,3 +184,21 @@ body { background: #1b120c radial-gradient(ellipse at 50% -10%, rgba(231,191,85,
 .crane-label b { font-size: calc(var(--hexw, 60px) * .3); }
 .crane-label small { font-family: var(--body2, inherit); font-weight: 700; font-size: calc(var(--hexw, 60px) * .17); color: #e8f2ff; }
 @keyframes craneLabel { 0% { transform: translate(-50%, -50%) scale(.6); opacity: 0; } 12% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; } 20%, 85% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+
+/* ══ v1.016 정사각형 칸 판 ══ 7칸 × 6줄, 군사는 자기 칸 안에 딱 들어감 */
+.board { aspect-ratio: 7 / 6; }
+.hex { clip-path: none; transform: none; border-radius: 0; box-shadow: inset 0 0 0 1px rgba(30, 18, 8, .55); }
+.hex::before { clip-path: none; inset: 3px; border-radius: 4px; }
+.board .hex.aoe::before, .board .hex.aoe-c::before, .board .hex.aoe-hit::before { clip-path: none; border-radius: 4px; }
+.frontline { top: calc(50% - 1px); }
+.piece { width: calc(100% / 7); height: calc(100% / 6); }
+.piece .spr { margin-bottom: calc(var(--hexw, 60px) * .07); }
+.piece .base { bottom: calc(var(--hexw, 60px) * .03); height: calc(var(--hexw, 60px) * .14); left: 16%; right: 16%; }
+.piece .bars { top: 3%; bottom: auto; left: 12%; right: 12%; }
+.piece .stars { top: auto; bottom: 1%; left: 4%; right: auto; text-align: left; font-size: calc(var(--hexw) * .17); }
+.piece .its { bottom: 1%; left: auto; right: 4%; justify-content: flex-end; font-size: calc(var(--hexw) * .15); }
+.board .piece .cargo { bottom: calc(var(--hexw, 60px) * .07 + var(--k) * 7); }
+.piece.pv-tgt::after { bottom: auto; top: -14%; }
+.slot .piece .spr, .mini .piece .spr { margin-bottom: 4%; }
+.slot .piece .base { bottom: 6%; height: 20%; }
+.slot .piece .bars { top: 2%; }

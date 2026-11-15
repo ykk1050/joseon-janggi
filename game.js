@@ -1,12 +1,11 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.015';
+const VERSION = 'v1.016';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
-const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
-const BH = 0.75 * (ROWS - 1) + 1;         // 판 높이(칸 높이 단위)
-const HH = 100 / BH;                      // 육각 칸 높이(% of board)
-const hexLeft = (x, y) => (x + (y & 1) * 0.5) * HW;
-const hexTop = (y) => y * 0.75 * HH;
+const HW = 100 / COLS;                     // 칸 너비(% of board) — 정사각형 칸
+const HH = 100 / ROWS;                     // 칸 높이(% of board)
+const hexLeft = (x, y) => x * HW;
+const hexTop = (y) => y * HH;
 
 // ───────── 저장 ─────────
 const SAVE_KEY = 'joseonJanggi';
@@ -563,7 +562,7 @@ function pieceHTML(type, star, o = {}) {
 function sizeBoard() {
   const b = $('#board');
   const w = b.clientWidth;
-  const k = (w * HW / 100) * 1.1 / SPRITE.w;
+  const k = (w * HW / 100) * 0.82 / 31;   // 사람 그림(키 31칸)이 칸 높이의 82%
   document.documentElement.style.setProperty('--k', k + 'px');
   document.documentElement.style.setProperty('--hexw', (w * HW / 100) + 'px');
   document.documentElement.style.setProperty('--kcargo', (k * 0.55) + 'px');
@@ -755,7 +754,7 @@ function startBattle() {
     cargo: (b.u.cargo || []).map(c => ({ type: c.type, star: c.star, items: c.items })) }));
   let opts;
   if (c.siege) {
-    players.push({ type: 'castle', star: 1, x: 3, y: 5 });
+    players.push({ type: 'castle', star: 1, x: 3, y: 5, items: [], cargo: [] });
     const m = siegeMul();
     opts = { surviveRounds: c.surviveRounds, atkMul: m.atk * (S.meetBuff === 'fight' ? 1.2 : 1), hpMul: m.hp,
              castleHpMul: c.cannonDay && S.day >= c.cannonDay ? c.cannonHp : 0 };
@@ -776,7 +775,7 @@ function startBattle() {
   // 역사 한마디: 처음 만나는 적
   if (bt.buffs.crisis) sayRule('crisis');
   if (S.ch === 1 && S.flags.navy && stage().id !== '2-2') sayRule('supply');
-  if (players.some(p => p.cargo.length)) say('ship', '⛵ 배가 땅(섬)에 닿으면 타고 있던 군사가 내려요. 배를 해안으로 몰아 보세요!');
+  if (players.some(p => (p.cargo || []).length)) say('ship', '⛵ 배가 땅(섬)에 닿으면 타고 있던 군사가 내려요. 배를 해안으로 몰아 보세요!');
   if (bt.leader) say(bt.leader, `<b>👑 ${UNITS[bt.leader].name}</b>를 쓰러뜨리면 남은 적이 항복해요!`);
   if (Object.values(bt.cells).includes('site')) say(null, `🚩 강 건너 깃발 자리에 군사를 세우면 ${stage().fortWord || '진'}을 세워요. ${stage().siteName}를 세워 보세요!`);
   [...new Set(bt.units.filter(u => u.side === 'e' && !u.wall).map(u => u.type))].filter(t => !S.seen.has(t)).slice(0, 2)
@@ -1210,7 +1209,7 @@ function craneShow(lead, ids) {
   board.classList.add('crane-mode');
   order.forEach((si, k) => {
     const P = slots[si];
-    const zi = zOf(Math.max(0, Math.min(ROWS - 1, Math.round((P.y - HH / 2) / (0.75 * HH)))));
+    const zi = zOf(Math.max(0, Math.min(ROWS - 1, Math.round((P.y - HH / 2) / HH))));
     if (k < ships.length) {
       const a = ships[k], el = pieceEl(a.id); if (!el) return;
       const A = centerOf(a);

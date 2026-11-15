@@ -1,6 +1,6 @@
 /* 조선 수호 장기 — 차례(턴)제 전투 엔진 (코드로 직접 만듦)
    장기처럼 우리 차례에 군사를 하나씩 움직이고 공격한 뒤, 적의 차례가 와요.
-   육각형 판, 마나·필살기, 아이템. 화면과 분리되어 node에서도 돌릴 수 있음. */
+   정사각형 칸 판, 마나·필살기, 아이템. 화면과 분리되어 node에서도 돌릴 수 있음. */
 const COLS = 7, ROWS = 6;
 const ATK_SCALE = 2.5;   // 차례제에서는 한 번 공격이 더 중요하므로 공격력을 키움 (화면 표시도 이 값을 곱함)
 const MANA_ATK = 25;     // 공격할 때 차는 마나
@@ -8,13 +8,12 @@ const MANA_HIT = 10;     // 맞을 때 차는 마나
 const MAX_ROUNDS = 12;   // 이 차례 안에 이기지 못하면 짐 (버티기 장은 surviveRounds)
 const moveOf = (d) => (d.move > 1 ? 3 : 2);   // 한 번에 갈 수 있는 칸 수 (빠른 군사 3칸)
 
-// 홀수 행이 오른쪽으로 반 칸 밀린 육각형 판
-function cube(p) { const q = p.x - (p.y - (p.y & 1)) / 2; return [q, p.y, -q - p.y]; }
-function hexDist(a, b) { const A = cube(a), B = cube(b); return Math.max(Math.abs(A[0] - B[0]), Math.abs(A[1] - B[1]), Math.abs(A[2] - B[2])); }
-const NB_EVEN = [[1, 0], [-1, 0], [0, -1], [-1, -1], [0, 1], [-1, 1]];
-const NB_ODD = [[1, 0], [-1, 0], [1, -1], [0, -1], [1, 1], [0, 1]];
-function neighbors(x, y) { return (y & 1 ? NB_ODD : NB_EVEN).map(([dx, dy]) => ({ x: x + dx, y: y + dy })).filter(p => p.x >= 0 && p.y >= 0 && p.x < COLS && p.y < ROWS); }
-function hexPx(p) { return { x: p.x + (p.y & 1) * 0.5, y: p.y * 0.866 }; } // 거리 비교용
+// 정사각형 칸 판 (v1.016부터). 가로·세로·대각선 8방향으로 한 칸씩 — 장기의 궁 안 움직임·체스의 킹처럼
+// 거리 = 가로 차이와 세로 차이 중 큰 값 (사거리 1이면 둘레 8칸, 범위 1이면 3×3칸)
+function hexDist(a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)); }
+const NB8 = [[1, 0], [-1, 0], [0, -1], [0, 1], [1, -1], [-1, -1], [1, 1], [-1, 1]];
+function neighbors(x, y) { return NB8.map(([dx, dy]) => ({ x: x + dx, y: y + dy })).filter(p => p.x >= 0 && p.y >= 0 && p.x < COLS && p.y < ROWS); }
+function hexPx(p) { return { x: p.x, y: p.y }; } // 거리 비교용
 function eucl(a, b) { const A = hexPx(a), B = hexPx(b); return Math.hypot(A.x - B.x, A.y - B.y); }
 
 // 시너지
