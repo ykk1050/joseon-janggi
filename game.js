@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.016';
+const VERSION = 'v1.017';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / COLS;                     // 칸 너비(% of board) — 정사각형 칸
@@ -276,8 +276,20 @@ function startChapter(i) {
 }
 function startStage(i) {
   S.stage = i; S.firstRoll = true; S.briefMana = 0; S.pass = null;
-  fixDeployment();
-  showStory(stage().pre, () => runBrief(stage().brief || [], () => choosePass(() => enterPrep(true))));
+  // 단계마다 처음부터: 지난 단계 군사는 모두 돌려보내고 산 값만큼 군량을 돌려받음 (레벨·경험치·아이템은 이어짐)
+  const back = releaseArmy();
+  const pre = back.n ? [{ who:'안내', text:`새 싸움터예요! 지난 군사 ${back.n}명은 돌려보내고 🌾 군량 ${back.gold}을 돌려받았어요. 이 단계 상점에서 군사를 새로 모아요.` }].concat(stage().pre) : stage().pre;
+  showStory(pre, () => runBrief(stage().brief || [], () => choosePass(() => enterPrep(true))));
+}
+function releaseArmy() {
+  let n = 0, gold = 0;
+  allOwned().forEach(o => {
+    const v = UNITS[o.u.type].cost * Math.pow(3, o.u.star - 1);
+    n++; gold += v; o.u.items.forEach(it => S.items.push(it));
+  });
+  S.board = []; S.bench = Array(BENCH).fill(null); S.sel = null; S.info = null;
+  S.gold += gold; updateTop();
+  return { n, gold };
 }
 function startDay(d) {
   const c = chap();
