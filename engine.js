@@ -261,8 +261,9 @@ function unloadShip(b, ship, ev) {
 function doMove(b, u, x, y) {
   const ev = [];
   if (!canAct(u) || !reachable(b, u).some(p => p.x === x && p.y === y)) return ev;
+  const fx = u.x, fy = u.y;
   u.x = x; u.y = y; u.moved = true;
-  ev.push({ k: 'move', id: u.id, x, y });
+  ev.push({ k: 'move', id: u.id, x, y, fx, fy });
   const cell = cellOf(b, u);
   if (u.side === 'p' && cell === 'site') { b.cells[x + ',' + y] = 'fort'; b.forts++; ev.push({ k: 'fort', id: u.id, x, y, n: b.forts }); }
   if (cell === 'river') ev.push({ k: 'rule', rule: 'river', id: u.id });

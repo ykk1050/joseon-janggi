@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.011';
+const VERSION = 'v1.012';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / (COLS + 0.5);            // 육각 칸 너비(% of board)
@@ -145,12 +145,13 @@ function showQuizSteps(qz, done, o) {
     answerHTML = () => `<ol class="ans">${qz.a.map(t => `<li>${t}</li>`).join('')}</ol>`;
   } else {
     const eff = shuffled(qz.pairs.length); picked = qz.pairs.map(() => -1);
-    body = `<div class="effects">${eff.map((pi, k) => `<div><b>${LET[k]}</b> ${qz.pairs[pi][1]}</div>`).join('')}</div>
-      <div class="match">${qz.pairs.map((p, ci) => `<div class="mrow"><div class="cause">${p[0]}</div><div class="mbtns">${eff.map((pi, k) => `<button class="btn mbtn" data-c="${ci}" data-e="${pi}">${LET[k]}</button>`).join('')}</div></div>`).join('')}</div>
-      <p class="muted small">원인마다 알맞은 결과(㉠㉡㉢)를 골라요.</p>`;
+    body = `<div class="effects"><div class="etag">결과 보기 (그래서 어떻게 되었나?)</div>${eff.map((pi, k) => `<div><b>${LET[k]}</b> ${qz.pairs[pi][1]}</div>`).join('')}</div>
+      <div class="match"><div class="mhead"><span class="h-cause">원인 (왜?)</span><span class="h-eff">결과 고르기</span></div>
+      ${qz.pairs.map((p, ci) => `<div class="mrow"><div class="cause"><span class="ctag">원인</span>${p[0]}</div><span class="marrow">➜</span><div class="mbtns">${eff.map((pi, k) => `<button class="btn mbtn" data-c="${ci}" data-e="${pi}">${LET[k]}</button>`).join('')}</div></div>`).join('')}</div>
+      <p class="muted small"><b>원인</b>(빨간 표)마다 알맞은 <b>결과</b>(㉠㉡㉢)를 골라요.</p>`;
     ready = () => picked.every(v => v >= 0);
     isRight = () => picked.every((v, ci) => v === ci);
-    answerHTML = () => `<ul class="ans">${qz.pairs.map(p => `<li>${p[0]} → <b>${p[1]}</b></li>`).join('')}</ul>`;
+    answerHTML = () => `<ul class="ans">${qz.pairs.map(p => `<li><span class="ctag">원인</span>${p[0]} ➜ <span class="etag2">결과</span><b>${p[1]}</b></li>`).join('')}</ul>`;
   }
   modal(`${head}${body}<p><button class="btn big" id="qCheck" disabled>확인</button></p><div id="qAfter"></div>`, (box) => {
     const chk = box.querySelector('#qCheck');
@@ -285,8 +286,21 @@ function choosePass(done) {
   modal(`<h3>🗺 작전 회의 — 어디에서 막을까?</h3><p>${ps.q}</p><div class="meeting">
     <button class="opinion" data-k="hill"><b>${ps.hillText}</b><small>${ps.hillMore}</small></button>
     <button class="opinion" data-k="field"><b>${ps.fieldText}</b><small>${ps.fieldMore}</small></button></div>`, (box) => {
+    const go = () => { S.pass = 'field'; play('ok'); closeModal(); S.passAfter = ps.after; done(); };
     box.querySelectorAll('.opinion').forEach(b => b.onclick = () => {
-      S.pass = b.dataset.k; play('ok'); closeModal(); S.passAfter = ps.after; done();
+      if (b.dataset.k === 'field' || !ps.forced) { S.pass = b.dataset.k; play('ok'); closeModal(); S.passAfter = ps.after; return done(); }
+      // 실제 역사: 신립은 조령을 버리고 충주 탄금대 들판을 골랐다 → 학생이 고개를 골라도 들판에서 싸움
+      play('error');
+      const lines = ps.forced; let i = 0;
+      const step = () => {
+        const l = lines[i];
+        box.innerHTML = `<h3>${l.title || '⚔ 장수 신립이 나섰어요'}</h3><div class="forced"><div class="face">${spriteHTML(ps.forcedFace)}<b>${l.who}</b></div>
+          <div class="bubble">${l.text}</div></div>
+          <div class="meeting dim"><div class="opinion x"><b>${ps.hillText}</b><small>신립이 받아들이지 않았어요</small></div><div class="opinion pick"><b>${ps.fieldText}</b><small>신립의 명령</small></div></div>
+          <p><button class="btn big" id="fNext">${i < lines.length - 1 ? '다음 ▶' : '🐎 들판으로 나가 싸운다'}</button></p>`;
+        box.querySelector('#fNext').onclick = () => { if (++i < lines.length) { play('page', .4); step(); } else go(); };
+      };
+      step();
     });
   });
 }
@@ -516,11 +530,16 @@ function spriteHTML(type) {
   const f0 = SPRITE.frames[type + '-i0'], f1 = SPRITE.frames[type + '-i1'], fa = SPRITE.frames[type + '-a'];
   return `<div class="spr" style="--x0:${f0[0]};--y0:${f0[1]};--x1:${f1[0]};--y1:${f1[1]};--xa:${fa[0]};--ya:${fa[1]}"></div>`;
 }
+// 아래 줄(화면 앞쪽)일수록 위에 그림 → 뒤 군사가 앞 군사를 가리지 않음
+const zOf = (y) => 3 + y * 2;
+function placeEl(el, x, y) { el.style.left = hexLeft(x, y) + '%'; el.style.top = hexTop(y) + '%'; el.style.zIndex = zOf(y); }
+// 보는 방향: 기본은 우리 편 오른쪽, 적 왼쪽. 움직이거나 칠 때 그쪽을 봄
+function faceTo(el, fromX, toX) { if (!el || Math.abs(toX - fromX) < 0.5) return; el.classList.toggle('face-l', toX < fromX); el.classList.toggle('face-r', toX > fromX); }
 function pieceHTML(type, star, o = {}) {
   const d = UNITS[type];
   const tier = d.side === 'p' && !d.fixed ? d.cost : 0;
   const cls = ['piece', d.side, d.fixed ? 'fixed' : '', o.sel ? 'sel' : '', o.cls || '', (o.odd ? 'odd' : '')].join(' ');
-  const pos = o.x !== undefined ? `style="left:${hexLeft(o.x, o.y)}%;top:${hexTop(o.y)}%"` : '';
+  const pos = o.x !== undefined ? `style="left:${hexLeft(o.x, o.y)}%;top:${hexTop(o.y)}%;z-index:${zOf(o.y)}"` : '';
   const stars = star > 1 ? `<div class="stars s${star}">${'★'.repeat(star)}</div>` : '';
   const bars = o.bars ? `<div class="bars"><div class="hpb"><i class="hp"></i><i class="sh"></i></div>${d.skill ? '<div class="mpb"><i class="mp"></i></div>' : ''}</div>` : '';
   const items = o.items && o.items.length ? `<div class="its">${o.items.map(it => `<span>${ITEMS[it].icon}</span>`).join('')}</div>` : '';
@@ -531,7 +550,7 @@ function pieceHTML(type, star, o = {}) {
 function sizeBoard() {
   const b = $('#board');
   const w = b.clientWidth;
-  const k = (w * HW / 100) * 1.25 / SPRITE.w;
+  const k = (w * HW / 100) * 1.1 / SPRITE.w;
   document.documentElement.style.setProperty('--k', k + 'px');
   document.documentElement.style.setProperty('--hexw', (w * HW / 100) + 'px');
   document.documentElement.style.setProperty('--kcargo', (k * 0.55) + 'px');
@@ -766,6 +785,7 @@ function renderBattle() {
   const board = $('#board');
   const myTurn = bt.side === 'p' && !bs.busy && !bt.over;
   board.querySelectorAll('.hex.mv, .hex.tg').forEach(h => h.classList.remove('mv', 'tg'));
+  bs.aim = null; showAoe(null);
   for (const u of bt.units) {
     const el = pieceEl(u.id); if (!el) continue;
     const mine = u.alive && u.side === 'p' && !u.fixed;
@@ -799,19 +819,36 @@ function renderBattle() {
   else if (bt.side === 'e') hint = '적이 움직이고 있어요…';
   else if (bs.busy) hint = '우리 군사가 움직이고 있어요…';
   else if (!sel) hint = '빛나는 군사를 눌러 고르세요. (흐린 군사는 이번 차례에 이미 움직였어요)';
-  else if (bs.mode === 'skill') hint = `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르세요.`;
+  else if (bs.mode === 'skill') hint = splashOf(sel, true) ? `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르면, 그 적과 바로 옆 칸까지 함께 맞는 곳이 노랗게 보여요.` : `💥 ${skillOf(sel).name}! 빨간 칸의 적을 누르세요.`;
   else if (!sel.moved) hint = targets.length ? '파란 칸을 누르면 이동, 빨간 칸의 적을 누르면 공격해요.' : '파란 칸을 눌러 이동하세요. 적이 사거리 안에 오면 빨갛게 빛나요.';
   else hint = targets.length ? '빨간 칸의 적을 눌러 공격하세요.' : '공격할 수 있는 적이 없어요.';
   if (sel && myTurn && targets.some(t => craneMul(bt, sel, t) > 1)) hint += ' 🪶 「학익진」 표시가 있는 적은 더 세게 칠 수 있어요!';
   $('#battleHint').textContent = hint;
 }
+// 마우스를 적 위에 올리면 범위 공격이 맞을 칸을 미리 보여 줌
+$('#board').addEventListener('pointermove', (ev) => {
+  if (ev.pointerType !== 'mouse' || !S || S.phase !== 'battle' || !S.battle || !S.bs || S.bs.aim != null) return;
+  const sel = selU(); if (!sel || S.battle.side !== 'p') return;
+  const h = ev.target.closest && ev.target.closest('.hex');
+  const u = h ? unitAt(S.battle, +h.dataset.x, +h.dataset.y) : null;
+  const r = splashOf(sel, S.bs.mode === 'skill');
+  showAoe(u && r && u.side !== sel.side && hexDist(sel, u) <= sel.range ? u : null, r);
+});
 function tapBattle(x, y) {
   const bt = S.battle, bs = S.bs, sel = selU();
   const u = unitAt(bt, x, y);
   if (u) { S.info = { unit: { type: u.type, star: u.star, items: u.items }, live: u }; renderInfo(); }
   if (bt.side !== 'p' || bs.busy || bt.over) return;
   if (sel && u && u.side !== sel.side && hexDist(sel, u) <= sel.range) {
-    return act(bs.mode === 'skill' ? doSkill(bt, sel, u) : doAttack(bt, sel, u));
+    const skill = bs.mode === 'skill', r = splashOf(sel, skill);
+    // 범위 공격은 먼저 맞을 칸을 보여 주고, 같은 적을 한 번 더 누르면 실행
+    if (r && bs.aim !== u.id) {
+      bs.aim = u.id; showAoe(u, r); play('click', .3);
+      $('#battleHint').textContent = `🎯 노란 칸에 있는 적이 모두 맞아요. 같은 적을 한 번 더 누르면 ${skill ? '필살기를 써요' : '공격해요'}! (다른 적을 누르면 바꿔요)`;
+      return;
+    }
+    bs.aim = null; showAoe(null);
+    return act(skill ? doSkill(bt, sel, u) : doAttack(bt, sel, u));
   }
   if (bs.mode === 'skill') { bs.mode = null; renderBattle(); return; }
   if (sel && !u && reachable(bt, sel).some(p => p.x === x && p.y === y)) {
@@ -907,6 +944,20 @@ function enemyTurn() {
   }), 1000);
 }
 const pieceEl = (id) => $('#board').querySelector(`.piece[data-id="${id}"]`);
+const far0 = (e) => e.ranged || e.k === 'shot';
+// 범위 칸: 가운데 t와 거리 r 안의 칸 (판 밖 제외)
+function areaCells(t, r) { const out = []; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (hexDist({ x, y }, t) <= r) out.push({ x, y }); return out; }
+function aoeFlash(t, r) {
+  if (!t) return;
+  areaCells(t, r).forEach(p => { const h = hexEl(p.x, p.y); if (!h) return; h.classList.remove('aoe-hit'); void h.offsetWidth; h.classList.add('aoe-hit'); setTimeout(() => h.classList.remove('aoe-hit'), 700); });
+}
+// 범위 공격 미리 보기: 이 적을 노리면 어느 칸까지 맞는지
+function splashOf(u, skill) { if (skill) { const sk = skillOf(u); return sk.kind === 'strike' && sk.splash ? sk.splash : 0; } return u.splash ? 1 : 0; }
+function showAoe(t, r) {
+  $('#board').querySelectorAll('.hex.aoe, .hex.aoe-c').forEach(h => h.classList.remove('aoe', 'aoe-c'));
+  if (!t || !r) return;
+  areaCells(t, r).forEach(p => { const h = hexEl(p.x, p.y); if (h) h.classList.add(p.x === t.x && p.y === t.y ? 'aoe-c' : 'aoe'); });
+}
 function centerOf(u) { return { x: hexLeft(u.x, u.y) + HW / 2, y: hexTop(u.y) + HH / 2 }; }
 function syncBars() {
   for (const u of S.battle.units) {
@@ -965,14 +1016,22 @@ function drawEvents(ev) {
   const bt = S.battle;
   for (const e of ev) {
     if (e.k === 'move') {
-      const el = pieceEl(e.id); if (el) { el.style.left = hexLeft(e.x, e.y) + '%'; el.style.top = hexTop(e.y) + '%'; }
+      const el = pieceEl(e.id);
+      if (el) {
+        faceTo(el, hexLeft(e.fx !== undefined ? e.fx : e.x, e.fy !== undefined ? e.fy : e.y), hexLeft(e.x, e.y));
+        el.classList.remove('walk'); void el.offsetWidth; el.classList.add('walk'); setTimeout(() => el.classList.remove('walk'), 380);
+        placeEl(el, e.x, e.y);
+      }
     } else if (e.k === 'atk' || e.k === 'shot') {
       const a = bt.units[e.from], t = bt.units[e.to], el = pieceEl(e.from);
       if (el) {
-        el.classList.add('atk'); setTimeout(() => el.classList.remove('atk'), 220);
-        const A = centerOf(a), T = centerOf(t);
-        if (!(e.ranged || e.k === 'shot')) { el.style.translate = `${(T.x - A.x) * 0.25}% ${(T.y - A.y) * 0.25}%`; setTimeout(() => { el.style.translate = ''; }, 150); }
+        const A = centerOf(a), T = centerOf(t), far = e.ranged || e.k === 'shot';
+        faceTo(el, A.x, T.x);
+        const cls = far ? 'atk-r' : 'atk-m';
+        el.classList.remove('atk-r', 'atk-m'); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), 420);
+        if (!far) { setTimeout(() => { el.style.translate = `${(T.x - A.x) * 2.2}% ${(T.y - A.y) * 1.4}%`; }, 110); setTimeout(() => { el.style.translate = ''; }, 300); }
       }
+      if (UNITS[a.type].splash && e.k === 'atk') setTimeout(() => aoeFlash(t, 1), far0(e) ? 220 : 120);
       if (e.ranged || e.k === 'shot') {
         const d = UNITS[a.type];
         shot(a, t, d.boom || ['gunner','mingGun','rocket','panok','ship','turtle'].includes(a.type) ? 'ball' : 'arrow');
@@ -995,6 +1054,9 @@ function drawEvents(ev) {
       if (e.big) { banner(`${UNITS[u.type].name} — ${sk.name}!`, u.side); const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); play('boom', .6); }
       else play('ok', .35);
       if (sk.fx) (e.targets || []).slice(0, 4).forEach((id, i) => setTimeout(() => playFx(sk.fx, bt.units[id], e.big ? 1.15 : .85), i * 90));
+      // 범위 공격이 닿은 칸을 잠깐 빨갛게
+      if (sk.splash && e.targets && e.targets.length) aoeFlash(bt.units[e.targets[0]], sk.splash);
+      else if (sk.kind === 'all' && e.targets) e.targets.forEach(id => aoeFlash(bt.units[id], 0));
     } else if (e.k === 'fort') {
       const h = hexEl(e.x, e.y); if (h) { h.classList.remove('site'); h.classList.add('fort'); }
       floatText(bt.units[e.id], `🏯 진 ${e.n}곳!`, 'cast p'); play('coin', .5);
@@ -1003,7 +1065,7 @@ function drawEvents(ev) {
       const u = bt.units[e.id], ship = bt.units[e.from];
       $('#board').insertAdjacentHTML('beforeend', pieceHTML(u.type, u.star, { x: ship.x, y: ship.y, id: u.id, bars: true, items: u.items, cls: 'spawn' }));
       const sEl = pieceEl(ship.id); if (sEl) { const cg = sEl.querySelector('.cargo .mini'); if (cg) cg.remove(); }
-      requestAnimationFrame(() => requestAnimationFrame(() => { const el = pieceEl(u.id); if (el) { el.style.left = hexLeft(e.x, e.y) + '%'; el.style.top = hexTop(e.y) + '%'; } }));
+      requestAnimationFrame(() => requestAnimationFrame(() => { const el = pieceEl(u.id); if (el) placeEl(el, e.x, e.y); }));
       floatText(u, '⛵ 상륙!', 'cast p'); play('place', .6); sayRule('landing');
     } else if (e.k === 'surrender') {
       banner('왜구가 항복했어요!', 'p'); sayRule('surrender');
@@ -1109,10 +1171,34 @@ function showDamage(title, cards, done) {
     box.querySelector('#dNext').onclick = () => { closeModal(); done(); };
   });
 }
+// 빈칸 낱말은 [정답] 또는 [정답|다른 답]. 띄어쓰기·'섬'·숫자/한글(4군=사군)은 같게 봄
+const normAns = (t) => t.replace(/[\s·,.]/g, '').replace(/사(?=군)/g, '4').replace(/육(?=진)/g, '6').replace(/섬$/, '');
 function showSummary(c, done) {
-  const html = c.summary.text.replace(/\[([^\]]+)\]/g, (_, w) => `<span class="blank">${w}</span>`);
-  modal(`<h3>📖 교과서 정리</h3><p class="muted">빈칸에 들어갈 말을 떠올린 뒤 눌러서 확인해 보세요.</p><p class="summary">${html}</p><button class="btn big" id="sNext">${c.title.split('.')[0]} 완료!</button>`, (box) => {
-    box.querySelectorAll('.blank').forEach(b => b.onclick = () => { b.classList.add('open'); play('click'); });
+  const ans = [];
+  const html = c.summary.text.replace(/\[([^\]]+)\]/g, (_, w) => { const k = ans.length; ans.push(w.split('|')); return `<input class="blank" data-k="${k}" autocomplete="off" autocapitalize="off" spellcheck="false" size="${Math.max(3, w.split('|')[0].length + 1)}" aria-label="빈칸 ${k + 1}">`; });
+  modal(`<h3>📖 교과서 정리</h3><p class="muted">빈칸에 들어갈 말을 <b>직접 써</b> 보세요.</p><p class="summary">${html}</p>
+    <p id="sMsg" class="muted small"></p><p><button class="btn big" id="sCheck">확인</button><button class="btn big hidden" id="sNext">${c.title.split('.')[0]} 완료!</button></p>`, (box) => {
+    const inputs = [...box.querySelectorAll('.blank')], tries = ans.map(() => 0);
+    inputs.forEach((b, i) => b.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); (inputs[i + 1] || box.querySelector('#sCheck')).focus(); } }));
+    const check = () => {
+      let left = 0, firstWrong = null;
+      inputs.forEach((b, k) => {
+        if (b.classList.contains('ok') || b.classList.contains('shown')) return;
+        const v = normAns(b.value);
+        if (v && ans[k].some(a => normAns(a) === v)) { b.classList.remove('wrong'); b.classList.add('ok'); b.readOnly = true; return; }
+        tries[k]++;
+        if (tries[k] >= 3) { b.value = ans[k][0]; b.classList.remove('wrong'); b.classList.add('shown'); b.readOnly = true; return; }
+        left++;
+        b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong');
+        if (tries[k] === 2) { b.value = ''; b.placeholder = ans[k][0][0] + '…'; }
+        firstWrong = firstWrong || b;
+      });
+      const msg = box.querySelector('#sMsg');
+      if (left) { play('error'); msg.textContent = '빨간 칸을 다시 써 보세요. 두 번 틀리면 첫 글자를, 세 번 틀리면 정답을 알려 줘요.'; firstWrong.focus(); }
+      else { play('coin'); msg.textContent = inputs.some(b => b.classList.contains('shown')) ? '회색 칸은 정답을 알려 준 거예요. 한 번 더 읽어 보세요.' : '모두 맞혔어요! 훌륭해요.';
+        box.querySelector('#sCheck').classList.add('hidden'); box.querySelector('#sNext').classList.remove('hidden'); }
+    };
+    box.querySelector('#sCheck').onclick = check;
     box.querySelector('#sNext').onclick = () => { play('win'); closeModal(); done(); };
   });
 }

@@ -365,3 +365,30 @@ body.beat .mini:nth-child(odd) .spr { background-position: calc(var(--x1) * var(
 @media (max-width: 600px) { .mrow { flex-direction: column; align-items: stretch; } .mbtns { justify-content: flex-end; } }
 .piece .spr.wallblock { width: calc(28 * var(--k)); height: calc(26 * var(--k)); }
 .music-corner { position: absolute; top: 10px; right: 10px; z-index: 5; font-size: .85rem; padding: 6px 12px; }
+
+/* 원인 → 결과 (v1.012) */
+.effects .etag { display: block; font-weight: 900; color: #1e5a3c; margin-bottom: 2px; font-size: .9rem; }
+.etag2 { display: inline-block; font-weight: 900; color: #1e5a3c; font-size: .8rem; padding: 0 6px; margin-right: 4px; border-radius: 6px; background: #d6ead9; }
+.mhead { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: .9rem; padding: 0 4px; }
+.mhead .h-cause { flex: 1; color: #8e2418; }
+.mhead .h-eff { color: #1e5a3c; }
+.ctag { display: inline-block; font-size: .8rem; font-weight: 900; color: #fff; background: #a8392b; padding: 0 6px; margin-right: 6px; border-radius: 6px; vertical-align: 1px; }
+.marrow { font-size: 1.3rem; color: #8e6a2a; flex: none; }
+@media (max-width: 600px) { .marrow { transform: rotate(90deg); align-self: center; } }
+/* 교과서 정리: 직접 쓰기 */
+input.blank { font: inherit; color: #2f68b8; font-weight: 900; cursor: text; min-width: 4em; width: auto; }
+input.blank:focus { outline: 3px solid #f2cd62; }
+input.blank.ok { border-style: solid; border-color: #2f7d4f; background: #e3f4e6; }
+input.blank.shown { border-style: solid; border-color: #8f887c; background: #efe9dc; color: #6a5a40; }
+input.blank.wrong { border-color: #c0392b; background: #fde4e0; animation: shakeX .35s; }
+#sCheck + #sNext, #sNext { margin-left: 0; }
+@keyframes shakeX { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+/* 2-1 신립 */
+.forced { display: flex; gap: 14px; align-items: center; margin: 8px 0 12px; text-align: left; }
+.forced .face { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; --k: 3px; }
+.forced .face b { font-size: .9rem; color: #8e2418; white-space: nowrap; }
+.forced .bubble { position: relative; background: #fff; border: 2px solid #a98a45; border-radius: 12px; padding: 12px 14px; line-height: 1.6; word-break: keep-all; }
+.forced .bubble::before { content: ''; position: absolute; left: -10px; top: 50%; margin-top: -8px; border: 8px solid transparent; border-right-color: #a98a45; border-left: 0; }
+.meeting.dim .opinion { cursor: default; }
+.meeting.dim .opinion.x { opacity: .55; text-decoration: line-through; }
+.meeting.dim .opinion.pick { box-shadow: 0 0 0 3px #d4473a; }
