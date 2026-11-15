@@ -1,5 +1,5 @@
 /* 조선 수호 장기 — 화면과 진행 (코드로 직접 만듦) */
-const VERSION = 'v1.017';
+const VERSION = 'v1.018';
 const $ = (s) => document.querySelector(s);
 const BENCH = 6, SHOP_N = 5, TRAY_MAX = 8;
 const HW = 100 / COLS;                     // 칸 너비(% of board) — 정사각형 칸
@@ -544,13 +544,32 @@ function tapItem(i) {
 }
 
 // ───────── 그림 조각 ─────────
+// 군사 그림 주소: 버전을 붙여 옛 캐시를 피하고, 못 불러오면 저절로 다시 받음(휴대폰에서 그림이 빠지던 문제)
+let imgTry = 0;
+const hdUrl = (hd) => `${hd.img}?v=${VERSION}${imgTry ? '&r=' + imgTry : ''}`;
+function preloadUnits() {
+  if (typeof HD === 'undefined') return;
+  let failed = 0, left = Object.keys(HD).length;
+  const done = () => {
+    if (--left > 0) return;
+    if (!failed || imgTry >= 3) return;
+    imgTry++;
+    setTimeout(() => {
+      // 이미 그려진 그림도 새 주소로 바꿔 다시 받음
+      document.querySelectorAll('.spr.hd').forEach(el => { el.style.backgroundImage = el.style.backgroundImage.replace(/\?v=[^")]*/, '?v=' + VERSION + '&r=' + imgTry); });
+      preloadUnits();
+    }, 1200 * imgTry);
+  };
+  Object.values(HD).forEach(hd => { const im = new Image(); im.onload = done; im.onerror = () => { failed++; done(); }; im.src = hdUrl(hd); });
+}
+preloadUnits();
 function spriteHTML(type) {
   if (UNITS[type].wall) return '<div class="spr wallblock"></div>';
   // 고해상도 도트 그림(Gemini 원화): 사람·말은 키 31칸, 배·기계·성은 너비 fitW칸에 맞춤 (옛 28칸 그림의 --k 기준)
   const hd = typeof HD !== 'undefined' && HD[type];
   if (hd) {
     const s = hd.fitW ? hd.fitW / hd.w : 31 / hd.h;
-    return `<div class="spr hd${hd.fitW ? ' ship' : ''}" style="background-image:url(${hd.img});width:calc(var(--k) * ${(hd.w * s).toFixed(2)});height:calc(var(--k) * ${(hd.h * s).toFixed(2)})"></div>`; }
+    return `<div class="spr hd${hd.fitW ? ' ship' : ''}" style="background-image:url(${hdUrl(hd)});width:calc(var(--k) * ${(hd.w * s).toFixed(2)});height:calc(var(--k) * ${(hd.h * s).toFixed(2)})"></div>`; }
   const f0 = SPRITE.frames[type + '-i0'], f1 = SPRITE.frames[type + '-i1'], fa = SPRITE.frames[type + '-a'];
   return `<div class="spr" style="--x0:${f0[0]};--y0:${f0[1]};--x1:${f1[0]};--y1:${f1[1]};--xa:${fa[0]};--ya:${fa[1]}"></div>`;
 }
